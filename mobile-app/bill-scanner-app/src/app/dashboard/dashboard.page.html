@@ -1,0 +1,44 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Bill Scanner</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Welcome -->
+  <div style="text-align: center; margin-top: 20px;">
+    <h1>Hello! 👋</h1>
+    <p style="color: #999;">Scan your bills quickly</p>
+  </div>
+
+  <!-- Buttons - SIMPLE VERSION -->
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 30px;">
+    <!-- Scan Button -->
+    <ion-card button (click)="goToUpload()" style="padding: 20px; text-align: center;">
+      <ion-icon name="camera-outline" style="font-size: 48px; color: #667eea;"></ion-icon>
+      <h3>Scan New Bill</h3>
+      <p style="font-size: 12px; color: #999;">Take photo or upload</p>
+    </ion-card>
+
+    <!-- View Bills Button -->
+    <ion-card button (click)="goToBills()" style="padding: 20px; text-align: center;">
+      <ion-icon name="list-outline" style="font-size: 48px; color: #f5576c;"></ion-icon>
+      <h3>View Bills</h3>
+      <p style="font-size: 12px; color: #999;">See all your bills</p>
+    </ion-card>
+  </div>
+
+  <!-- Recent Bills -->
+  <div style="margin-top: 30px;">
+    <h3>Recent Bills</h3>
+    <ion-list>
+      <ion-item *ngFor="let bill of recentBills" (click)="viewBill(bill.id)">
+        <ion-label>
+          <h2>{{ bill.vendor }}</h2>
+          <p>{{ bill.date | date:'mediumDate' }}</p>
+        </ion-label>
+        <ion-note slot="end">₹{{ bill.total }}</ion-note>
+      </ion-item>
+    </ion-list>
+  </div>
+</ion-content>

@@ -1,0 +1,83 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button></ion-back-button>
+    </ion-buttons>
+    <ion-title>✅ Validate Bill</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div style="text-align: center; margin-top: 20px;">
+    <h2>📋 Review Bill</h2>
+    <p style="color: #999;">Please check the extracted data</p>
+
+    <!-- EXTRACTED DATA -->
+    <ion-card style="margin-top: 20px; padding: 16px; text-align: left;">
+      <ion-item>
+        <ion-label><strong>Bill Number</strong></ion-label>
+        <ion-text><strong>{{ billData?.bill_number || 'Not found' }}</strong></ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label><strong>Vendor</strong></ion-label>
+        <ion-text>{{ billData?.vendor || 'Not found' }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label><strong>Date</strong></ion-label>
+        <ion-text>{{ billData?.date || 'Not found' }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label><strong>GSTIN</strong></ion-label>
+        <ion-text>{{ billData?.gstin || 'Not found' }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label><strong>Subtotal</strong></ion-label>
+        <ion-text>₹{{ billData?.subtotal || '0' }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label><strong>Tax</strong></ion-label>
+        <ion-text>₹{{ billData?.tax || '0' }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label><strong>Total</strong></ion-label>
+        <ion-text><strong style="color: #4CAF50; font-size: 18px;">₹{{ billData?.total || '0' }}</strong></ion-text>
+      </ion-item>
+      
+      <!-- ITEMS -->
+      <ion-item *ngIf="billData?.items?.length > 0">
+        <ion-label><strong>Items</strong></ion-label>
+      </ion-item>
+      <div *ngFor="let item of billData?.items" style="padding: 8px 16px; background: #f5f5f5; margin: 4px 0; border-radius: 8px;">
+        <div style="display: flex; justify-content: space-between; font-size: 14px;">
+          <span>{{ item.name }}</span>
+          <span>₹{{ item.price }} × {{ item.qty }} = ₹{{ item.price * item.qty }}</span>
+        </div>
+      </div>
+      
+      <!-- Payment Terms -->
+      <ion-item *ngIf="billData?.payment_terms">
+        <ion-label><strong>Payment Terms</strong></ion-label>
+        <ion-text>{{ billData?.payment_terms }}</ion-text>
+      </ion-item>
+      
+      <!-- Grand Total Words -->
+      <ion-item *ngIf="billData?.grand_total_words">
+        <ion-label><strong>Amount in Words</strong></ion-label>
+        <ion-text style="font-size: 12px;">{{ billData?.grand_total_words }}</ion-text>
+      </ion-item>
+    </ion-card>
+
+    <!-- ACTIONS -->
+    <ion-button expand="block" color="success" (click)="confirmBill()" style="margin-top: 16px;">
+      ✅ Confirm & Save
+    </ion-button>
+    
+    <ion-button expand="block" fill="outline" (click)="retakePhoto()" style="margin-top: 8px;">
+      📸 Retake Photo
+    </ion-button>
+    
+    <ion-button expand="block" fill="clear" color="warning" (click)="editData()" style="margin-top: 4px;">
+      ✏️ Edit Data Manually
+    </ion-button>
+  </div>
+</ion-content>

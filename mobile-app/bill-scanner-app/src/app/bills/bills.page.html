@@ -1,0 +1,80 @@
+<!-- src/app/bills/bills.page.html -->
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="list-outline" style="margin-right: 8px;"></ion-icon>
+      All Bills
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button>
+        <ion-icon name="search-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    <div class="summary-card">
+      <div class="summary-icon" style="background: #e3f2fd;">
+        <ion-icon name="document-text-outline" style="color: #1976d2;"></ion-icon>
+      </div>
+      <div>
+        <div class="summary-number">24</div>
+        <div class="summary-label">Total Bills</div>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon" style="background: #e8f5e9;">
+        <ion-icon name="cash-outline" style="color: #4CAF50;"></ion-icon>
+      </div>
+      <div>
+        <div class="summary-number">₹12,450</div>
+        <div class="summary-label">Total Amount</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Buttons -->
+  <div class="filter-row">
+    <ion-button size="small" fill="solid" color="primary">All</ion-button>
+    <ion-button size="small" fill="outline">This Month</ion-button>
+    <ion-button size="small" fill="outline">Last Month</ion-button>
+    <ion-button size="small" fill="outline">This Year</ion-button>
+  </div>
+
+  <!-- Bills List -->
+  <ion-list class="bills-list">
+    <ion-item *ngFor="let bill of bills" (click)="viewBill(bill.id)" class="bill-item">
+      <ion-thumbnail slot="start" class="bill-thumbnail">
+        <div class="thumbnail-icon">
+          <ion-icon name="receipt-outline"></ion-icon>
+        </div>
+      </ion-thumbnail>
+      <ion-label>
+        <h2>{{ bill.vendor }}</h2>
+        <p>
+          <ion-icon name="calendar-outline" class="label-icon"></ion-icon>
+          {{ bill.date | date:'MMM dd, yyyy' }}
+        </p>
+        <p class="bill-number">#{{ bill.billNumber || 'INV-001' }}</p>
+      </ion-label>
+      <ion-note slot="end" class="bill-total">₹{{ bill.total }}</ion-note>
+    </ion-item>
+  </ion-list>
+
+  <!-- Empty State -->
+  <div *ngIf="bills.length === 0" class="empty-state">
+    <ion-icon name="document-outline" size="large"></ion-icon>
+    <h3>No Bills Yet</h3>
+    <p>Scan your first bill to get started!</p>
+    <ion-button (click)="goToUpload()" color="primary">
+      <ion-icon name="camera-outline" slot="start"></ion-icon>
+      Scan Now
+    </ion-button>
+  </div>
+</ion-content>
