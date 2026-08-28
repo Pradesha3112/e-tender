@@ -1,45 +1,60 @@
+<!-- ============================================ -->
+<!-- FILE 1: upload.page.html                     -->
+<!-- RAILWAY E-BILLING SYSTEM - UPLOAD PAGE      -->
+<!-- ============================================ -->
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar style="--background: #cc0000; --color: white;">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+      <ion-back-button defaultHref="/dashboard" style="--color: white;"></ion-back-button>
     </ion-buttons>
-    <ion-title>📸 Upload Bill</ion-title>
+    <ion-title>
+      <ion-icon name="train-outline" style="margin-right: 10px; font-size: 22px;"></ion-icon>
+      Upload Bill
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div style="text-align: center; margin-top: 20px;">
-    <h2>📸 Upload Your Bill</h2>
-    <p style="color: #999;">Choose an option below</p>
-
-    <!-- OPTIONS -->
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 30px;">
-      <!-- CAMERA BUTTON -->
-      <ion-card button (click)="openCamera()" style="padding: 20px; cursor: pointer;">
-        <div style="font-size: 48px;">📷</div>
-        <h3>Camera</h3>
-        <p style="font-size: 12px; color: #999;">Take a photo</p>
-        <ion-badge color="warning" style="margin-top: 8px;">Mobile Only</ion-badge>
-      </ion-card>
-
-      <!-- GALLERY BUTTON -->
-      <ion-card button (click)="openGallery()" style="padding: 20px; cursor: pointer;">
-        <div style="font-size: 48px;">🖼️</div>
-        <h3>Gallery</h3>
-        <p style="font-size: 12px; color: #999;">Choose from gallery</p>
-        <ion-badge color="warning" style="margin-top: 8px;">Mobile Only</ion-badge>
-      </ion-card>
+<ion-content class="ion-padding" style="--background: #f8f9fc;">
+  <div class="upload-container" style="max-width: 500px; margin: 0 auto;">
+    
+    <!-- HEADER -->
+    <div class="upload-header" style="text-align: center; margin-bottom: 24px;">
+      <h2 style="font-size: 24px; font-weight: 700; color: #1a1a2e; margin: 0 0 4px;">
+        <ion-icon name="train" style="color: #cc0000; margin-right: 8px;"></ion-icon>
+        Upload Railway Bill
+      </h2>
+      <p style="color: #888; font-size: 14px; margin: 0;">Choose an option below</p>
     </div>
 
-    <!-- OR DIVIDER -->
-    <div style="display: flex; align-items: center; margin: 30px 0;">
-      <div style="flex: 1; height: 1px; background: #ddd;"></div>
-      <span style="padding: 0 16px; color: #999;">OR</span>
-      <div style="flex: 1; height: 1px; background: #ddd;"></div>
+    <!-- OPTIONS -->
+    <div class="options-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+      <div class="option-card" (click)="openCamera()" style="background: white; border-radius: 20px; padding: 24px 16px; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; position: relative;">
+        <div class="option-icon camera-icon" style="width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; background: #fff0f0; border: 2px solid #ffcccc;">
+          <ion-icon name="camera-outline" style="font-size: 30px; color: #cc0000;"></ion-icon>
+        </div>
+        <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin: 0 0 4px;">Camera</h3>
+        <p style="font-size: 12px; color: #888; margin: 0;">Take a photo</p>
+        <div class="option-badge" style="position: absolute; top: -8px; right: -8px; background: #cc0000; color: white; padding: 2px 10px; border-radius: 12px; font-size: 9px; font-weight: 600; box-shadow: 0 2px 8px rgba(204, 0, 0, 0.3);">Rail</div>
+      </div>
+
+      <div class="option-card" (click)="openGallery()" style="background: white; border-radius: 20px; padding: 24px 16px; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 2px solid transparent; position: relative;">
+        <div class="option-icon gallery-icon" style="width: 60px; height: 60px; border-radius: 16px; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; background: #fff0f0; border: 2px solid #ffcccc;">
+          <ion-icon name="images-outline" style="font-size: 30px; color: #cc0000;"></ion-icon>
+        </div>
+        <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin: 0 0 4px;">Gallery</h3>
+        <p style="font-size: 12px; color: #888; margin: 0;">Choose from gallery</p>
+        <div class="option-badge" style="position: absolute; top: -8px; right: -8px; background: #cc0000; color: white; padding: 2px 10px; border-radius: 12px; font-size: 9px; font-weight: 600; box-shadow: 0 2px 8px rgba(204, 0, 0, 0.3);">Rail</div>
+      </div>
+    </div>
+
+    <!-- DIVIDER -->
+    <div class="divider" style="display: flex; align-items: center; margin: 20px 0 24px;">
+      <span style="padding: 0 16px; color: #888; font-size: 12px; font-weight: 500;">OR</span>
+      <span style="content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, #ddd, transparent);"></span>
     </div>
 
     <!-- FILE UPLOAD -->
-    <div style="margin-top: 10px;">
+    <div class="upload-area" style="text-align: center; margin-bottom: 16px;">
       <input 
         #fileInput
         type="file" 
@@ -47,55 +62,54 @@
         (change)="onFileSelected($event)" 
         style="display: none;"
       />
-      <ion-button expand="block" (click)="fileInput.click()" color="medium">
-        📁 Upload from Computer
+      <ion-button expand="block" (click)="fileInput.click()" class="upload-btn" style="--border-radius: 14px; height: 48px; font-weight: 600; --background: #f0f2f5; --color: #333; border: 2px dashed #cc0000;">
+        <ion-icon name="folder-outline" slot="start" style="color: #cc0000;"></ion-icon>
+        Upload from Computer
       </ion-button>
-      <p style="font-size: 11px; color: #999; margin-top: 8px;">
-        Supports: JPG, PNG (Max 10MB)
-      </p>
+      <p class="upload-hint" style="font-size: 11px; color: #888; margin-top: 8px;">Supports: JPG, PNG (Max 10MB)</p>
     </div>
 
-    <!-- ERROR MESSAGE -->
-    <div *ngIf="errorMessage" style="margin-top: 16px; padding: 12px; background: #ffebee; border-radius: 8px; color: #c62828;">
-      ❌ {{ errorMessage }}
+    <!-- ERROR -->
+    <div *ngIf="errorMessage" class="error-message" style="margin: 12px 0; padding: 12px 16px; background: #fff5f5; border-radius: 12px; color: #cc0000; font-size: 13px; border: 1px solid #ffcccc; display: flex; align-items: center; gap: 10px;">
+      <ion-icon name="alert-circle-outline" style="font-size: 20px; flex-shrink: 0; color: #cc0000;"></ion-icon>
+      {{ errorMessage }}
     </div>
 
-    <!-- PREVIEW SECTION -->
-    <div *ngIf="selectedImage" style="margin-top: 30px;">
-      <ion-card>
-        <ion-card-content>
-          <img [src]="selectedImage" style="width: 100%; border-radius: 8px;" />
-          
-          <div style="margin-top: 16px; display: flex; gap: 8px; flex-direction: column;">
-            <ion-button expand="block" (click)="processBill()" [disabled]="isLoading" color="primary">
-              {{ isLoading ? '⏳ Processing...' : '📋 Extract Bill Data' }}
-            </ion-button>
-            
-            <ion-button expand="block" fill="outline" color="danger" (click)="clearImage()">
-              🗑️ Remove Image
-            </ion-button>
-          </div>
-        </ion-card-content>
-      </ion-card>
+    <!-- PREVIEW -->
+    <div *ngIf="selectedImage" class="preview-section" style="margin-top: 24px;">
+      <div class="preview-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h3 style="font-size: 16px; font-weight: 600; color: #1a1a2e; margin: 0; display: flex; align-items: center; gap: 8px;">
+          <ion-icon name="eye-outline" style="color: #cc0000;"></ion-icon>
+          Preview
+        </h3>
+        <ion-button fill="clear" (click)="clearImage()" style="--color: #cc0000; font-size: 13px;">
+          <ion-icon name="close-circle" style="font-size: 18px;"></ion-icon>
+          Remove
+        </ion-button>
+      </div>
+
+      <div class="image-preview" style="position: relative; border-radius: 16px; overflow: hidden; background: white; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); border: 2px solid #f0f0f0;">
+        <img [src]="selectedImage" alt="Selected bill" style="width: 100%; height: auto; display: block; max-height: 350px; object-fit: contain;" />
+        <div *ngIf="isLoading" class="image-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+          <ion-spinner name="crescent" style="--color: white; width: 48px; height: 48px;"></ion-spinner>
+        </div>
+      </div>
+
+      <div class="action-buttons" style="margin-top: 16px;">
+        <ion-button expand="block" (click)="processBill()" [disabled]="isLoading" class="process-btn" style="--border-radius: 14px; height: 50px; font-size: 16px; font-weight: 600; --background: #cc0000; --box-shadow: 0 4px 16px rgba(204, 0, 0, 0.35); --color: white;">
+          <ion-icon name="scan-outline" slot="start"></ion-icon>
+          {{ isLoading ? 'Processing...' : 'Extract Bill Data' }}
+        </ion-button>
+      </div>
     </div>
 
-    <!-- STATUS -->
-    <div *ngIf="isLoading" style="margin-top: 16px;">
-      <ion-spinner name="crescent"></ion-spinner>
-      <p style="color: #666;">Processing your bill...</p>
+    <!-- LOADING -->
+    <div *ngIf="isLoading" class="loading-container" style="margin-top: 20px; text-align: center;">
+      <ion-spinner name="crescent" style="--color: #cc0000; width: 40px; height: 40px;"></ion-spinner>
+      <p style="color: #888; font-size: 14px; margin-top: 8px;">Processing your bill...</p>
     </div>
 
-    <!-- TIPS -->
-    <div style="margin-top: 30px; padding: 16px; background: #f5f5f5; border-radius: 12px; text-align: left;">
-      <p style="font-size: 12px; color: #666; margin: 0;">
-        💡 <strong>Tips for best results:</strong>
-      </p>
-      <ul style="font-size: 12px; color: #666; margin: 8px 0 0; padding-left: 20px;">
-        <li>Good lighting</li>
-        <li>Hold camera steady</li>
-        <li>Include entire bill</li>
-        <li>Clear text</li>
-      </ul>
-    </div>
-  </div>
-</ion-content>
+  
+   </div>
+
+  </ion-content>

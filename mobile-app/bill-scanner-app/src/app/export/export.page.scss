@@ -1,0 +1,756 @@
+/* ============================================
+   EXPORT PAGE - RAILWAY RED THEME
+   ============================================ */
+
+/* ============================================ */
+/*           GLOBAL STYLES                      */
+/* ============================================ */
+
+ion-content {
+  --background: #f5f7fa;
+}
+
+.export-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
+
+/* ============================================ */
+/*           HEADER                            */
+/* ============================================ */
+
+.export-header {
+  text-align: center;
+  margin-bottom: 20px;
+  
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 4px;
+  }
+  
+  p {
+    color: #999;
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
+/* ============================================ */
+/*           TOOLBAR - RAILWAY RED             */
+/* ============================================ */
+
+ion-toolbar {
+  --background: #cc0000 !important;
+  --color: white !important;
+}
+
+ion-back-button {
+  --color: white !important;
+}
+
+.header-icon {
+  margin-right: 10px;
+  font-size: 22px;
+}
+
+ion-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: white !important;
+}
+
+/* ============================================ */
+/*           OPTION CARD                       */
+/* ============================================ */
+
+.option-card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  margin-bottom: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  
+  ion-card-header {
+    padding-bottom: 8px;
+    
+    ion-card-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1a1a2e;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      
+      ion-button {
+        --padding-start: 4px;
+        --padding-end: 4px;
+        --color: #cc0000 !important;
+        height: 30px;
+      }
+    }
+    
+    ion-card-subtitle {
+      font-size: 13px;
+      color: #999;
+    }
+  }
+  
+  ion-card-content {
+    padding-top: 8px;
+  }
+}
+
+/* ============================================ */
+/*           SELECT ALL CARD - RED             */
+/* ============================================ */
+
+.select-all-card {
+  background: #fff5f5;
+  border: 1px solid #ffcccc;
+}
+
+.select-all-container {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  
+  .select-all-checkbox {
+    --size: 24px;
+    --background-checked: #cc0000 !important;
+    --border-color-checked: #cc0000 !important;
+    flex-shrink: 0;
+  }
+  
+  .select-all-info {
+    flex: 1;
+    
+    h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin: 0 0 2px;
+    }
+    
+    p {
+      font-size: 12px;
+      color: #999;
+      margin: 0;
+    }
+  }
+  
+  ion-badge {
+    --padding-start: 12px;
+    --padding-end: 12px;
+    padding: 6px 12px;
+    font-size: 12px;
+    border-radius: 20px;
+    --background: #cc0000 !important;
+    --color: white !important;
+  }
+}
+
+/* ============================================ */
+/*           BILLS LIST                        */
+/* ============================================ */
+
+.bills-list-card {
+  .bills-list {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 4px 0;
+  }
+
+  .bill-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 12px;
+    background: #f8f9fc;
+    border-radius: 8px;
+    margin-bottom: 6px;
+    gap: 12px;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #f0f0f5;
+    }
+
+    .bill-checkbox {
+      --size: 20px;
+      --background-checked: #cc0000 !important;
+      --border-color-checked: #cc0000 !important;
+      flex-shrink: 0;
+    }
+
+    .bill-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+
+      .bill-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: #1a1a2e;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .bill-number {
+        font-size: 11px;
+        color: #999;
+      }
+    }
+
+    .bill-date {
+      font-size: 12px;
+      color: #888;
+      flex-shrink: 0;
+      text-align: center;
+      min-width: 80px;
+    }
+
+    .bill-amount {
+      font-size: 14px;
+      font-weight: 600;
+      color: #cc0000;
+      flex-shrink: 0;
+      text-align: right;
+      min-width: 70px;
+    }
+  }
+}
+
+/* ============================================ */
+/*           SELECTED BILLS PREVIEW            */
+/* ============================================ */
+
+.selected-bills-list {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.selected-bill-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  background: #f8f9fc;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  gap: 12px;
+  
+  .bill-name {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a1a2e;
+  }
+  
+  .bill-number {
+    font-size: 12px;
+    color: #999;
+    background: white;
+    padding: 2px 10px;
+    border-radius: 4px;
+  }
+  
+  .bill-amount-small {
+    font-size: 13px;
+    font-weight: 600;
+    color: #cc0000;
+  }
+}
+
+.selected-total {
+  text-align: right;
+  padding: 8px 4px 0;
+  font-size: 14px;
+  border-top: 1px solid #f0f2f5;
+  margin-top: 8px;
+  color: #1a1a2e;
+}
+
+/* ============================================ */
+/*           DATE RANGE                        */
+/* ============================================ */
+
+.date-range-container {
+  .date-input-group {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    
+    .date-input-item {
+      flex: 1;
+      
+      .date-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #999;
+        margin-bottom: 4px;
+      }
+      
+      .date-input {
+        --background: #f8f9fc;
+        --border-radius: 10px;
+        --padding-start: 14px;
+        --padding-end: 14px;
+        border: 1px solid #e8ecf1;
+        border-radius: 10px;
+        height: 44px;
+        font-size: 14px;
+        color: #1a1a2e;
+      }
+    }
+  }
+}
+
+.quick-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  
+  .filter-btn {
+    --border-radius: 20px;
+    font-size: 12px;
+    height: 32px;
+    --padding-start: 14px;
+    --padding-end: 14px;
+    --border-color: #cc0000 !important;
+    --color: #cc0000 !important;
+    
+    &:hover {
+      --background: #cc0000 !important;
+      --color: white !important;
+    }
+  }
+}
+
+.filtered-count {
+  text-align: center;
+  margin-top: 8px;
+  
+  small {
+    color: #999;
+    font-size: 12px;
+  }
+}
+
+/* ============================================ */
+/*           EXPORT OPTIONS - RED              */
+/* ============================================ */
+
+.export-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid #e8ecf1;
+  cursor: pointer;
+  transition: all 0.3s;
+  
+  &:hover {
+    border-color: #cc000050;
+    background: #f8f9fc;
+  }
+  
+  &.active {
+    border-color: #cc0000;
+    background: #fff5f5;
+  }
+  
+  .option-icon {
+    font-size: 32px;
+    margin-right: 14px;
+    flex-shrink: 0;
+  }
+  
+  .pdf-icon {
+    color: #cc0000;
+  }
+  
+  .excel-icon {
+    color: #27ae60;
+  }
+  
+  .option-info {
+    flex: 1;
+    
+    h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1a1a2e;
+      margin: 0 0 2px;
+    }
+    
+    p {
+      font-size: 12px;
+      color: #999;
+      margin: 0;
+    }
+  }
+  
+  .check-icon {
+    font-size: 24px;
+    color: #cc0000;
+    opacity: 0;
+    transition: all 0.3s;
+    
+    &.visible {
+      opacity: 1;
+    }
+  }
+}
+
+/* ============================================ */
+/*           SUMMARY - RED                     */
+/* ============================================ */
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.summary-item {
+  background: #f8f9fc;
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: center;
+  
+  .summary-label {
+    display: block;
+    font-size: 11px;
+    color: #999;
+    margin-bottom: 4px;
+  }
+  
+  .summary-value {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+}
+
+/* ============================================ */
+/*           EXPORT BUTTON - RED               */
+/* ============================================ */
+
+.export-btn {
+  --border-radius: 14px;
+  height: 52px;
+  font-size: 16px;
+  font-weight: 600;
+  --background: #cc0000 !important;
+  --box-shadow: 0 4px 16px rgba(204, 0, 0, 0.35) !important;
+  margin-top: 8px;
+  --color: white !important;
+  
+  &:disabled {
+    --background: #cccccc !important;
+    --box-shadow: none !important;
+  }
+}
+
+/* ============================================ */
+/*           PROGRESS - RED                    */
+/* ============================================ */
+
+.progress-container {
+  margin-top: 16px;
+  text-align: center;
+  
+  ion-progress-bar {
+    --background: #e8ecf1;
+    --progress-background: #cc0000 !important;
+    height: 8px;
+    border-radius: 10px;
+  }
+  
+  p {
+    font-size: 13px;
+    color: #999;
+    margin-top: 8px;
+  }
+}
+
+/* ============================================ */
+/*           INFO MESSAGE - RED                */
+/* ============================================ */
+
+.info-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  background: #f8f9fc;
+  border-radius: 16px;
+  border: 1px dashed #ddd;
+  margin: 16px 0;
+  
+  ion-icon {
+    font-size: 24px;
+    color: #cc0000;
+  }
+  
+  p {
+    margin: 0;
+    color: #999;
+    font-size: 14px;
+  }
+}
+
+/* ============================================ */
+/*           EMPTY STATE                       */
+/* ============================================ */
+
+.empty-state {
+  text-align: center;
+  padding: 30px 20px;
+  
+  .empty-icon {
+    font-size: 64px;
+    color: #ddd;
+  }
+  
+  h3 {
+    font-size: 18px;
+    color: #333;
+    margin: 12px 0 8px;
+  }
+  
+  p {
+    color: #999;
+    font-size: 14px;
+    margin: 0 0 16px;
+  }
+}
+
+.empty-state ion-button {
+  --border-color: #cc0000 !important;
+  --color: #cc0000 !important;
+}
+
+/* ============================================ */
+/*           LOADING - RED                     */
+/* ============================================ */
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  
+  ion-spinner {
+    --color: #cc0000 !important;
+    width: 48px;
+    height: 48px;
+  }
+  
+  p {
+    margin-top: 12px;
+    color: #999;
+    font-size: 14px;
+  }
+}
+
+/* ============================================ */
+/*           DARK THEME SUPPORT                */
+/* ============================================ */
+
+.dark-theme {
+  ion-content {
+    --background: #1a1a2e;
+  }
+
+  .export-header {
+    h2 {
+      color: #ffffff;
+    }
+  }
+
+  .option-card {
+    background: #1e1e3a;
+    border-color: rgba(255, 255, 255, 0.06);
+
+    ion-card-title {
+      color: #ffffff;
+    }
+
+    ion-card-subtitle {
+      color: #888;
+    }
+  }
+
+  .select-all-card {
+    background: #2a1a2a;
+    border-color: #4a1a1a;
+
+    .select-all-info {
+      h4 {
+        color: #ffffff;
+      }
+    }
+  }
+
+  .bills-list-card {
+    .bill-item {
+      background: #2a2a4a;
+
+      &:hover {
+        background: #333355;
+      }
+
+      .bill-info {
+        .bill-name {
+          color: #ffffff;
+        }
+      }
+
+      .bill-date {
+        color: #888;
+      }
+    }
+  }
+
+  .selected-bill-item {
+    background: #2a2a4a;
+
+    .bill-name {
+      color: #ffffff;
+    }
+
+    .bill-number {
+      background: #1a1a2e;
+      color: #888;
+    }
+  }
+
+  .selected-total {
+    color: #ffffff;
+    border-top-color: #333355;
+  }
+
+  .date-input {
+    --background: #2a2a4a;
+    --color: #ffffff;
+    border-color: #333355;
+  }
+
+  .filter-btn {
+    --border-color: #cc0000 !important;
+    --color: #ff6b6b !important;
+
+    &:hover {
+      --background: #cc0000 !important;
+      --color: white !important;
+    }
+  }
+
+  .option-item {
+    border-color: #333355;
+
+    &:hover {
+      border-color: #cc000050;
+      background: #2a2a4a;
+    }
+
+    &.active {
+      border-color: #cc0000;
+      background: #2a1a2a;
+    }
+
+    .option-info {
+      h4 {
+        color: #ffffff;
+      }
+    }
+  }
+
+  .summary-item {
+    background: #2a2a4a;
+
+    .summary-value {
+      color: #ffffff;
+    }
+  }
+
+  .info-message {
+    background: #2a2a4a;
+    border-color: #333355;
+
+    p {
+      color: #888;
+    }
+  }
+
+  .empty-state {
+    h3 {
+      color: #ffffff;
+    }
+  }
+
+  .loading-container {
+    ion-spinner {
+      --color: #ff6b6b !important;
+    }
+  }
+}
+
+/* ============================================ */
+/*           RESPONSIVE                        */
+/* ============================================ */
+
+@media (max-width: 480px) {
+  .date-input-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  
+  .option-item {
+    padding: 12px;
+    
+    .option-icon {
+      font-size: 28px;
+      margin-right: 10px;
+    }
+  }
+  
+  .select-all-container {
+    gap: 10px;
+  }
+
+  .bill-item {
+    flex-wrap: wrap;
+    gap: 6px;
+
+    .bill-date {
+      min-width: 60px;
+      font-size: 11px;
+    }
+
+    .bill-amount {
+      min-width: 60px;
+      font-size: 13px;
+    }
+  }
+}

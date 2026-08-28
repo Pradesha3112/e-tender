@@ -1,0 +1,255 @@
+/* ============================================ */
+/* FILE 2: profile.page.scss                    */
+/* RAILWAY E-BILLING SYSTEM - PROFILE STYLES   */
+/* ============================================ */
+
+ion-content {
+  --background: #f8f9fc;
+}
+
+/* ----- PROFILE CARD ----- */
+.profile-card {
+  background: linear-gradient(145deg, #cc0000, #990000);
+  border-radius: 24px;
+  padding: 30px 20px 24px;
+  color: white;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(204, 0, 0, 0.35);
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.profile-card .railway-bg {
+  position: absolute;
+  top: -30px;
+  right: -30px;
+  font-size: 100px;
+  opacity: 0.06;
+  transform: rotate(15deg);
+}
+
+.profile-card .railway-bg-2 {
+  position: absolute;
+  bottom: -40px;
+  left: -40px;
+  font-size: 120px;
+  opacity: 0.05;
+  transform: rotate(-10deg);
+}
+
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.avatar .avatar-text {
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+}
+
+.user-name {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+.user-email {
+  font-size: 14px;
+  opacity: 0.8;
+  margin: 0 0 16px;
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+/* ----- STATS ----- */
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  z-index: 1;
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.stat-label {
+  font-size: 11px;
+  opacity: 0.8;
+  color: white;
+}
+
+.stat-divider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ----- MENU SECTIONS ----- */
+.menu-section {
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:hover {
+  background: #f8f9fc;
+}
+
+.menu-item:active {
+  transform: scale(0.98);
+}
+
+.menu-item.logout .menu-label {
+  color: #cc0000;
+}
+
+.menu-item.logout .menu-icon {
+  color: #cc0000;
+}
+
+.menu-icon {
+  font-size: 22px;
+  color: #cc0000;
+  margin-right: 14px;
+}
+
+.menu-label {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1a1a2e;
+}
+
+.menu-arrow {
+  font-size: 18px;
+  color: #ccc;
+}
+
+/* ----- TOGGLE ----- */
+ion-toggle {
+  --background: #ddd;
+  --background-checked: #cc0000;
+  --handle-background: white;
+  --handle-background-checked: white;
+  width: 48px;
+  height: 28px;
+}
+
+/* ----- VERSION ----- */
+.version-info {
+  text-align: center;
+  margin-top: 20px;
+  padding-bottom: 20px;
+}
+
+.version-info p {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+}
+
+.version-info p ion-icon {
+  font-size: 14px;
+  color: #cc0000;
+  margin-right: 4px;
+}
+
+/* ----- RESPONSIVE ----- */
+@media (max-width: 480px) {
+  .profile-card {
+    padding: 24px 16px 20px;
+  }
+  
+  .avatar {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .avatar .avatar-text {
+    font-size: 28px;
+  }
+  
+  .user-name {
+    font-size: 18px;
+  }
+}
+
+/* ----- DARK THEME SUPPORT ----- */
+.dark-theme ion-content {
+  --background: #1a1a2e;
+}
+
+.dark-theme .menu-section {
+  background: #1e1e1e;
+}
+
+.dark-theme .menu-item {
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.dark-theme .menu-item:hover {
+  background: #2a2a2a;
+}
+
+.dark-theme .menu-label {
+  color: #ffffff;
+}
+
+.dark-theme .version-info p {
+  color: #888;
+}
+
+.dark-theme .profile-card {
+  box-shadow: 0 8px 32px rgba(204, 0, 0, 0.2);
+}
+
+.dark-theme ion-toggle {
+  --background: #333;
+  --background-checked: #cc0000;
+}

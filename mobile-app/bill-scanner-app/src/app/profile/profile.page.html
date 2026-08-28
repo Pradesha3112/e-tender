@@ -1,0 +1,81 @@
+<!-- ============================================ -->
+<!-- FILE 1: profile.page.html                    -->
+<!-- RAILWAY E-BILLING SYSTEM - PROFILE PAGE     -->
+<!-- ============================================ -->
+<ion-header>
+  <ion-toolbar style="--background: #cc0000; --color: white;">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard" style="--color: white;"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="train-outline" style="margin-right: 10px; font-size: 22px;"></ion-icon>
+      Profile
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" style="--background: #f8f9fc;">
+  <!-- Profile Card - Railway Theme -->
+  <div class="profile-card" style="background: linear-gradient(145deg, #cc0000, #990000); border-radius: 24px; padding: 30px 20px 24px; color: white; text-align: center; box-shadow: 0 8px 32px rgba(204, 0, 0, 0.35); margin-bottom: 20px; position: relative; overflow: hidden;">
+    <!-- Railway Symbol Decoration -->
+    <div style="position: absolute; top: -30px; right: -30px; font-size: 100px; opacity: 0.06; transform: rotate(15deg);">🚆</div>
+    <div style="position: absolute; bottom: -40px; left: -40px; font-size: 120px; opacity: 0.05; transform: rotate(-10deg);">🚂</div>
+    
+    <div class="avatar-container" style="display: flex; justify-content: center; margin-bottom: 12px; position: relative; z-index: 1;">
+      <div class="avatar" style="width: 80px; height: 80px; border-radius: 50%; background: rgba(255, 255, 255, 0.2); border: 3px solid rgba(255, 255, 255, 0.3); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(10px);">
+        <span class="avatar-text" style="font-size: 36px; font-weight: 700; color: white;">U</span>
+      </div>
+    </div>
+    <h2 class="user-name" style="font-size: 22px; font-weight: 700; margin: 0 0 4px; color: white; position: relative; z-index: 1;">User</h2>
+    <p class="user-email" style="font-size: 14px; opacity: 0.8; margin: 0 0 16px; color: white; position: relative; z-index: 1;">user@example.com</p>
+    
+    <!-- Stats -->
+    <div class="stats-grid" style="display: flex; justify-content: space-around; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.15); position: relative; z-index: 1;">
+      <div class="stat-item" style="flex: 1; text-align: center;">
+        <span class="stat-number" style="display: block; font-size: 20px; font-weight: 700; color: white;">{{ stats.totalBills }}</span>
+        <span class="stat-label" style="font-size: 11px; opacity: 0.8; color: white;">Total Bills</span>
+      </div>
+      <div class="stat-divider" style="width: 1px; background: rgba(255, 255, 255, 0.15);"></div>
+      <div class="stat-item" style="flex: 1; text-align: center;">
+        <span class="stat-number" style="display: block; font-size: 20px; font-weight: 700; color: white;">{{ stats.totalAmount }}</span>
+        <span class="stat-label" style="font-size: 11px; opacity: 0.8; color: white;">Total Amount</span>
+      </div>
+      <div class="stat-divider" style="width: 1px; background: rgba(255, 255, 255, 0.15);"></div>
+      <div class="stat-item" style="flex: 1; text-align: center;">
+        <span class="stat-number" style="display: block; font-size: 20px; font-weight: 700; color: white;">{{ stats.thisMonth }}</span>
+        <span class="stat-label" style="font-size: 11px; opacity: 0.8; color: white;">This Month</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Account Section -->
+  <div class="menu-section" style="background: white; border-radius: 16px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);">
+    <div class="menu-item" (click)="editProfile()" style="display: flex; align-items: center; padding: 14px 16px; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid #f0f2f5;">
+      <ion-icon name="person-outline" slot="start" class="menu-icon" style="font-size: 22px; color: #cc0000; margin-right: 14px;"></ion-icon>
+      <span class="menu-label" style="flex: 1; font-size: 15px; font-weight: 500; color: #1a1a2e;">Edit Profile</span>
+      <ion-icon name="chevron-forward-outline" class="menu-arrow" style="font-size: 18px; color: #ccc;"></ion-icon>
+    </div>
+    <div class="menu-item" (click)="changePassword()" style="display: flex; align-items: center; padding: 14px 16px; cursor: pointer; transition: all 0.2s; border-bottom: 1px solid #f0f2f5;">
+      <ion-icon name="key-outline" slot="start" class="menu-icon" style="font-size: 22px; color: #cc0000; margin-right: 14px;"></ion-icon>
+      <span class="menu-label" style="flex: 1; font-size: 15px; font-weight: 500; color: #1a1a2e;">Change Password</span>
+      <ion-icon name="chevron-forward-outline" class="menu-arrow" style="font-size: 18px; color: #ccc;"></ion-icon>
+    </div>
+  </div>
+
+  <!-- Logout -->
+  <div class="menu-section" style="background: white; border-radius: 16px; margin-bottom: 12px; overflow: hidden; box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);">
+    <div class="menu-item logout" (click)="logout()" style="display: flex; align-items: center; padding: 14px 16px; cursor: pointer; transition: all 0.2s;">
+      <ion-icon name="log-out-outline" slot="start" class="menu-icon" style="font-size: 22px; color: #cc0000; margin-right: 14px;"></ion-icon>
+      <span class="menu-label" style="flex: 1; font-size: 15px; font-weight: 500; color: #cc0000;">Logout</span>
+      <ion-icon name="chevron-forward-outline" class="menu-arrow" style="font-size: 18px; color: #ccc;"></ion-icon>
+    </div>
+  </div>
+
+  <!-- Version -->
+  <div class="version-info" style="text-align: center; margin-top: 20px; padding-bottom: 20px;">
+    <p style="font-size: 12px; color: #888; margin: 0;">
+      <ion-icon name="train" style="font-size: 14px; color: #cc0000; margin-right: 4px;"></ion-icon>
+      Railway E-Billing System v1.0.0
+    </p>
+  </div>
+</ion-content>

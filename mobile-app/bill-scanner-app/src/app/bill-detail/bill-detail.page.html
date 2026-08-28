@@ -1,20 +1,145 @@
-<!-- src/app/bill-detail/bill-detail.page.html -->
+<!-- ============================================ -->
+<!-- FILE: bill-detail.page.html                  -->
+<!-- RAILWAY E-BILLING SYSTEM - BILL DETAIL PAGE -->
+<!-- ============================================ -->
+
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar class="detail-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/bills"></ion-back-button>
     </ion-buttons>
-    <ion-title>Bill Details</ion-title>
+    <ion-title>
+      <ion-icon name="receipt-outline" class="header-icon"></ion-icon>
+      Bill Details
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="editBill()" class="toolbar-btn">
+        <ion-icon name="create-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>Bill #{{ billId }}</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      <p>Details coming soon...</p>
-    </ion-card-content>
-  </ion-card>
+<ion-content class="detail-content">
+
+  <!-- LOADING -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading bill details...</p>
+  </div>
+
+  <!-- BILL DETAILS -->
+  <div *ngIf="!isLoading && bill" class="detail-container">
+    
+    <!-- STATUS BADGE -->
+    <div class="status-badge">
+      <ion-badge [color]="getStatusColor()">
+        {{ bill?.status || 'Pending' }}
+      </ion-badge>
+    </div>
+
+    <!-- BILL HEADER CARD -->
+    <ion-card class="bill-header-card">
+      <ion-card-content>
+        <div class="bill-header">
+          <div class="bill-number-section">
+            <div class="label">Bill Number</div>
+            <h2>{{ bill?.bill_number || 'N/A' }}</h2>
+          </div>
+          <div class="bill-date-section">
+            <div class="label">Date</div>
+            <p>{{ formatDate(bill?.date || bill?.created_at) }}</p>
+          </div>
+        </div>
+        
+        <div class="bill-vendor">
+          <div class="label">Vendor</div>
+          <h3>{{ bill?.vendor || 'Unknown' }}</h3>
+          <p class="gstin" *ngIf="bill?.gstin">GSTIN: {{ bill?.gstin }}</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ITEMS CARD -->
+    <ion-card class="items-card">
+      <ion-card-header>
+        <ion-card-title>Items</ion-card-title>
+        <ion-card-subtitle>{{ bill?.items?.length || 0 }} item(s)</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="items-list">
+          <div class="item-row" *ngFor="let item of bill?.items; let i = index">
+            <div class="item-sno">{{ i + 1 }}</div>
+            <div class="item-details">
+              <div class="item-name">{{ item?.name || 'Item' }}</div>
+              <div class="item-meta">
+                <span class="item-qty">Qty: {{ item?.qty || 1 }}</span>
+                <span>₹{{ item?.price || 0 }}</span>
+              </div>
+            </div>
+            <div class="item-total">₹{{ getItemTotal(item) }}</div>
+          </div>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="summary">
+          <div class="summary-row">
+            <span class="summary-label">Subtotal</span>
+            <span class="summary-value">₹{{ getSubtotal() }}</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Tax (18%)</span>
+            <span class="summary-value">₹{{ getTax() }}</span>
+          </div>
+          <div class="summary-row total">
+            <span class="summary-label">Total</span>
+            <span class="summary-value">₹{{ getTotal() }}</span>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ADDITIONAL INFO -->
+    <ion-card class="info-card" *ngIf="bill?.amount_words || bill?.payment_terms">
+      <ion-card-content>
+        <div class="info-row" *ngIf="bill?.amount_words">
+          <span class="info-label">Amount in Words</span>
+          <span class="info-value">{{ bill?.amount_words }}</span>
+        </div>
+        <div class="info-row" *ngIf="bill?.payment_terms">
+          <span class="info-label">Payment Terms</span>
+          <span class="info-value">{{ bill?.payment_terms }}</span>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ACTION BUTTONS -->
+    <div class="action-buttons">
+      <ion-button expand="block" (click)="exportPDF()" class="export-btn">
+        <ion-icon name="download-outline" slot="start"></ion-icon>
+        Export PDF
+      </ion-button>
+      <ion-button expand="block" fill="outline" (click)="editBill()" class="edit-btn">
+        <ion-icon name="create-outline" slot="start"></ion-icon>
+        Edit Bill
+      </ion-button>
+      <ion-button expand="block" fill="outline" (click)="deleteBill()" class="delete-btn">
+        <ion-icon name="trash-outline" slot="start"></ion-icon>
+        Delete Bill
+      </ion-button>
+    </div>
+
+  </div>
+
+  <!-- EMPTY STATE -->
+  <div *ngIf="!isLoading && !bill" class="empty-state">
+    <ion-icon name="receipt-outline" class="empty-icon"></ion-icon>
+    <h3>Bill Not Found</h3>
+    <p>The bill you're looking for doesn't exist.</p>
+    <ion-button (click)="goBack()">
+      <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+      Go Back
+    </ion-button>
+  </div>
+
 </ion-content>

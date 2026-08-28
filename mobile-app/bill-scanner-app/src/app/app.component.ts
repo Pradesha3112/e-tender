@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import * as ionIcons from 'ionicons/icons';  // ← ADD THIS
+// Import ALL icons at once
+import * as ionIcons from 'ionicons/icons';
 
 @Component({
   selector: 'app-root',
@@ -14,7 +15,8 @@ export class AppComponent {
   constructor() {
     console.log('🚀 App started!');
     
-    // Register all Ionic icons
-    addIcons(ionIcons);  // ← ADD THIS
+    // Register ALL Ionic icons at once
+    addIcons(ionIcons);
+    console.log('✅ All icons registered!');
   }
 }

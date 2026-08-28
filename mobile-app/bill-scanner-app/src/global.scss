@@ -25,13 +25,948 @@
 @import "@ionic/angular/css/text-transformation.css";
 @import "@ionic/angular/css/flex-utils.css";
 
-/**
- * Ionic Dark Mode
- * -----------------------------------------------------
- * For more info, please see:
- * https://ionicframework.com/docs/theming/dark-mode
- */
+/* ============================================
+   THEME TOGGLE - DARK/LIGHT MODE
+   ============================================ */
 
-/* @import "@ionic/angular/css/palettes/dark.always.css"; */
-/* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import '@ionic/angular/css/palettes/dark.system.css';
+/* ----- LIGHT THEME (Default) ----- */
+:root {
+  // Background Colors
+  --app-background: #f5f7fa;
+  --app-card-background: #ffffff;
+  --app-card-border: rgba(0, 0, 0, 0.04);
+  
+  // Text Colors
+  --app-text-primary: #1a1a2e;
+  --app-text-secondary: #333333;
+  --app-text-muted: #999999;
+  
+  // Shadow Colors
+  --app-shadow-light: rgba(0, 0, 0, 0.06);
+  --app-shadow-medium: rgba(0, 0, 0, 0.08);
+  --app-shadow-heavy: rgba(0, 0, 0, 0.12);
+  
+  // Border Colors
+  --app-border-light: #f0f2f5;
+  --app-border-medium: #e8ecf1;
+  --app-border-dark: #ddd;
+  
+  // Menu Colors
+  --app-menu-hover: #f8f9fc;
+  --app-menu-border: #f0f2f5;
+  
+  // Input Colors
+  --app-input-bg: #f8f9fc;
+  --app-input-border: #e8ecf1;
+  
+  // Toggle Colors
+  --app-toggle-bg: #ddd;
+  --app-toggle-checked: #667eea;
+  --app-toggle-handle: white;
+}
+
+/* ----- DARK THEME ----- */
+:root.dark-theme {
+  // Background Colors
+  --app-background: #121212;
+  --app-card-background: #1e1e1e;
+  --app-card-border: rgba(255, 255, 255, 0.06);
+  
+  // Text Colors
+  --app-text-primary: #ffffff;
+  --app-text-secondary: #e0e0e0;
+  --app-text-muted: #888888;
+  
+  // Shadow Colors
+  --app-shadow-light: rgba(0, 0, 0, 0.3);
+  --app-shadow-medium: rgba(0, 0, 0, 0.4);
+  --app-shadow-heavy: rgba(0, 0, 0, 0.5);
+  
+  // Border Colors
+  --app-border-light: #2a2a2a;
+  --app-border-medium: #333333;
+  --app-border-dark: #444444;
+  
+  // Menu Colors
+  --app-menu-hover: #2a2a2a;
+  --app-menu-border: #2a2a2a;
+  
+  // Input Colors
+  --app-input-bg: #2a2a2a;
+  --app-input-border: #333333;
+  
+  // Toggle Colors
+  --app-toggle-bg: #444;
+  --app-toggle-checked: #667eea;
+  --app-toggle-handle: white;
+  
+  // Override Ionic background
+  --ion-background-color: #121212;
+  --ion-text-color: #ffffff;
+  --ion-item-background: #1e1e1e;
+  --ion-card-background: #1e1e1e;
+  --ion-toolbar-background: #1e1e1e;
+  --ion-tab-bar-background: #1e1e1e;
+  --ion-tab-bar-border-color: #2a2a2a;
+}
+
+/* ----- HEADER ICON ----- */
+.header-icon {
+  margin-right: 8px;
+  font-size: 20px;
+}
+
+/* ----- RESPONSIVE ----- */
+@media (max-width: 480px) {
+  .welcome-card {
+    padding: 18px 16px !important;
+  }
+  
+  .welcome-card h1 {
+    font-size: 20px !important;
+  }
+  
+  .action-card .card-gradient {
+    padding: 16px 12px !important;
+    min-height: 120px !important;
+  }
+}
+
+/* ============================================
+   DARK THEME - COMPLETE FIXES FOR ALL PAGES
+   ============================================ */
+
+.dark-theme {
+  background-color: #121212 !important;
+  color: #ffffff !important;
+}
+
+/* ----- HEADER TITLE FIX ----- */
+.dark-theme ion-title {
+  color: #ffffff !important;
+}
+
+.dark-theme .header-title {
+  color: #ffffff !important;
+}
+
+.dark-theme ion-toolbar {
+  --color: #ffffff !important;
+}
+
+/* ----- ION CONTENT ----- */
+.dark-theme ion-content {
+  --background: #121212 !important;
+  background-color: #121212 !important;
+}
+
+.dark-theme ion-item {
+  --background: #1e1e1e !important;
+  --color: #ffffff !important;
+}
+
+.dark-theme ion-card {
+  background: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark-theme ion-card-content {
+  background: #1e1e1e !important;
+  color: #ffffff !important;
+}
+
+.dark-theme ion-card-title {
+  color: #ffffff !important;
+}
+
+.dark-theme ion-card-subtitle {
+  color: #888888 !important;
+}
+
+.dark-theme ion-label {
+  color: #ffffff !important;
+}
+
+.dark-theme ion-text {
+  color: #ffffff !important;
+}
+
+.dark-theme ion-note {
+  color: #888888 !important;
+}
+
+.dark-theme ion-badge {
+  background: #333333 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme ion-input {
+  --color: #ffffff !important;
+  --placeholder-color: #888888 !important;
+}
+
+.dark-theme ion-datetime {
+  --background: #1e1e1e !important;
+  --color: #ffffff !important;
+}
+
+.dark-theme ion-checkbox {
+  --background: #333333 !important;
+  --background-checked: #667eea !important;
+}
+
+.dark-theme ion-toggle {
+  --background: #444444 !important;
+  --background-checked: #667eea !important;
+  --handle-background: #ffffff !important;
+  --handle-background-checked: #ffffff !important;
+}
+
+.dark-theme ion-button {
+  --color: #ffffff !important;
+}
+
+.dark-theme ion-button[fill="clear"] {
+  --color: #888888 !important;
+}
+
+.dark-theme ion-button[fill="clear"]:hover {
+  --color: #ffffff !important;
+}
+
+/* ----- UPLOAD PAGE HEADER FIX ----- */
+.dark-theme .upload-header h2 {
+  color: #ffffff !important;
+}
+
+.dark-theme .upload-header p {
+  color: #aaaaaa !important;
+}
+
+/* ----- EXPORT PAGE HEADER FIX ----- */
+.dark-theme .export-header h2 {
+  color: #ffffff !important;
+}
+
+.dark-theme .export-header p {
+  color: #aaaaaa !important;
+}
+
+/* ----- VALIDATION PAGE HEADER FIX ----- */
+.dark-theme .validation-header h2 {
+  color: #ffffff !important;
+}
+
+.dark-theme .validation-header p {
+  color: #888888 !important;
+}
+
+/* ----- BILLS PAGE HEADER FIX ----- */
+.dark-theme .bills-header h2 {
+  color: #ffffff !important;
+}
+
+.dark-theme .bills-header p {
+  color: #888888 !important;
+}
+
+/* ----- WELCOME CARD DARK FIX ----- */
+.dark-theme .welcome-card {
+  background: linear-gradient(135deg, #4a4a8a 0%, #5a3a7a 100%) !important;
+}
+
+.dark-theme .welcome-card h1 {
+  color: #ffffff !important;
+}
+
+.dark-theme .welcome-card p {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.dark-theme .welcome-card .stats-badge {
+  background: rgba(255, 255, 255, 0.2) !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .welcome-card .stats-badge ion-icon {
+  color: #ffffff !important;
+}
+
+.dark-theme .welcome-card .stat-number {
+  color: #ffffff !important;
+}
+
+.dark-theme .welcome-card .stat-label {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.dark-theme .welcome-card .stat-divider {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark-theme .stats-row .stat-number {
+  color: #ffffff !important;
+}
+
+.dark-theme .stats-row .stat-label {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.dark-theme .stats-row .stat-divider {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* ----- ACTION CARDS DARK FIX ----- */
+.dark-theme .action-card .scan-gradient {
+  background: linear-gradient(135deg, #4a4a8a 0%, #5a3a7a 100%) !important;
+}
+
+.dark-theme .action-card .view-gradient {
+  background: linear-gradient(135deg, #8a4a5a 0%, #6a3a4a 100%) !important;
+}
+
+.dark-theme .action-card h3 {
+  color: #ffffff !important;
+}
+
+.dark-theme .action-card p {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.dark-theme .action-card .card-badge {
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .action-card .icon-wrapper {
+  background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark-theme .action-card .icon-wrapper ion-icon {
+  color: #ffffff !important;
+}
+
+/* ----- QUICK ACTIONS DARK FIX ----- */
+.dark-theme .quick-actions {
+  background: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark-theme .quick-actions ion-button {
+  --color: #888888 !important;
+}
+
+.dark-theme .quick-actions ion-button:hover {
+  --color: #667eea !important;
+}
+
+/* ----- RECENT BILLS SECTION FIX ----- */
+.dark-theme .recent-section {
+  background: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark-theme .recent-section .section-header h3 {
+  color: #ffffff !important;
+}
+
+.dark-theme .recent-section .section-header ion-button {
+  --color: #667eea !important;
+}
+
+.dark-theme .recent-list .recent-item {
+  --background: transparent !important;
+  border-bottom: 1px solid #2a2a2a !important;
+}
+
+.dark-theme .recent-list .recent-item:hover {
+  --background: #2a2a2a !important;
+}
+
+.dark-theme .recent-list .recent-item ion-label h2 {
+  color: #ffffff !important;
+}
+
+.dark-theme .recent-list .recent-item ion-label p {
+  color: #888888 !important;
+}
+
+.dark-theme .recent-list .recent-item .bill-amount {
+  color: #4CAF50 !important;
+}
+
+.dark-theme .recent-list .recent-item .bill-status {
+  --background: #4CAF50 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .recent-list .recent-item .vendor-avatar {
+  background: linear-gradient(135deg, #4a4a8a 0%, #5a3a7a 100%) !important;
+}
+
+.dark-theme .recent-list .recent-item .avatar-text {
+  color: #ffffff !important;
+}
+
+/* ----- BILLS PAGE DARK FIX ----- */
+.dark-theme .bills-container .bill-item {
+  background: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark-theme .bills-container .bill-item .bill-vendor {
+  color: #ffffff !important;
+}
+
+.dark-theme .bills-container .bill-item .bill-details {
+  color: #888888 !important;
+}
+
+.dark-theme .bills-container .bill-item .bill-number {
+  background: #2a2a2a !important;
+  color: #888888 !important;
+}
+
+.dark-theme .bills-container .bill-item .bill-date {
+  color: #888888 !important;
+}
+
+.dark-theme .bills-container .bill-item .bill-amount {
+  color: #4CAF50 !important;
+}
+
+.dark-theme .bill-date {
+  color: #888888 !important;
+}
+
+.dark-theme .bill-date ion-icon {
+  color: #888888 !important;
+}
+
+.dark-theme .bill-amount {
+  color: #4CAF50 !important;
+}
+
+/* ----- PROFILE PAGE DARK FIX ----- */
+.dark-theme .profile-card {
+  background: linear-gradient(135deg, #4a4a8a 0%, #5a3a7a 100%) !important;
+}
+
+.dark-theme .profile-card .user-name {
+  color: #ffffff !important;
+}
+
+.dark-theme .profile-card .user-email {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.dark-theme .profile-card .stat-number {
+  color: #ffffff !important;
+}
+
+.dark-theme .profile-card .stat-label {
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.dark-theme .profile-card .stat-divider {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark-theme .profile-card .avatar {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 3px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.dark-theme .profile-card .avatar .avatar-text {
+  color: #ffffff !important;
+}
+
+/* ----- MENU ITEMS DARK FIX ----- */
+.dark-theme .menu-section {
+  background: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark-theme .menu-item {
+  border-bottom: 1px solid #2a2a2a !important;
+}
+
+.dark-theme .menu-item:hover {
+  background: #2a2a2a !important;
+}
+
+.dark-theme .menu-label {
+  color: #ffffff !important;
+}
+
+.dark-theme .menu-icon {
+  color: #888888 !important;
+}
+
+.dark-theme .menu-arrow {
+  color: #444444 !important;
+}
+
+.dark-theme .menu-item.logout .menu-label {
+  color: #ff6b6b !important;
+}
+
+.dark-theme .menu-item.logout .menu-icon {
+  color: #ff6b6b !important;
+}
+
+/* ----- VERSION INFO DARK ----- */
+.dark-theme .version-info p {
+  color: #666666 !important;
+}
+
+/* ----- STATS CARDS DARK FIX ----- */
+.dark-theme .stat-card {
+  background: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark-theme .stat-card .stat-number {
+  color: #ffffff !important;
+}
+
+.dark-theme .stat-card .stat-label {
+  color: #888888 !important;
+}
+
+/* ----- SEARCH BAR DARK FIX ----- */
+.dark-theme .search-bar {
+  --background: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark-theme .search-bar .search-input {
+  --color: #ffffff !important;
+  --placeholder-color: #666666 !important;
+}
+
+.dark-theme .search-bar .search-icon {
+  color: #666666 !important;
+}
+
+.dark-theme .search-bar .clear-btn {
+  --color: #666666 !important;
+}
+
+/* ----- FILTER CHIPS DARK FIX ----- */
+.dark-theme .filter-chips ion-chip {
+  --background: #2a2a2a !important;
+  --color: #888888 !important;
+}
+
+.dark-theme .filter-chips ion-chip[color="primary"] {
+  --background: #667eea !important;
+  --color: #ffffff !important;
+}
+
+/* ----- OPTION CARDS DARK FIX ----- */
+.dark-theme .option-card {
+  background: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark-theme .option-card h3 {
+  color: #ffffff !important;
+}
+
+.dark-theme .option-card p {
+  color: #888888 !important;
+}
+
+.dark-theme .option-card .option-badge {
+  color: #ffffff !important;
+}
+
+.dark-theme .option-item {
+  border: 2px solid #333333 !important;
+}
+
+.dark-theme .option-item:hover {
+  background: #2a2a2a !important;
+}
+
+.dark-theme .option-item.active {
+  border-color: #667eea !important;
+  background: rgba(102, 126, 234, 0.1) !important;
+}
+
+.dark-theme .option-info h4 {
+  color: #ffffff !important;
+}
+
+.dark-theme .option-info p {
+  color: #888888 !important;
+}
+
+/* ----- SUMMARY ITEMS DARK FIX ----- */
+.dark-theme .summary-item {
+  background: #2a2a2a !important;
+}
+
+.dark-theme .summary-label {
+  color: #888888 !important;
+}
+
+.dark-theme .summary-value {
+  color: #ffffff !important;
+}
+
+/* ----- DATE INPUT DARK FIX ----- */
+.dark-theme .date-input {
+  --background: #2a2a2a !important;
+  border: 1px solid #333333 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .date-label {
+  color: #888888 !important;
+}
+
+.dark-theme .filter-btn {
+  --color: #888888 !important;
+  --border-color: #444444 !important;
+}
+
+.dark-theme .filter-btn:hover {
+  --color: #ffffff !important;
+  --border-color: #667eea !important;
+}
+
+.dark-theme .filtered-count small {
+  color: #888888 !important;
+}
+
+/* ----- SELECT ALL DARK FIX ----- */
+.dark-theme .select-all-card {
+  background: rgba(102, 126, 234, 0.05) !important;
+  border: 1px solid rgba(102, 126, 234, 0.2) !important;
+}
+
+.dark-theme .select-all-info h4 {
+  color: #ffffff !important;
+}
+
+.dark-theme .select-all-info p {
+  color: #888888 !important;
+}
+
+/* ----- SELECTED BILLS DARK FIX ----- */
+.dark-theme .selected-bill-item {
+  background: #2a2a2a !important;
+}
+
+.dark-theme .selected-bill-item .bill-name {
+  color: #ffffff !important;
+}
+
+.dark-theme .selected-bill-item .bill-number {
+  background: #333333 !important;
+  color: #888888 !important;
+}
+
+.dark-theme .selected-bill-item .bill-amount-small {
+  color: #4CAF50 !important;
+}
+
+.dark-theme .selected-total {
+  border-top: 1px solid #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+/* ----- EXPORT BUTTON DARK FIX ----- */
+.dark-theme .export-btn {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  --color: #ffffff !important;
+}
+
+.dark-theme .export-btn:disabled {
+  --background: #333333 !important;
+  --color: #666666 !important;
+}
+
+.dark-theme .progress-container p {
+  color: #888888 !important;
+}
+
+/* ----- UPLOAD PAGE DARK FIX ----- */
+.dark-theme .tips-section {
+  background: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark-theme .tips-section h4 {
+  color: #ffffff !important;
+}
+
+.dark-theme .tips-section li {
+  color: #888888 !important;
+}
+
+.dark-theme .tips-section li::before {
+  color: #4CAF50 !important;
+}
+
+.dark-theme .error-message {
+  background: rgba(255, 0, 0, 0.1) !important;
+  border: 1px solid rgba(255, 0, 0, 0.2) !important;
+  color: #ff6b6b !important;
+}
+
+.dark-theme .upload-btn {
+  --background: #2a2a2a !important;
+  --color: #ffffff !important;
+  border: 2px dashed #444444 !important;
+}
+
+.dark-theme .upload-btn:hover {
+  --background: #333333 !important;
+}
+
+.dark-theme .upload-hint {
+  color: #888888 !important;
+}
+
+.dark-theme .divider span {
+  color: #888888 !important;
+}
+
+.dark-theme .divider::before,
+.dark-theme .divider::after {
+  background: linear-gradient(90deg, transparent, #444444, transparent) !important;
+}
+
+.dark-theme .preview-header h3 {
+  color: #ffffff !important;
+}
+
+.dark-theme .preview-header ion-button {
+  --color: #ff6b6b !important;
+}
+
+.dark-theme .image-preview {
+  background: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark-theme .process-btn {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  --color: #ffffff !important;
+}
+
+.dark-theme .clear-btn {
+  --border-color: #ff6b6b !important;
+  --color: #ff6b6b !important;
+}
+
+.dark-theme .loading-container p {
+  color: #888888 !important;
+}
+
+/* ----- VALIDATION PAGE DARK FIX ----- */
+.dark-theme .data-card {
+  background: #1e1e1e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.dark-theme .field-label {
+  color: #888888 !important;
+}
+
+.dark-theme .field-value {
+  color: #ffffff !important;
+}
+
+.dark-theme .field-value.highlight {
+  color: #667eea !important;
+}
+
+.dark-theme .field-value.total-amount {
+  color: #4CAF50 !important;
+}
+
+.dark-theme .field-value.editable {
+  background: #2a2a2a !important;
+  border: 2px solid #333333 !important;
+  color: #ffffff !important;
+}
+
+.dark-theme .field-value.editable:focus {
+  border-color: #667eea !important;
+  background: #1e1e1e !important;
+}
+
+.dark-theme .items-list .item-row {
+  border-bottom: 1px solid #2a2a2a !important;
+}
+
+.dark-theme .items-list .item-name {
+  color: #ffffff !important;
+}
+
+.dark-theme .items-list .item-detail {
+  color: #888888 !important;
+}
+
+.dark-theme .confirm-btn {
+  --background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%) !important;
+  --color: #ffffff !important;
+}
+
+.dark-theme .retake-btn {
+  --border-color: #667eea !important;
+  --color: #667eea !important;
+}
+
+.dark-theme .edit-btn {
+  --color: #f39c12 !important;
+}
+
+.dark-theme .save-btn {
+  --background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  --color: #ffffff !important;
+}
+
+.dark-theme .cancel-btn {
+  --color: #ff6b6b !important;
+}
+
+/* ----- BOTTOM NAV DARK FIX ----- */
+.dark-theme .bottom-nav {
+  background: #1e1e1e !important;
+  border-top: 1px solid #2a2a2a !important;
+}
+
+.dark-theme .bottom-nav .nav-btn {
+  --color: #666666 !important;
+}
+
+.dark-theme .bottom-nav .nav-btn span {
+  color: #666666 !important;
+}
+
+.dark-theme .bottom-nav .nav-btn.active {
+  --color: #667eea !important;
+}
+
+.dark-theme .bottom-nav .nav-btn.active span {
+  color: #667eea !important;
+}
+
+.dark-theme .bottom-nav .nav-btn.active::before {
+  background: linear-gradient(90deg, #667eea, #764ba2) !important;
+}
+
+/* ----- EMPTY STATE DARK FIX ----- */
+.dark-theme .empty-state h3 {
+  color: #ffffff !important;
+}
+
+.dark-theme .empty-state p {
+  color: #888888 !important;
+}
+
+.dark-theme .empty-state .empty-icon {
+  color: #444444 !important;
+}
+
+/* ----- INFO MESSAGE DARK FIX ----- */
+.dark-theme .info-message {
+  background: #2a2a2a !important;
+  border: 1px dashed #444444 !important;
+}
+
+.dark-theme .info-message p {
+  color: #888888 !important;
+}
+
+/* ============================================
+   GLOBAL STYLES - LIGHT THEME
+   ============================================ */
+
+/* Font */
+* {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-in {
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--app-background);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border-radius: 10px;
+}
+
+/* Toast */
+ion-toast {
+  --border-radius: 12px;
+  --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+ion-toast.success-toast {
+  --background: linear-gradient(135deg, #4CAF50, #45a049);
+  --color: white;
+}
+
+ion-toast.error-toast {
+  --background: linear-gradient(135deg, #ff6b6b, #e74c3c);
+  --color: white;
+}
+
+/* Loading */
+ion-loading {
+  --background: rgba(255, 255, 255, 0.9);
+  --backdrop-opacity: 0.6;
+  --spinner-color: #667eea;
+  --border-radius: 16px;
+}
+
+.dark-theme ion-loading {
+  --background: rgba(30, 30, 30, 0.9);
+}
+
+/* Card Improvements */
+ion-card {
+  box-shadow: 0 4px 20px var(--app-shadow-light) !important;
+  border-radius: 16px !important;
+  margin: 0 !important;
+}
+
+ion-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+}
+
+ion-button {
+  --border-radius: 12px;
+}

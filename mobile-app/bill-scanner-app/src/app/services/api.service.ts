@@ -1,24 +1,24 @@
-// src/app/services/api.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'  // This makes it available everywhere
+  providedIn: 'root'
 })
 export class ApiService {
-  // For browser testing
-  private apiUrl = 'http://localhost:5000';
+  // 🔴 CHANGE THIS TO YOUR CORRECT IP
+  //private apiUrl = 'http://192.168.58.153:5000';  // ← USE YOUR FLASK IP
   
-  // For mobile testing - change to your computer's IP
-  // private apiUrl = 'http://192.168.1.100:5000';
+  // For local testing (browser):
+  private apiUrl = 'http://localhost:5000';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log('✅ API Service created with URL:', this.apiUrl);
+  }
 
   uploadBill(imageData: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/upload`, {
-      image: imageData
-    });
+    console.log('📤 Uploading to:', `${this.apiUrl}/upload`);
+    return this.http.post(`${this.apiUrl}/upload`, { image: imageData });
   }
 
   saveBill(billData: any): Observable<any> {
@@ -35,5 +35,9 @@ export class ApiService {
 
   deleteBill(id: number): Observable<any> {
     return this.http.delete(`${this.apiUrl}/bills/${id}`);
+  }
+
+  getStats(): Observable<any> {
+    return this.http.get(`${this.apiUrl}/stats`);
   }
 }

@@ -1,0 +1,99 @@
+<!-- ============================================ -->
+<!-- FILE: login.page.html                       -->
+<!-- RAILWAY E-BILLING SYSTEM - LOGIN PAGE      -->
+<!-- ============================================ -->
+
+<ion-header>
+  <ion-toolbar class="login-toolbar">
+    <ion-title>
+      <ion-icon name="train-outline" class="header-icon"></ion-icon>
+      Railway E-Billing
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="login-content">
+
+  <div class="login-container">
+    
+    <!-- LOGIN HEADER -->
+    <div class="login-header">
+      <div class="logo-container">
+        <div class="logo">
+          <ion-icon name="receipt-outline"></ion-icon>
+        </div>
+      </div>
+      <h1>Welcome Back!</h1>
+      <p>Enter your credentials to continue</p>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <ion-card class="login-card">
+      <ion-card-content>
+        
+        <!-- Username -->
+        <ion-item class="form-item">
+          <ion-icon name="person-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-input 
+            [(ngModel)]="username" 
+            placeholder="Username"
+            label="Username"
+            labelPlacement="floating"
+          ></ion-input>
+        </ion-item>
+
+        <!-- Password -->
+        <ion-item class="form-item">
+          <ion-icon name="lock-closed-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-input 
+            [(ngModel)]="password" 
+            placeholder="Password"
+            label="Password"
+            labelPlacement="floating"
+            type="password"
+          ></ion-input>
+        </ion-item>
+
+        <!-- Error Message -->
+        <div *ngIf="errorMessage" class="error-message">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          {{ errorMessage }}
+        </div>
+
+        <!-- Login Button -->
+        <ion-button 
+          expand="block" 
+          (click)="login()" 
+          [disabled]="isLoading"
+          class="login-btn"
+        >
+          <ion-icon name="log-in-outline" slot="start"></ion-icon>
+          {{ isLoading ? 'Logging in...' : 'Login' }}
+        </ion-button>
+
+        <!-- Credentials Hint -->
+        <div class="credentials-hint">
+          <ion-text color="medium">
+            <small>
+              <ion-icon name="information-circle-outline"></ion-icon>
+              Username: admin | Password: admin
+            </small>
+          </ion-text>
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Pendrive Status -->
+    <div class="pendrive-status">
+      <ion-icon name="usb-outline"></ion-icon>
+      <span>✅ Pendrive authenticated</span>
+    </div>
+
+    <!-- Version -->
+    <div class="version-info">
+      <span>Railway E-Billing System v2.0</span>
+    </div>
+
+  </div>
+</ion-content>

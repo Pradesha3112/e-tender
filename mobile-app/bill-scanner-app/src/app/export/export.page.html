@@ -1,0 +1,289 @@
+<!-- ============================================ -->
+<!-- FILE: export.page.html                       -->
+<!-- RAILWAY E-BILLING SYSTEM - EXPORT PAGE      -->
+<!-- ============================================ -->
+
+<ion-header><ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="download-outline" class="header-icon"></ion-icon>
+      Export Bills
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="export-container">
+    
+    <!-- ========================================== -->
+    <!--         HEADER                            -->
+    <!-- ========================================== -->
+    <div class="export-header">
+      <h2>📤 Export Your Bills</h2>
+      <p>Select bills and choose export format</p>
+    </div>
+
+    <!-- ========================================== -->
+    <!--         DATE RANGE                        -->
+    <!-- ========================================== -->
+    <ion-card class="option-card">
+      <ion-card-header>
+        <ion-card-title>📅 Date Range</ion-card-title>
+        <ion-card-subtitle>Select the period you want to export</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="date-range-container">
+          <div class="date-input-group">
+            <div class="date-input-item">
+              <ion-label position="stacked" class="date-label">From</ion-label>
+              <ion-datetime 
+                [(ngModel)]="startDate"
+                presentation="date"
+                (ionChange)="onDateChange()"
+                class="date-input"
+                [max]="endDate"
+              ></ion-datetime>
+            </div>
+            <div class="date-input-item">
+              <ion-label position="stacked" class="date-label">To</ion-label>
+              <ion-datetime 
+                [(ngModel)]="endDate"
+                presentation="date"
+                (ionChange)="onDateChange()"
+                class="date-input"
+                [min]="startDate"
+              ></ion-datetime>
+            </div>
+          </div>
+
+          <div class="quick-filters">
+            <ion-button 
+              size="small" 
+              fill="outline" 
+              *ngFor="let filter of dateFilters"
+              (click)="applyDateFilter(filter)"
+              class="filter-btn"
+            >
+              {{ filter.label }}
+            </ion-button>
+          </div>
+
+          <div class="filtered-count">
+            <ion-text color="medium">
+              <small>{{ filteredBills.length }} bills found in this period</small>
+            </ion-text>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ========================================== -->
+    <!--         SELECT ALL                        -->
+    <!-- ========================================== -->
+    <ion-card class="option-card select-all-card">
+      <ion-card-content>
+        <div class="select-all-container">
+          <ion-checkbox 
+            [(ngModel)]="selectAll" 
+            (ionChange)="toggleSelectAll()"
+            class="select-all-checkbox"
+          ></ion-checkbox>
+          <div class="select-all-info">
+            <h4>Select All Bills</h4>
+            <p>{{ filteredBills.length }} bills available in this period</p>
+          </div>
+          <ion-badge color="primary">{{ selectedBills.length }} selected</ion-badge>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ========================================== -->
+    <!--         BILLS LIST WITH CHECKBOXES        -->
+    <!-- ========================================== -->
+    <ion-card *ngIf="filteredBills.length > 0" class="option-card bills-list-card">
+      <ion-card-header>
+        <ion-card-title>
+          <span>Bills</span>
+          <ion-button fill="clear" size="small" (click)="showBillList = !showBillList">
+            <ion-icon name="{{ showBillList ? 'eye-off-outline' : 'eye-outline' }}"></ion-icon>
+          </ion-button>
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content *ngIf="showBillList">
+        <div class="bills-list">
+          <div *ngFor="let bill of filteredBills" class="bill-item">
+            <ion-checkbox 
+              [(ngModel)]="bill.selected"
+              (ionChange)="onBillSelect(bill)"
+              class="bill-checkbox"
+            ></ion-checkbox>
+            <div class="bill-info">
+              <span class="bill-name">{{ bill.vendor || 'Unknown' }}</span>
+              <span class="bill-number">#{{ bill.bill_number || 'N/A' }}</span>
+            </div>
+            <span class="bill-date">{{ getBillDate(bill) }}</span>
+            <span class="bill-amount">{{ formatCurrency(bill.total) }}</span>
+          </div>
+        </div>
+        <div class="selected-total">
+          <strong>Total Amount:</strong> {{ formatCurrency(selectedTotalAmount) }}
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ========================================== -->
+    <!--         SELECTED BILLS PREVIEW            -->
+    <!-- ========================================== -->
+    <ion-card *ngIf="selectedBills.length > 0" class="option-card">
+      <ion-card-header>
+        <ion-card-title>
+          <span>Selected Bills ({{ selectedBills.length }})</span>
+          <ion-button fill="clear" size="small" (click)="showSelectedBills = !showSelectedBills">
+            <ion-icon name="{{ showSelectedBills ? 'eye-off-outline' : 'eye-outline' }}"></ion-icon>
+          </ion-button>
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content *ngIf="showSelectedBills">
+        <div class="selected-bills-list">
+          <div *ngFor="let bill of selectedBills" class="selected-bill-item">
+            <span class="bill-name">{{ bill.vendor || 'Unknown' }}</span>
+            <span class="bill-number">#{{ bill.bill_number || 'N/A' }}</span>
+            <span class="bill-amount-small">{{ formatCurrency(bill.total) }}</span>
+          </div>
+        </div>
+        <div class="selected-total">
+          <strong>Total Amount:</strong> {{ formatCurrency(selectedTotalAmount) }}
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ========================================== -->
+    <!--         EXPORT OPTIONS                    -->
+    <!-- ========================================== -->
+    <ng-container *ngIf="showExportOptions">
+      <ion-card class="option-card">
+        <ion-card-header>
+          <ion-card-title>📤 Export Options</ion-card-title>
+          <ion-card-subtitle>Choose your export format</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="export-options">
+            <div 
+              class="option-item" 
+              [class.active]="selectedFormat === 'pdf'"
+              (click)="selectedFormat = 'pdf'"
+            >
+              <ion-icon name="document-text-outline" class="option-icon pdf-icon"></ion-icon>
+              <div class="option-info">
+                <h4>PDF Report</h4>
+                <p>Professional PDF with all details</p>
+              </div>
+              <ion-icon 
+                name="checkmark-circle" 
+                class="check-icon" 
+                [class.visible]="selectedFormat === 'pdf'"
+              ></ion-icon>
+            </div>
+
+            <div 
+              class="option-item" 
+              [class.active]="selectedFormat === 'excel'"
+              (click)="selectedFormat = 'excel'"
+            >
+              <ion-icon name="grid-outline" class="option-icon excel-icon"></ion-icon>
+              <div class="option-info">
+                <h4>Excel/CSV</h4>
+                <p>Spreadsheet format for analysis</p>
+              </div>
+              <ion-icon 
+                name="checkmark-circle" 
+                class="check-icon" 
+                [class.visible]="selectedFormat === 'excel'"
+              ></ion-icon>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- ========================================== -->
+      <!--         SUMMARY                           -->
+      <!-- ========================================== -->
+      <ion-card class="option-card">
+        <ion-card-header>
+          <ion-card-title>📊 Export Summary</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="summary-grid">
+            <div class="summary-item">
+              <span class="summary-label">Selected Bills</span>
+              <span class="summary-value">{{ selectedBills.length }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Total Amount</span>
+              <span class="summary-value">{{ formatCurrency(selectedTotalAmount) }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Date Range</span>
+              <span class="summary-value">{{ formatDateRange() }}</span>
+            </div>
+            <div class="summary-item">
+              <span class="summary-label">Format</span>
+              <span class="summary-value">{{ selectedFormat | uppercase }}</span>
+            </div>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- ========================================== -->
+      <!--         EXPORT BUTTON                     -->
+      <!-- ========================================== -->
+      <ion-button 
+        expand="block" 
+        (click)="exportBills()" 
+        [disabled]="selectedBills.length === 0 || isExporting"
+        class="export-btn"
+      >
+        <ion-icon name="download-outline" slot="start"></ion-icon>
+        {{ isExporting ? 'Exporting...' : `Export ${selectedBills.length} Bills` }}
+      </ion-button>
+
+      <!-- PROGRESS -->
+      <div *ngIf="isExporting" class="progress-container">
+        <ion-progress-bar type="indeterminate"></ion-progress-bar>
+        <p>Generating your export...</p>
+      </div>
+    </ng-container>
+
+    <!-- ========================================== -->
+    <!--         NO BILLS SELECTED MESSAGE          -->
+    <!-- ========================================== -->
+    <div *ngIf="!showExportOptions && !isLoading && filteredBills.length > 0" class="info-message">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <p>Please select bills to export using the checkbox above</p>
+    </div>
+
+    <!-- ========================================== -->
+    <!--         NO DATA STATE                     -->
+    <!-- ========================================== -->
+    <div *ngIf="filteredBills.length === 0 && !isLoading" class="empty-state">
+      <ion-icon name="document-outline" class="empty-icon"></ion-icon>
+      <h3>No Bills Found</h3>
+      <p>No bills found in the selected date range.</p>
+      <ion-button (click)="applyDateFilter({id:'all'})" color="primary" fill="outline">
+        <ion-icon name="time-outline" slot="start"></ion-icon>
+        View All Bills
+      </ion-button>
+    </div>
+
+    <!-- ========================================== -->
+    <!--         LOADING STATE                     -->
+    <!-- ========================================== -->
+    <div *ngIf="isLoading" class="loading-container">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Loading bills...</p>
+    </div>
+
+  </div>
+</ion-content>

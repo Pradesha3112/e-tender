@@ -1,0 +1,407 @@
+/* ============================================ */
+/* FILE: login.page.scss                       */
+/* RAILWAY E-BILLING SYSTEM - LOGIN STYLES    */
+/* ============================================ */
+
+/* ============================================ */
+/*           GLOBAL STYLES                      */
+/* ============================================ */
+
+.login-content {
+  --background: #f5f7fa;
+}
+
+/* ============================================ */
+/*           TOOLBAR - RAILWAY RED             */
+/* ============================================ */
+
+.login-toolbar {
+  --background: #cc0000 !important;
+  --color: white !important;
+}
+
+.header-icon {
+  margin-right: 10px;
+  font-size: 22px;
+}
+
+ion-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: white !important;
+}
+
+/* ============================================ */
+/*           CONTAINER                         */
+/* ============================================ */
+
+.login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 100px);
+}
+
+/* ============================================ */
+/*           LOGIN HEADER                      */
+/* ============================================ */
+
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+  animation: fadeInDown 0.5s ease;
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #cc0000, #990000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 30px rgba(204, 0, 0, 0.3);
+  transition: transform 0.3s ease;
+}
+
+.logo:hover {
+  transform: scale(1.05);
+}
+
+.logo ion-icon {
+  font-size: 40px;
+  color: white;
+}
+
+.login-header h1 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 4px;
+}
+
+.login-header p {
+  color: #888;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ============================================ */
+/*           LOGIN CARD                        */
+/* ============================================ */
+
+.login-card {
+  border-radius: 20px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(204, 0, 0, 0.05);
+  margin: 0;
+  animation: fadeInUp 0.6s ease;
+}
+
+.login-card ion-card-content {
+  padding: 24px 20px 20px;
+}
+
+/* ============================================ */
+/*           FORM ITEMS                        */
+/* ============================================ */
+
+.form-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #f0f0f5;
+  transition: border-color 0.3s ease;
+}
+
+.form-item:focus-within {
+  border-bottom-color: #cc0000;
+}
+
+.input-icon {
+  color: #cc0000;
+  font-size: 20px;
+  margin-right: 12px;
+  opacity: 0.7;
+}
+
+.form-item ion-input {
+  --padding-start: 0;
+  --color: #1a1a2e;
+  font-size: 15px;
+}
+
+.form-item ion-label {
+  color: #888 !important;
+  font-weight: 500;
+}
+
+/* ============================================ */
+/*           ERROR MESSAGE                     */
+/* ============================================ */
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #ffebee;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #c62828;
+  font-size: 13px;
+  margin-bottom: 16px;
+  border: 1px solid #ffcdd2;
+  animation: shake 0.4s ease;
+}
+
+.error-message ion-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* ============================================ */
+/*           LOGIN BUTTON - RED                */
+/* ============================================ */
+
+.login-btn {
+  --border-radius: 12px;
+  height: 48px;
+  font-size: 16px;
+  font-weight: 600;
+  --background: linear-gradient(145deg, #cc0000, #990000) !important;
+  --box-shadow: 0 4px 16px rgba(204, 0, 0, 0.35) !important;
+  --color: white !important;
+  margin-top: 8px;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover:not(:disabled) {
+  --box-shadow: 0 6px 24px rgba(204, 0, 0, 0.45) !important;
+  transform: translateY(-2px);
+}
+
+.login-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.login-btn:disabled {
+  --background: #cccccc !important;
+  --box-shadow: none !important;
+  opacity: 0.7;
+}
+
+.login-btn ion-icon {
+  font-size: 20px;
+}
+
+/* ============================================ */
+/*           CREDENTIALS HINT                  */
+/* ============================================ */
+
+.credentials-hint {
+  text-align: center;
+  margin-top: 16px;
+  padding: 10px;
+  background: #fff8f0;
+  border-radius: 10px;
+  border: 1px dashed #ffcc80;
+}
+
+.credentials-hint small {
+  color: #e65100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.credentials-hint ion-icon {
+  font-size: 16px;
+  color: #ff9800;
+}
+
+/* ============================================ */
+/*           PENDRIVE STATUS                   */
+/* ============================================ */
+
+.pendrive-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  background: #e8f5e9;
+  border-radius: 12px;
+  color: #2e7d32;
+  border: 1px solid #a5d6a7;
+  font-weight: 500;
+  font-size: 14px;
+  animation: fadeInUp 0.8s ease;
+}
+
+.pendrive-status ion-icon {
+  font-size: 20px;
+}
+
+/* ============================================ */
+/*           VERSION INFO                      */
+/* ============================================ */
+
+.version-info {
+  text-align: center;
+  margin-top: auto;
+  padding-top: 24px;
+  color: #999;
+  font-size: 12px;
+}
+
+/* ============================================ */
+/*           ANIMATIONS                        */
+/* ============================================ */
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+/* ============================================ */
+/*           RESPONSIVE DESIGN                 */
+/* ============================================ */
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 16px 12px 30px;
+  }
+
+  .logo {
+    width: 64px;
+    height: 64px;
+  }
+
+  .logo ion-icon {
+    font-size: 32px;
+  }
+
+  .login-header h1 {
+    font-size: 20px;
+  }
+
+  .login-header p {
+    font-size: 13px;
+  }
+
+  .login-card ion-card-content {
+    padding: 16px;
+  }
+
+  .login-btn {
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .pendrive-status {
+    font-size: 13px;
+    padding: 10px 14px;
+  }
+}
+
+/* ============================================ */
+/*           DARK THEME SUPPORT                */
+/* ============================================ */
+
+.dark-theme {
+  .login-content {
+    --background: #1a1a2e;
+  }
+
+  .login-header h1 {
+    color: #ffffff;
+  }
+
+  .login-header p {
+    color: #888;
+  }
+
+  .login-card {
+    background: #1e1e3a;
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .login-card ion-card-content {
+    background: transparent;
+  }
+
+  .form-item {
+    border-bottom-color: #333355;
+  }
+
+  .form-item ion-input {
+    --color: #ffffff;
+  }
+
+  .form-item ion-label {
+    color: #888 !important;
+  }
+
+  .credentials-hint {
+    background: #2a1a1a;
+    border-color: #4a1a1a;
+  }
+
+  .credentials-hint small {
+    color: #ff9800;
+  }
+
+  .pendrive-status {
+    background: #1a2a1a;
+    border-color: #2d5a2d;
+    color: #66bb6a;
+  }
+
+  .version-info {
+    color: #666;
+  }
+
+  .error-message {
+    background: #2a1a1a;
+    border-color: #4a1a1a;
+    color: #ff6b6b;
+  }
+}

@@ -1,83 +1,165 @@
+<!-- ============================================ -->
+<!-- FILE: validation.page.html                   -->
+<!-- RAILWAY E-BILLING SYSTEM - VALIDATION PAGE  -->
+<!-- ============================================ -->
+
 <ion-header>
-  <ion-toolbar color="primary">
+  <ion-toolbar class="validation-toolbar">
     <ion-buttons slot="start">
       <ion-back-button></ion-back-button>
     </ion-buttons>
-    <ion-title>✅ Validate Bill</ion-title>
+    <ion-title>
+      <ion-icon name="checkmark-circle-outline" class="header-icon"></ion-icon>
+      Validate Bill
+    </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
-  <div style="text-align: center; margin-top: 20px;">
-    <h2>📋 Review Bill</h2>
-    <p style="color: #999;">Please check the extracted data</p>
+<ion-content class="validation-content">
 
-    <!-- EXTRACTED DATA -->
-    <ion-card style="margin-top: 20px; padding: 16px; text-align: left;">
-      <ion-item>
-        <ion-label><strong>Bill Number</strong></ion-label>
-        <ion-text><strong>{{ billData?.bill_number || 'Not found' }}</strong></ion-text>
-      </ion-item>
-      <ion-item>
-        <ion-label><strong>Vendor</strong></ion-label>
-        <ion-text>{{ billData?.vendor || 'Not found' }}</ion-text>
-      </ion-item>
-      <ion-item>
-        <ion-label><strong>Date</strong></ion-label>
-        <ion-text>{{ billData?.date || 'Not found' }}</ion-text>
-      </ion-item>
-      <ion-item>
-        <ion-label><strong>GSTIN</strong></ion-label>
-        <ion-text>{{ billData?.gstin || 'Not found' }}</ion-text>
-      </ion-item>
-      <ion-item>
-        <ion-label><strong>Subtotal</strong></ion-label>
-        <ion-text>₹{{ billData?.subtotal || '0' }}</ion-text>
-      </ion-item>
-      <ion-item>
-        <ion-label><strong>Tax</strong></ion-label>
-        <ion-text>₹{{ billData?.tax || '0' }}</ion-text>
-      </ion-item>
-      <ion-item>
-        <ion-label><strong>Total</strong></ion-label>
-        <ion-text><strong style="color: #4CAF50; font-size: 18px;">₹{{ billData?.total || '0' }}</strong></ion-text>
-      </ion-item>
+  <div class="validation-container">
+    
+    <!-- HEADER -->
+    <div class="validation-header">
+      <h2>📋 Review Bill</h2>
+      <p>Please check the extracted data</p>
+    </div>
+
+    <!-- DATA CARD -->
+    <ion-card class="data-card">
       
-      <!-- ITEMS -->
-      <ion-item *ngIf="billData?.items?.length > 0">
-        <ion-label><strong>Items</strong></ion-label>
-      </ion-item>
-      <div *ngFor="let item of billData?.items" style="padding: 8px 16px; background: #f5f5f5; margin: 4px 0; border-radius: 8px;">
-        <div style="display: flex; justify-content: space-between; font-size: 14px;">
-          <span>{{ item.name }}</span>
-          <span>₹{{ item.price }} × {{ item.qty }} = ₹{{ item.price * item.qty }}</span>
+      <!-- VIEW MODE -->
+      <ng-container *ngIf="!isEditing">
+        
+        <div class="field-group">
+          <div class="field-label">Bill Number</div>
+          <div class="field-value highlight">{{ billData?.bill_number || 'Not found' }}</div>
         </div>
-      </div>
-      
-      <!-- Payment Terms -->
-      <ion-item *ngIf="billData?.payment_terms">
-        <ion-label><strong>Payment Terms</strong></ion-label>
-        <ion-text>{{ billData?.payment_terms }}</ion-text>
-      </ion-item>
-      
-      <!-- Grand Total Words -->
-      <ion-item *ngIf="billData?.grand_total_words">
-        <ion-label><strong>Amount in Words</strong></ion-label>
-        <ion-text style="font-size: 12px;">{{ billData?.grand_total_words }}</ion-text>
-      </ion-item>
+
+        <div class="field-group">
+          <div class="field-label">Vendor</div>
+          <div class="field-value">{{ billData?.vendor || 'Not found' }}</div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Date</div>
+          <div class="field-value">{{ billData?.date || 'Not found' }}</div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">GSTIN</div>
+          <div class="field-value">{{ billData?.gstin || 'Not found' }}</div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Subtotal</div>
+          <div class="field-value">₹{{ billData?.subtotal || '0' }}</div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Tax</div>
+          <div class="field-value">₹{{ billData?.tax || '0' }}</div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Total</div>
+          <div class="field-value total-amount">₹{{ billData?.total || '0' }}</div>
+        </div>
+
+        <!-- ITEMS -->
+        <div *ngIf="billData?.items?.length > 0">
+          <div class="field-label" style="margin-top: 12px;">Items</div>
+          <div class="items-list">
+            <div class="item-row" *ngFor="let item of billData?.items">
+              <span class="item-name">{{ item.name }}</span>
+              <span class="item-detail">₹{{ item.price }} × {{ item.qty }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="billData?.amount_words" class="field-group">
+          <div class="field-label">Amount in Words</div>
+          <div class="field-value" style="font-size: 12px; color: #666;">{{ billData?.amount_words }}</div>
+        </div>
+
+      </ng-container>
+
+      <!-- EDIT MODE -->
+      <ng-container *ngIf="isEditing">
+        
+        <div class="field-group">
+          <div class="field-label">Bill Number</div>
+          <input class="field-value editable" [(ngModel)]="editData.bill_number" placeholder="Enter bill number" />
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Vendor</div>
+          <input class="field-value editable" [(ngModel)]="editData.vendor" placeholder="Enter vendor name" />
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Date</div>
+          <input class="field-value editable" [(ngModel)]="editData.date" placeholder="Enter date" />
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">GSTIN</div>
+          <input class="field-value editable" [(ngModel)]="editData.gstin" placeholder="Enter GSTIN" />
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Subtotal</div>
+          <input class="field-value editable" [(ngModel)]="editData.subtotal" placeholder="Enter subtotal" />
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Tax</div>
+          <input class="field-value editable" [(ngModel)]="editData.tax" placeholder="Enter tax" />
+        </div>
+
+        <div class="field-group">
+          <div class="field-label">Total</div>
+          <input class="field-value editable" [(ngModel)]="editData.total" placeholder="Enter total" />
+        </div>
+
+      </ng-container>
+
     </ion-card>
 
-    <!-- ACTIONS -->
-    <ion-button expand="block" color="success" (click)="confirmBill()" style="margin-top: 16px;">
-      ✅ Confirm & Save
-    </ion-button>
-    
-    <ion-button expand="block" fill="outline" (click)="retakePhoto()" style="margin-top: 8px;">
-      📸 Retake Photo
-    </ion-button>
-    
-    <ion-button expand="block" fill="clear" color="warning" (click)="editData()" style="margin-top: 4px;">
-      ✏️ Edit Data Manually
-    </ion-button>
+    <!-- ACTIONS - VIEW MODE -->
+    <ng-container *ngIf="!isEditing">
+      <div class="button-group">
+        <ion-button expand="block" (click)="confirmBill()" [disabled]="isSaving" class="confirm-btn">
+          <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+          {{ isSaving ? 'Saving...' : 'Confirm & Save' }}
+        </ion-button>
+        
+        <ion-button expand="block" fill="outline" (click)="retakePhoto()" class="retake-btn">
+          <ion-icon name="camera" slot="start"></ion-icon>
+          Retake Photo
+        </ion-button>
+        
+        <ion-button expand="block" fill="clear" (click)="toggleEdit()" class="edit-btn">
+          <ion-icon name="create-outline" slot="start"></ion-icon>
+          Edit Data Manually
+        </ion-button>
+      </div>
+    </ng-container>
+
+    <!-- ACTIONS - EDIT MODE -->
+    <ng-container *ngIf="isEditing">
+      <div class="button-group">
+        <ion-button expand="block" (click)="saveEdits()" class="save-btn">
+          <ion-icon name="save-outline" slot="start"></ion-icon>
+          Save Changes
+        </ion-button>
+        
+        <ion-button expand="block" fill="outline" (click)="toggleEdit()" class="cancel-btn">
+          <ion-icon name="close-outline" slot="start"></ion-icon>
+          Cancel Edit
+        </ion-button>
+      </div>
+    </ng-container>
+
   </div>
 </ion-content>

@@ -1,0 +1,325 @@
+/* ============================================ */
+/* FILE: validation.page.scss                   */
+/* RAILWAY E-BILLING SYSTEM - VALIDATION STYLES */
+/* ============================================ */
+
+/* ============================================ */
+/*           GLOBAL STYLES                      */
+/* ============================================ */
+
+.validation-content {
+  --background: #f5f7fa;
+}
+
+/* ============================================ */
+/*           TOOLBAR - RAILWAY RED             */
+/* ============================================ */
+
+.validation-toolbar {
+  --background: #cc0000 !important;
+  --color: white !important;
+}
+
+.validation-toolbar ion-back-button {
+  --color: white !important;
+}
+
+.header-icon {
+  margin-right: 10px;
+  font-size: 22px;
+}
+
+.validation-toolbar ion-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: white !important;
+}
+
+/* ============================================ */
+/*           CONTAINER                         */
+/* ============================================ */
+
+.validation-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: 20px;
+}
+
+/* ============================================ */
+/*           HEADER                            */
+/* ============================================ */
+
+.validation-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.validation-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0 0 4px;
+}
+
+.validation-header p {
+  color: #999;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ============================================ */
+/*           DATA CARD                         */
+/* ============================================ */
+
+.data-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  margin-bottom: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.data-card .field-group {
+  margin-bottom: 14px;
+}
+
+.data-card .field-group:last-child {
+  margin-bottom: 0;
+}
+
+.data-card .field-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.data-card .field-value {
+  font-size: 16px;
+  color: #1a1a2e;
+  font-weight: 500;
+  padding: 4px 0;
+}
+
+.data-card .field-value.highlight {
+  font-size: 18px;
+  color: #cc0000;
+  font-weight: 700;
+}
+
+.data-card .field-value.total-amount {
+  font-size: 22px;
+  color: #2e7d32;
+  font-weight: 700;
+}
+
+.data-card .field-value.editable {
+  background: #f8f9fc;
+  border-radius: 8px;
+  padding: 10px 14px;
+  border: 2px solid #e8ecf1;
+  transition: all 0.3s;
+  width: 100%;
+  font-size: 14px;
+  color: #1a1a2e;
+}
+
+.data-card .field-value.editable:focus {
+  border-color: #cc0000;
+  background: white;
+  outline: none;
+}
+
+/* ============================================ */
+/*           ITEMS LIST                        */
+/* ============================================ */
+
+.items-list {
+  margin-top: 6px;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f2f5;
+  font-size: 14px;
+}
+
+.item-row:last-child {
+  border-bottom: none;
+}
+
+.item-name {
+  color: #333;
+  flex: 1;
+  font-weight: 500;
+}
+
+.item-detail {
+  color: #666;
+  font-weight: 400;
+}
+
+/* ============================================ */
+/*           BUTTON GROUP                      */
+/* ============================================ */
+
+.button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.button-group ion-button {
+  --border-radius: 14px;
+  height: 48px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* CONFIRM BUTTON - GREEN */
+.confirm-btn {
+  --background: #2e7d32 !important;
+  --box-shadow: 0 4px 16px rgba(46, 125, 50, 0.35) !important;
+  --color: white !important;
+}
+
+.confirm-btn:disabled {
+  --background: #cccccc !important;
+  --box-shadow: none !important;
+}
+
+/* RETAKE BUTTON - RED OUTLINE */
+.retake-btn {
+  --border-color: #cc0000 !important;
+  --color: #cc0000 !important;
+}
+
+/* EDIT BUTTON - ORANGE */
+.edit-btn {
+  --color: #e65100 !important;
+}
+
+/* SAVE BUTTON - RED */
+.save-btn {
+  --background: #cc0000 !important;
+  --box-shadow: 0 4px 16px rgba(204, 0, 0, 0.35) !important;
+  --color: white !important;
+}
+
+/* CANCEL BUTTON - RED OUTLINE */
+.cancel-btn {
+  --border-color: #cc0000 !important;
+  --color: #cc0000 !important;
+}
+
+/* ============================================ */
+/*           RESPONSIVE                        */
+/* ============================================ */
+
+@media (max-width: 480px) {
+  .validation-container {
+    padding: 0 4px;
+  }
+  
+  .data-card {
+    padding: 16px 12px;
+  }
+  
+  .data-card .field-value.total-amount {
+    font-size: 18px;
+  }
+  
+  .data-card .field-value.highlight {
+    font-size: 16px;
+  }
+}
+
+/* ============================================ */
+/*           DARK THEME                        */
+/* ============================================ */
+
+.dark-theme {
+  .validation-content {
+    --background: #1a1a2e;
+  }
+
+  .validation-header h2 {
+    color: #ffffff;
+  }
+
+  .validation-header p {
+    color: #888;
+  }
+
+  .data-card {
+    background: #1e1e3a;
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .data-card .field-label {
+    color: #888;
+  }
+
+  .data-card .field-value {
+    color: #ffffff;
+  }
+
+  .data-card .field-value.highlight {
+    color: #ff6b6b;
+  }
+
+  .data-card .field-value.total-amount {
+    color: #66bb6a;
+  }
+
+  .data-card .field-value.editable {
+    background: #2a2a4a;
+    border-color: #333355;
+    color: #ffffff;
+  }
+
+  .data-card .field-value.editable:focus {
+    border-color: #ff6b6b;
+    background: #333355;
+  }
+
+  .item-row {
+    border-bottom-color: #333355;
+  }
+
+  .item-name {
+    color: #ffffff;
+  }
+
+  .item-detail {
+    color: #888;
+  }
+
+  .confirm-btn {
+    --background: #2e7d32 !important;
+  }
+
+  .retake-btn {
+    --border-color: #ff6b6b !important;
+    --color: #ff6b6b !important;
+  }
+
+  .edit-btn {
+    --color: #ff9800 !important;
+  }
+
+  .save-btn {
+    --background: #cc0000 !important;
+  }
+
+  .cancel-btn {
+    --border-color: #ff6b6b !important;
+    --color: #ff6b6b !important;
+  }
+}
