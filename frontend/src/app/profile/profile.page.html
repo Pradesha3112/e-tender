@@ -1,0 +1,70 @@
+<!-- ============================================ -->
+<!-- FILE: profile.page.html                      -->
+<!-- RAILWAY E-BILLING SYSTEM - PROFILE PAGE     -->
+<!-- ============================================ -->
+
+<ion-header>
+  <ion-toolbar class="profile-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="train-outline" class="header-icon"></ion-icon>
+      Profile
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="profile-content">
+
+  <!-- Profile Card - Full Width (Touches Header) -->
+  <div class="profile-card">
+    
+    <div class="avatar-container">
+      <div class="avatar">
+        <span class="avatar-text">U</span>
+      </div>
+    </div>
+    <h2 class="user-name">User</h2>
+    <p class="user-email">user@example.com</p>
+    
+    <!-- Stats -->
+    
+  </div>
+
+  <!-- Content with padding -->
+  <div class="content-wrapper">
+    
+    <!-- Account Section -->
+    <div class="menu-section">
+      <div class="menu-item" (click)="editProfile()">
+        <ion-icon name="person-outline" slot="start" class="menu-icon"></ion-icon>
+        <span class="menu-label">Edit Profile</span>
+        <ion-icon name="chevron-forward-outline" class="menu-arrow"></ion-icon>
+      </div>
+      <div class="menu-item" (click)="changePassword()">
+        <ion-icon name="key-outline" slot="start" class="menu-icon"></ion-icon>
+        <span class="menu-label">Change Password</span>
+        <ion-icon name="chevron-forward-outline" class="menu-arrow"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Logout -->
+    <div class="menu-section">
+      <div class="menu-item logout" (click)="logout()">
+        <ion-icon name="log-out-outline" slot="start" class="menu-icon"></ion-icon>
+        <span class="menu-label">Logout</span>
+        <ion-icon name="chevron-forward-outline" class="menu-arrow"></ion-icon>
+      </div>
+    </div>
+
+    <!-- Version -->
+    <div class="version-info">
+      <p>
+        <ion-icon name="train"></ion-icon>
+        Railway E-Billing System v1.0.0
+      </p>
+    </div>
+
+  </div>
+</ion-content>

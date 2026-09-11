@@ -1,0 +1,296 @@
+/* ============================================ */
+/* FILE: profile.page.scss                      */
+/* RAILWAY E-BILLING SYSTEM - PROFILE STYLES   */
+/* ============================================ */
+
+/* ============================================ */
+/*           GLOBAL STYLES                      */
+/* ============================================ */
+
+.profile-content {
+  --background: #f8f9fc;
+}
+
+/* ============================================ */
+/*           TOOLBAR - RAILWAY RED             */
+/* ============================================ */
+
+.profile-toolbar {
+  --background: #cc0000 !important;
+  --color: white !important;
+}
+
+.profile-toolbar ion-back-button {
+  --color: white !important;
+}
+
+.header-icon {
+  margin-right: 10px;
+  font-size: 22px;
+}
+
+.profile-toolbar ion-title {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  color: white !important;
+}
+
+/* ============================================ */
+/*     PROFILE CARD - FULL WIDTH (NO FLOAT)     */
+/* ============================================ */
+
+.profile-card {
+  background: linear-gradient(145deg, #cc0000, #990000);
+  padding: 30px 20px 24px;
+  color: white;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(204, 0, 0, 0.35);
+  margin: 0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  width: 100%;
+}
+
+/* ============================================ */
+/*           AVATAR                            */
+/* ============================================ */
+
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+}
+
+.avatar-text {
+  font-size: 36px;
+  font-weight: 700;
+  color: white;
+}
+
+/* ============================================ */
+/*           USER INFO                         */
+/* ============================================ */
+
+.user-name {
+  font-size: 22px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+.user-email {
+  font-size: 14px;
+  opacity: 0.8;
+  margin: 0 0 16px;
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================ */
+/*           STATS                             */
+/* ============================================ */
+
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  z-index: 1;
+}
+
+.stat-item {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 20px;
+  font-weight: 700;
+  color: white;
+}
+
+.stat-label {
+  font-size: 11px;
+  opacity: 0.8;
+  color: white;
+}
+
+.stat-divider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================ */
+/*           CONTENT WRAPPER (PADDING)         */
+/* ============================================ */
+
+.content-wrapper {
+  padding: 20px 16px;
+}
+
+/* ============================================ */
+/*           MENU SECTIONS                     */
+/* ============================================ */
+
+.menu-section {
+  background: white;
+  border-radius: 16px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item:hover {
+  background: #f8f9fc;
+}
+
+.menu-item:active {
+  transform: scale(0.98);
+}
+
+.menu-item.logout .menu-label {
+  color: #cc0000;
+}
+
+.menu-item.logout .menu-icon {
+  color: #cc0000;
+}
+
+.menu-icon {
+  font-size: 22px;
+  color: #cc0000;
+  margin-right: 14px;
+}
+
+.menu-label {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1a1a2e;
+}
+
+.menu-arrow {
+  font-size: 18px;
+  color: #ccc;
+}
+
+/* ============================================ */
+/*           VERSION                           */
+/* ============================================ */
+
+.version-info {
+  text-align: center;
+  margin-top: 20px;
+  padding-bottom: 20px;
+}
+
+.version-info p {
+  font-size: 12px;
+  color: #888;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.version-info p ion-icon {
+  font-size: 14px;
+  color: #cc0000;
+}
+
+/* ============================================ */
+/*           RESPONSIVE                        */
+/* ============================================ */
+
+@media (max-width: 480px) {
+  .profile-card {
+    padding: 24px 16px 20px;
+  }
+
+  .avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .avatar-text {
+    font-size: 28px;
+  }
+
+  .user-name {
+    font-size: 18px;
+  }
+}
+
+/* ============================================ */
+/*           DARK THEME                        */
+/* ============================================ */
+
+.dark-theme {
+  .profile-content {
+    --background: #1a1a2e;
+  }
+
+  .menu-section {
+    background: #1e1e1e;
+  }
+
+  .menu-item {
+    border-bottom: 1px solid #2a2a2a;
+  }
+
+  .menu-item:hover {
+    background: #2a2a2a;
+  }
+
+  .menu-label {
+    color: #ffffff;
+  }
+
+  .version-info p {
+    color: #888;
+  }
+
+  .profile-card {
+    box-shadow: 0 8px 32px rgba(204, 0, 0, 0.2);
+  }
+
+  ion-toggle {
+    --background: #333;
+    --background-checked: #cc0000;
+  }
+}

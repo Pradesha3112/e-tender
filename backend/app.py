@@ -1,11 +1,14 @@
 from flask import Flask, request, jsonify
-from flask_cors import CORS  # ← IMPORT THIS
+from flask_cors import CORS
 from ocr_simple import extract_text_from_image
+from mysql_client import MySQLClient
 import traceback
+import json
+import os
 
 app = Flask(__name__)
 
-# ✅ FIX: Enable CORS for all routes
+# Enable CORS for all routes
 CORS(app, resources={
     r"/*": {
         "origins": "*",
@@ -14,6 +17,9 @@ CORS(app, resources={
         "supports_credentials": True
     }
 })
+
+# Initialize MySQL Database
+db = MySQLClient()
 
 @app.route('/')
 def home():
@@ -58,48 +64,44 @@ def upload_bill():
 def save_bill():
     try:
         bill_data = request.json
-        print(f"💾 Saving bill: {bill_data}")
+        print(f"💾 Saving bill to MySQL: {bill_data}")
         
-        # ✅ Try to save to Supabase
-        try:
-            from supabase_client import SupabaseClient
-            db = SupabaseClient()
-            result = db.save_bill(bill_data)
-            if result:
-                return jsonify({
-                    'success': True,
-                    'message': 'Bill saved to Supabase!',
-                    'data': result,
-                    'id': result.get('id')
-                })
-        except Exception as db_error:
-            print(f"⚠️ Supabase error: {db_error}")
+        # Save to MySQL
+        result = db.save_bill(bill_data)
         
-        # ✅ Fallback: Save locally
-        import json
-        import os
-        bills_file = 'bills.json'
-        existing_bills = []
-        if os.path.exists(bills_file):
-            with open(bills_file, 'r') as f:
-                existing_bills = json.load(f)
-        
-        new_bill = bill_data.copy()
-        new_bill['id'] = len(existing_bills) + 1
-        existing_bills.append(new_bill)
-        
-        with open(bills_file, 'w') as f:
-            json.dump(existing_bills, f, indent=2)
-        
-        return jsonify({
-            'success': True,
-            'message': 'Bill saved locally!',
-            'data': new_bill,
-            'id': new_bill['id']
-        })
-        
+        if result:
+            return jsonify({
+                'success': True,
+                'message': 'Bill saved to MySQL successfully!',
+                'data': result,
+                'id': result.get('id')
+            })
+        else:
+            # Fallback: Save to local file
+            print("⚠️ MySQL save failed, saving locally...")
+            bills_file = 'bills.json'
+            existing_bills = []
+            if os.path.exists(bills_file):
+                with open(bills_file, 'r') as f:
+                    existing_bills = json.load(f)
+            
+            new_bill = bill_data.copy()
+            new_bill['id'] = len(existing_bills) + 1
+            existing_bills.append(new_bill)
+            
+            with open(bills_file, 'w') as f:
+                json.dump(existing_bills, f, indent=2)
+            
+            return jsonify({
+                'success': True,
+                'message': 'Bill saved locally! (MySQL unavailable)',
+                'data': new_bill,
+                'id': new_bill['id']
+            })
+            
     except Exception as e:
         print(f"❌ Error saving: {e}")
+        print(traceback.format_exc())
         return jsonify({
             'success': False,
             'error': str(e)
@@ -108,28 +110,17 @@ def save_bill():
 @app.route('/bills', methods=['GET'])
 def get_bills():
     try:
-        # ✅ Try to get from Supabase first
-        try:
-            from supabase_client import SupabaseClient
-            db = SupabaseClient()
-            bills = db.get_all_bills()
-            if bills:
-                return jsonify({
-                    'success': True,
-                    'data': bills
-                })
-        except Exception as db_error:
-            print(f"⚠️ Supabase error: {db_error}")
+        bills = db.get_all_bills()
         
-        # ✅ Fallback: Get from local file
-        import json
-        import os
-        bills_file = 'bills.json'
-        if os.path.exists(bills_file):
-            with open(bills_file, 'r') as f:
-                bills = json.load(f)
-        else:
-            bills = []
+        if not bills:
+            # Fallback: Get from local file
+            print("⚠️ No MySQL bills, checking local file...")
+            bills_file = 'bills.json'
+            if os.path.exists(bills_file):
+                with open(bills_file, 'r') as f:
+                    bills = json.load(f)
+            else:
+                bills = []
         
         return jsonify({
             'success': True,
@@ -145,37 +136,29 @@ def get_bills():
 @app.route('/bills/<int:bill_id>', methods=['GET'])
 def get_bill(bill_id):
     try:
-        # ✅ Try to get from Supabase first
-        try:
-            from supabase_client import SupabaseClient
-            db = SupabaseClient()
-            bill = db.get_bill(bill_id)
-            if bill:
-                return jsonify({
-                    'success': True,
-                    'data': bill
-                })
-        except Exception as db_error:
-            print(f"⚠️ Supabase error: {db_error}")
+        bill = db.get_bill(bill_id)
         
-        # ✅ Fallback: Get from local file
-        import json
-        import os
-        bills_file = 'bills.json'
-        if os.path.exists(bills_file):
-            with open(bills_file, 'r') as f:
-                bills = json.load(f)
-            for bill in bills:
-                if bill.get('id') == bill_id:
-                    return jsonify({
-                        'success': True,
-                        'data': bill
-                    })
+        if not bill:
+            # Fallback: Get from local file
+            bills_file = 'bills.json'
+            if os.path.exists(bills_file):
+                with open(bills_file, 'r') as f:
+                    bills = json.load(f)
+                for b in bills:
+                    if b.get('id') == bill_id:
+                        bill = b
+                        break
         
-        return jsonify({
-            'success': False,
-            'error': 'Bill not found'
-        }), 404
+        if bill:
+            return jsonify({
+                'success': True,
+                'data': bill
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Bill not found'
+            }), 404
     except Exception as e:
         return jsonify({
             'success': False,
@@ -185,33 +168,42 @@ def get_bill(bill_id):
 @app.route('/bills/<int:bill_id>', methods=['DELETE'])
 def delete_bill(bill_id):
     try:
-        # ✅ Try to delete from Supabase first
-        try:
-            from supabase_client import SupabaseClient
-            db = SupabaseClient()
-            result = db.delete_bill(bill_id)
-            if result:
-                return jsonify({
-                    'success': True,
-                    'message': 'Bill deleted successfully'
-                })
-        except Exception as db_error:
-            print(f"⚠️ Supabase error: {db_error}")
+        result = db.delete_bill(bill_id)
         
-        # ✅ Fallback: Delete from local file
-        import json
-        import os
-        bills_file = 'bills.json'
-        if os.path.exists(bills_file):
-            with open(bills_file, 'r') as f:
-                bills = json.load(f)
-            bills = [b for b in bills if b.get('id') != bill_id]
-            with open(bills_file, 'w') as f:
-                json.dump(bills, f, indent=2)
+        if not result:
+            # Fallback: Delete from local file
+            bills_file = 'bills.json'
+            if os.path.exists(bills_file):
+                with open(bills_file, 'r') as f:
+                    bills = json.load(f)
+                bills = [b for b in bills if b.get('id') != bill_id]
+                with open(bills_file, 'w') as f:
+                    json.dump(bills, f, indent=2)
+                result = True
         
+        if result:
+            return jsonify({
+                'success': True,
+                'message': 'Bill deleted successfully'
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'error': 'Failed to delete bill'
+            }), 500
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@app.route('/stats', methods=['GET'])
+def get_stats():
+    try:
+        stats = db.get_stats()
         return jsonify({
             'success': True,
-            'message': 'Bill deleted successfully'
+            'data': stats
         })
     except Exception as e:
         return jsonify({
