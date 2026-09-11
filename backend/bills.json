@@ -1,0 +1,26 @@
+[
+  {
+    "amount_words": "Twenty Eight Thousand Seven Hundred Thirty Only",
+    "bill_number": "Invoice No\n\nTM/INV/2026/0876",
+    "date": "21-07-2026",
+    "gstin": "33AABCT1234F1Z5",
+    "items": [],
+    "subtotal": 24500,
+    "tax": 0,
+    "total": "245000987",
+    "vendor": "TechMart Solutions Pvt. Ltd.",
+    "id": 1
+  },
+  {
+    "amount_words": "Twenty Eight Thousand Seven Hundred Thirty Only",
+    "bill_number": "Invoice No\n\nTM/INV/2026/0876",
+    "date": "21-07-2026",
+    "gstin": "33AABCT1234F1Z5",
+    "items": [],
+    "subtotal": 24500,
+    "tax": 0,
+    "total": "245000987",
+    "vendor": "TechMart Solutions Pvt. Ltd.",
+    "id": 2
+  }
+]

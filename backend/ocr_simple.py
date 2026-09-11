@@ -14,7 +14,6 @@ if os.path.exists(TESSERACT_PATH):
     print("✅ Tesseract found at:", TESSERACT_PATH)
 else:
     print(f"❌ Tesseract NOT found at: {TESSERACT_PATH}")
-
 def enhance_image(image):
     """Enhance image for better OCR"""
     try:
@@ -300,24 +299,7 @@ def parse_bill_data(text):
     else:
         print("⚠️ No items found")
     
-    # ============================================
-    # 9. AMOUNT IN WORDS (IMPROVED)
-    # ============================================
-    words_patterns = [
-        r'Amount in Words\s*[:#]?\s*([^\n]+)',
-        r'Rupees\s*([^\n]+)',
-        r'Amount in Words[^\n]*([^\n]+)',
-    ]
-    for pattern in words_patterns:
-        match = re.search(pattern, text, re.IGNORECASE)
-        if match:
-            words = match.group(1).strip()
-            # Skip if it's just "Sub Total" or similar
-            if not re.search(r'Sub Total|Grand Total|Total', words, re.IGNORECASE):
-                data['amount_words'] = words
-                print(f"✅ Found Amount in Words: {words[:50]}")
-                break
-    
+        
     # ============================================
     # 10. CALCULATE MISSING FIELDS
     # ============================================

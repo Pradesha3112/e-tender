@@ -62,25 +62,8 @@
 
     <!-- ITEMS CARD -->
     <ion-card class="items-card">
-      <ion-card-header>
-        <ion-card-title>Items</ion-card-title>
-        <ion-card-subtitle>{{ bill?.items?.length || 0 }} item(s)</ion-card-subtitle>
-      </ion-card-header>
       <ion-card-content>
-        <div class="items-list">
-          <div class="item-row" *ngFor="let item of bill?.items; let i = index">
-            <div class="item-sno">{{ i + 1 }}</div>
-            <div class="item-details">
-              <div class="item-name">{{ item?.name || 'Item' }}</div>
-              <div class="item-meta">
-                <span class="item-qty">Qty: {{ item?.qty || 1 }}</span>
-                <span>₹{{ item?.price || 0 }}</span>
-              </div>
-            </div>
-            <div class="item-total">₹{{ getItemTotal(item) }}</div>
-          </div>
-        </div>
-
+       
         <!-- SUMMARY -->
         <div class="summary">
           <div class="summary-row">
@@ -99,26 +82,11 @@
       </ion-card-content>
     </ion-card>
 
-    <!-- ADDITIONAL INFO -->
-    <ion-card class="info-card" *ngIf="bill?.amount_words || bill?.payment_terms">
-      <ion-card-content>
-        <div class="info-row" *ngIf="bill?.amount_words">
-          <span class="info-label">Amount in Words</span>
-          <span class="info-value">{{ bill?.amount_words }}</span>
-        </div>
-        <div class="info-row" *ngIf="bill?.payment_terms">
-          <span class="info-label">Payment Terms</span>
-          <span class="info-value">{{ bill?.payment_terms }}</span>
-        </div>
-      </ion-card-content>
-    </ion-card>
+   
 
     <!-- ACTION BUTTONS -->
     <div class="action-buttons">
-      <ion-button expand="block" (click)="exportPDF()" class="export-btn">
-        <ion-icon name="download-outline" slot="start"></ion-icon>
-        Export PDF
-      </ion-button>
+     
       <ion-button expand="block" fill="outline" (click)="editBill()" class="edit-btn">
         <ion-icon name="create-outline" slot="start"></ion-icon>
         Edit Bill
