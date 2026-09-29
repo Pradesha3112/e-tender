@@ -31,6 +31,7 @@
         <ion-card-title>Account</ion-card-title>
       </ion-card-header>
       <ion-card-content>
+
         <ion-item class="form-item" lines="none">
           <ion-input
             label="Username"
@@ -42,15 +43,27 @@
           </ion-input>
         </ion-item>
 
+        <!-- Password with eye toggle -->
         <ion-item class="form-item" lines="none">
           <ion-input
             [label]="isEditMode ? 'New Password (leave blank to keep)' : 'Password'"
             labelPlacement="stacked"
             [(ngModel)]="form.password"
-            type="password"
+            [type]="showPassword ? 'text' : 'password'"
             placeholder="Min 4 characters">
           </ion-input>
+          <ion-button
+            fill="clear"
+            slot="end"
+            class="eye-btn"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+            <ion-icon
+              [name]="showPassword ? 'eye-off-outline' : 'eye-outline'">
+            </ion-icon>
+          </ion-button>
         </ion-item>
+
       </ion-card-content>
     </ion-card>
 
@@ -60,6 +73,7 @@
         <ion-card-title>Profile</ion-card-title>
       </ion-card-header>
       <ion-card-content>
+
         <ion-item class="form-item" lines="none">
           <ion-input
             label="Full Name"
@@ -95,6 +109,7 @@
             placeholder="Optional">
           </ion-input>
         </ion-item>
+
       </ion-card-content>
     </ion-card>
 
@@ -104,6 +119,7 @@
         <ion-card-title>Role &amp; Group</ion-card-title>
       </ion-card-header>
       <ion-card-content>
+
         <ion-item class="form-item" lines="none">
           <ion-select
             label="Role"
@@ -132,6 +148,7 @@
           <ion-icon name="information-circle-outline"></ion-icon>
           Clerks inherit the category group of their creator.
         </div>
+
       </ion-card-content>
     </ion-card>
 

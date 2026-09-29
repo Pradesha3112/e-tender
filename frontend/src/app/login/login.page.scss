@@ -3,7 +3,6 @@
 /* RAILWAY E-BILLING - LOGIN (Blue Theme)       */
 /* ============================================ */
 
-/* Times New Roman everywhere */
 :host, :host * {
   font-family: "Times New Roman", "Times", "Georgia", "Cambria",
                "Garamond", serif !important;
@@ -20,7 +19,7 @@
 }
 
 /* ============================================ */
-/*           TOOLBAR — RAILWAY BLUE             */
+/*           TOOLBAR                            */
 /* ============================================ */
 
 .login-toolbar {
@@ -82,9 +81,7 @@ ion-title {
   transition: transform 0.3s ease;
 }
 
-.logo:hover {
-  transform: scale(1.05);
-}
+.logo:hover { transform: scale(1.05); }
 
 .logo ion-icon {
   font-size: 40px;
@@ -130,7 +127,7 @@ ion-title {
   --padding-start: 0;
   --padding-end: 0;
   --inner-padding-end: 0;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
   border-bottom: 2px solid #e2e8f0;
   transition: border-color 0.3s ease;
 }
@@ -146,7 +143,8 @@ ion-title {
   opacity: 0.85;
 }
 
-.form-item ion-input {
+.form-item ion-input,
+.form-item ion-select {
   --padding-start: 0;
   --color: #1e293b;
   font-size: 15px;
@@ -155,6 +153,32 @@ ion-title {
 .form-item ion-label {
   color: #64748b !important;
   font-weight: 500;
+}
+
+.role-select {
+  width: 100%;
+}
+
+/* ============================================ */
+/*           EYE BUTTON                         */
+/* ============================================ */
+
+.eye-btn {
+  --color: #64748b;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  height: 36px;
+  width: 36px;
+  margin: 0;
+  transition: color 0.2s;
+}
+
+.eye-btn:hover {
+  --color: #2563eb;
+}
+
+.eye-btn ion-icon {
+  font-size: 22px;
 }
 
 /* ============================================ */
@@ -181,7 +205,7 @@ ion-title {
 }
 
 /* ============================================ */
-/*           LOGIN BUTTON — BLUE GRADIENT       */
+/*           LOGIN BUTTON                       */
 /* ============================================ */
 
 .login-btn {
@@ -248,6 +272,7 @@ ion-title {
   color: #2563eb;
   font-weight: 700;
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .credentials-hint ion-icon {
@@ -322,8 +347,12 @@ ion-title {
   .login-card ion-card-content { background: transparent; }
 
   .form-item { border-bottom-color: #334155; }
-  .form-item ion-input { --color: #ffffff; }
+  .form-item ion-input,
+  .form-item ion-select { --color: #ffffff; }
   .form-item ion-label { color: #94a3b8 !important; }
+
+  .eye-btn { --color: #94a3b8; }
+  .eye-btn:hover { --color: #60a5fa; }
 
   .credentials-hint {
     background: #1e3a5f;

@@ -1,6 +1,6 @@
 // ============================================================
 // FILE: src/app/login/login.page.ts
-// PURPOSE: Login page — calls /login, stores JWT + user
+// PURPOSE: Login — username, password (with eye), dummy role
 // ============================================================
 
 import { Component, OnInit } from '@angular/core';
@@ -10,12 +10,13 @@ import { Router } from '@angular/router';
 import {
   IonHeader, IonToolbar, IonTitle, IonContent,
   IonCard, IonCardContent, IonItem, IonInput,
-  IonButton, IonIcon, IonSpinner,
+  IonButton, IonIcon, IonSpinner, IonSelect, IonSelectOption,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   trainOutline, receiptOutline, personOutline, lockClosedOutline,
   alertCircleOutline, logInOutline, informationCircleOutline,
+  eyeOutline, eyeOffOutline, shieldCheckmarkOutline,
 } from 'ionicons/icons';
 
 import { AuthService } from '../services/auth.service';
@@ -25,20 +26,33 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
   standalone: true,
-    imports: [
+  imports: [
     CommonModule,
     FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent,
     IonCard, IonCardContent, IonItem, IonInput,
     IonButton, IonIcon, IonSpinner,
+    IonSelect, IonSelectOption,
   ],
 })
 export class LoginPage implements OnInit {
 
+  // Form fields
   username = '';
   password = '';
+  selectedRole = 'admin';    // ⚠️ DUMMY — cosmetic only, never sent to backend
+
+  // UI state
+  showPassword = false;
   isLoading = false;
   errorMessage = '';
+
+  // Dummy roles for dropdown
+  roles = [
+    { value: 'admin',       label: 'Admin' },
+    { value: 'super_admin', label: 'Super Admin' },
+    { value: 'clerk',       label: 'Clerk' },
+  ];
 
   constructor(
     private auth: AuthService,
@@ -47,6 +61,7 @@ export class LoginPage implements OnInit {
     addIcons({
       trainOutline, receiptOutline, personOutline, lockClosedOutline,
       alertCircleOutline, logInOutline, informationCircleOutline,
+      eyeOutline, eyeOffOutline, shieldCheckmarkOutline,
     });
   }
 
@@ -56,6 +71,16 @@ export class LoginPage implements OnInit {
     }
   }
 
+  // ============================================================
+  // SHOW / HIDE PASSWORD
+  // ============================================================
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  // ============================================================
+  // LOGIN
+  // ============================================================
   login(): void {
     this.errorMessage = '';
 
@@ -64,6 +89,7 @@ export class LoginPage implements OnInit {
       return;
     }
 
+    // ⚠️ selectedRole is NOT sent — backend determines role
     this.isLoading = true;
 
     this.auth.login(this.username.trim(), this.password).subscribe({
@@ -89,5 +115,6 @@ export class LoginPage implements OnInit {
   fillAdmin(): void {
     this.username = 'admin';
     this.password = 'admin';
+    this.selectedRole = 'admin';
   }
 }

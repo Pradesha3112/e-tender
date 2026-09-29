@@ -1,6 +1,6 @@
 // ============================================================
 // FILE: src/app/admin-passwords/admin-passwords.page.ts
-// PURPOSE: Admin-only — reset any user's password
+// PURPOSE: Admin-only — reset passwords with custom modal
 // ============================================================
 
 import { Component, OnInit } from '@angular/core';
@@ -10,7 +10,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
 import { AuthService } from '../services/auth.service';
-import { AlertController, ToastController } from '@ionic/angular';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-admin-passwords',
@@ -26,11 +26,35 @@ export class AdminPasswordsPage implements OnInit {
   isLoading = true;
   searchTerm = '';
 
+  // ============================================================
+  // MODAL STATE
+  // ============================================================
+  showModal = false;
+  modalMode: 'self' | 'other' = 'self';
+  modalTarget: any = null;
+  isSaving = false;
+
+  // Form data
+  selfForm = {
+    current: '',
+    newPwd:  '',
+    confirm: '',
+  };
+
+  otherForm = {
+    newPwd:  '',
+    confirm: '',
+  };
+
+  // Show/hide toggles
+  showCurrentPwd = false;
+  showNewPwd = false;
+  showConfirmPwd = false;
+
   constructor(
     private router: Router,
     private apiService: ApiService,
     public auth: AuthService,
-    private alertController: AlertController,
     private toastController: ToastController,
   ) {
     console.log('🔑 Admin Passwords page loaded');
@@ -39,6 +63,10 @@ export class AdminPasswordsPage implements OnInit {
   ngOnInit() {
     this.loadUsers();
   }
+
+  // ============================================================
+  // LOAD USERS
+  // ============================================================
   loadUsers() {
     this.isLoading = true;
 
@@ -46,9 +74,9 @@ export class AdminPasswordsPage implements OnInit {
       next: (res: any) => {
         let list = res?.data || [];
 
-        // Prepend admin itself (may or may not be in the /users response)
         const me = this.auth.getCurrentUser();
         const hasMe = list.some((u: any) => u.username === me?.username);
+
         if (!hasMe && me) {
           list = [
             {
@@ -63,7 +91,6 @@ export class AdminPasswordsPage implements OnInit {
             ...list,
           ];
         } else {
-          // Mark the matching row as "self"
           list = list.map((u: any) =>
             u.username === me?.username ? { ...u, _self: true } : u
           );
@@ -80,94 +107,143 @@ export class AdminPasswordsPage implements OnInit {
       },
     });
   }
-  // ============================================================
-  // SELF-UPDATE — only allowed for admin's own row
-  // ============================================================
-  async changeOwnPassword() {
-    const alert = await this.alertController.create({
-      header: 'Change Your Password',
-      message: 'Enter your current password, then your new password.',
-      inputs: [
-        {
-          name: 'current',
-          type: 'password',
-          placeholder: 'Current password (admin)',
-          attributes: { minlength: 1 },
-        },
-        {
-          name: 'password',
-          type: 'password',
-          placeholder: 'New password (min 4)',
-          attributes: { minlength: 4 },
-        },
-        {
-          name: 'confirm',
-          type: 'password',
-          placeholder: 'Confirm new password',
-          attributes: { minlength: 4 },
-        },
-      ],
-      buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: 'Update',
-          handler: (data) => {
-            const current = (data.current || '').trim();
-            const pw      = (data.password || '').trim();
-            const cf      = (data.confirm  || '').trim();
 
-            if (!current) {
-              this.showToast('Current password required', 'warning');
-              return false;
-            }
-            if (pw.length < 4) {
-              this.showToast('New password must be at least 4 characters', 'warning');
-              return false;
-            }
-            if (pw !== cf) {
-              this.showToast('New passwords do not match', 'warning');
-              return false;
-            }
-
-            this.performSelfChange(current, pw);
-            return true;
-          },
-        },
-      ],
-    });
-    await alert.present();
+  // ============================================================
+  // OPEN MODAL — SELF (Change My Password)
+  // ============================================================
+  changeOwnPassword() {
+    this.modalMode = 'self';
+    this.modalTarget = null;
+    this.selfForm = { current: '', newPwd: '', confirm: '' };
+    this.resetToggles();
+    this.showModal = true;
   }
 
-  private performSelfChange(currentPassword: string, newPassword: string) {
+  // ============================================================
+  // OPEN MODAL — OTHERS (Reset User Password)
+  // ============================================================
+  resetPassword(user: any) {
+    this.modalMode = 'other';
+    this.modalTarget = user;
+    this.otherForm = { newPwd: '', confirm: '' };
+    this.resetToggles();
+    this.showModal = true;
+  }
+
+  // ============================================================
+  // CLOSE / CANCEL
+  // ============================================================
+  closeModal() {
+    this.showModal = false;
+    this.modalMode = 'self';
+    this.modalTarget = null;
+    this.selfForm = { current: '', newPwd: '', confirm: '' };
+    this.otherForm = { newPwd: '', confirm: '' };
+    this.resetToggles();
+    this.isSaving = false;
+  }
+
+  cancelModal() {
+    this.closeModal();
+  }
+
+  private resetToggles() {
+    this.showCurrentPwd = false;
+    this.showNewPwd = false;
+    this.showConfirmPwd = false;
+  }
+
+  // ============================================================
+  // TOGGLES
+  // ============================================================
+  toggleCurrentPwd() { this.showCurrentPwd = !this.showCurrentPwd; }
+  toggleNewPwd()     { this.showNewPwd     = !this.showNewPwd;     }
+  toggleConfirmPwd() { this.showConfirmPwd = !this.showConfirmPwd; }
+
+  // ============================================================
+  // SAVE — SELF
+  // ============================================================
+  async saveSelf() {
+    const current = this.selfForm.current.trim();
+    const newPwd  = this.selfForm.newPwd.trim();
+    const confirm = this.selfForm.confirm.trim();
+
+    if (!current) {
+      this.showToast('Current password required', 'warning');
+      return;
+    }
+    if (newPwd.length < 4) {
+      this.showToast('New password must be at least 4 characters', 'warning');
+      return;
+    }
+    if (newPwd !== confirm) {
+      this.showToast('New passwords do not match', 'warning');
+      return;
+    }
+
     const me = this.auth.getCurrentUser();
     if (!me) return;
 
-    // 1. Verify current password by attempting a fresh login
-    this.apiService['http'].post(`${this.apiService['apiUrl']}/login`, {
-      username: me.username,
-      password: currentPassword,
-    }).subscribe({
+    this.isSaving = true;
+
+    // 1. Verify current password
+    this.apiService.verifyCredentials(me.username, current).subscribe({
       next: () => {
-        // 2. Current password OK → update
-        this.apiService.updateUser((me as any).id ?? 1, { password: newPassword })
-          .subscribe({
-            next: () => {
-              this.showToast('Password updated — please login again', 'success');
-              setTimeout(() => this.auth.logout(), 1200);
-            },
-            error: (err) => {
-              this.showToast(
-                err?.error?.error || 'Failed to update password',
-                'danger'
-              );
-            },
-          });
+        // 2. Update password
+        this.apiService.updateUser((me as any).id ?? 1, { password: newPwd }).subscribe({
+          next: () => {
+            this.isSaving = false;
+            this.closeModal();
+            this.showToast('Password updated — please login again', 'success');
+            setTimeout(() => this.auth.logout(), 1200);
+          },
+          error: (err) => {
+            this.isSaving = false;
+            this.showToast(err?.error?.error || 'Failed to update password', 'danger');
+          },
+        });
       },
       error: () => {
+        this.isSaving = false;
         this.showToast('Current password is incorrect', 'danger');
       },
     });
   }
+
+  // ============================================================
+  // SAVE — OTHER
+  // ============================================================
+  saveOther() {
+    const newPwd  = this.otherForm.newPwd.trim();
+    const confirm = this.otherForm.confirm.trim();
+
+    if (!newPwd || newPwd.length < 4) {
+      this.showToast('Password must be at least 4 characters', 'warning');
+      return;
+    }
+    if (newPwd !== confirm) {
+      this.showToast('Passwords do not match', 'warning');
+      return;
+    }
+
+    if (!this.modalTarget) return;
+
+    this.isSaving = true;
+
+    this.apiService.updateUser(this.modalTarget.id, { password: newPwd }).subscribe({
+      next: () => {
+        this.isSaving = false;
+        const targetUsername = this.modalTarget.username;
+        this.closeModal();
+        this.showToast(`Password reset for ${targetUsername}`, 'success');
+      },
+      error: (err) => {
+        this.isSaving = false;
+        this.showToast(err?.error?.error || 'Failed to reset password', 'danger');
+      },
+    });
+  }
+
   // ============================================================
   // SEARCH
   // ============================================================
@@ -190,7 +266,7 @@ export class AdminPasswordsPage implements OnInit {
   }
 
   // ============================================================
-  // ROLE BADGES
+  // BADGES
   // ============================================================
   getRoleColor(role: string): string {
     if (role === 'admin')       return 'danger';
@@ -204,77 +280,6 @@ export class AdminPasswordsPage implements OnInit {
     if (role === 'super_admin') return 'Super Admin';
     if (role === 'clerk')       return 'Clerk';
     return role;
-  }
-
-  // ============================================================
-  // RESET PASSWORD
-  // ============================================================
-  async resetPassword(user: any) {
-    const alert = await this.alertController.create({
-      header: `Reset Password`,
-      subHeader: `${user.full_name} (@${user.username})`,
-      message: 'Enter a new password (minimum 4 characters)',
-      inputs: [
-        {
-          name: 'password',
-          type: 'password',
-          placeholder: 'New password',
-          attributes: {
-            minlength: 4,
-            autocomplete: 'new-password',
-          },
-        },
-        {
-          name: 'confirm',
-          type: 'password',
-          placeholder: 'Confirm password',
-          attributes: {
-            minlength: 4,
-            autocomplete: 'new-password',
-          },
-        },
-      ],
-      buttons: [
-        { text: 'Cancel', role: 'cancel' },
-        {
-          text: 'Reset',
-          role: 'destructive',
-          handler: (data) => {
-            const pw = (data.password || '').trim();
-            const cf = (data.confirm || '').trim();
-
-            if (!pw || pw.length < 4) {
-              this.showToast('Password must be at least 4 characters', 'warning');
-              return false;    // keep alert open
-            }
-
-            if (pw !== cf) {
-              this.showToast('Passwords do not match', 'warning');
-              return false;
-            }
-
-            this.performReset(user, pw);
-            return true;
-          },
-        },
-      ],
-    });
-
-    await alert.present();
-  }
-
-  private performReset(user: any, newPassword: string) {
-    this.apiService.updateUser(user.id, { password: newPassword }).subscribe({
-      next: () => {
-        this.showToast(`Password reset for ${user.username}`, 'success');
-      },
-      error: (err) => {
-        this.showToast(
-          err?.error?.error || 'Failed to reset password',
-          'danger'
-        );
-      },
-    });
   }
 
   // ============================================================

@@ -1,6 +1,6 @@
 // ============================================================
 // FILE: src/app/user-form/user-form.page.ts
-// PURPOSE: Create / edit a user
+// PURPOSE: Create / edit user — with show/hide password
 // ============================================================
 
 import { Component, OnInit } from '@angular/core';
@@ -26,6 +26,9 @@ export class UserFormPage implements OnInit {
   userId: number | null = null;
   isLoading = false;
   isSaving = false;
+
+  // UI state
+  showPassword = false;
 
   // Form fields
   form = {
@@ -74,15 +77,21 @@ export class UserFormPage implements OnInit {
   }
 
   // ============================================================
+  // SHOW / HIDE PASSWORD
+  // ============================================================
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  // ============================================================
   // HELPERS
   // ============================================================
   get canEditRole(): boolean {
-    // Only admin can change role/group of an existing super_admin
     return !this.isEditMode || this.auth.isAdmin();
   }
 
   get canChangeGroup(): boolean {
-    return this.auth.isAdmin();     // only admin can pick adfm_1 / adfm_2
+    return this.auth.isAdmin();
   }
 
   // ============================================================
@@ -117,7 +126,6 @@ export class UserFormPage implements OnInit {
   // SAVE
   // ============================================================
   save() {
-    // Validation
     if (!this.form.full_name.trim()) {
       this.showToast('Full name is required', 'warning');
       return;

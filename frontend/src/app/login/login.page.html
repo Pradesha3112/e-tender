@@ -32,7 +32,7 @@
       <ion-card-content>
 
         <!-- Username -->
-        <ion-item class="form-item">
+        <ion-item class="form-item" lines="none">
           <ion-icon name="person-outline" slot="start" class="input-icon"></ion-icon>
           <ion-input
             [(ngModel)]="username"
@@ -44,18 +44,43 @@
           ></ion-input>
         </ion-item>
 
-        <!-- Password -->
-        <ion-item class="form-item">
+        <!-- Password (with eye toggle) -->
+        <ion-item class="form-item" lines="none">
           <ion-icon name="lock-closed-outline" slot="start" class="input-icon"></ion-icon>
           <ion-input
             [(ngModel)]="password"
             placeholder="Password"
             label="Password"
             labelPlacement="floating"
-            type="password"
+            [type]="showPassword ? 'text' : 'password'"
             autocomplete="current-password"
             (keyup.enter)="login()"
           ></ion-input>
+          <ion-button
+            fill="clear"
+            slot="end"
+            class="eye-btn"
+            (click)="togglePassword()"
+            [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
+            <ion-icon
+              [name]="showPassword ? 'eye-off-outline' : 'eye-outline'">
+            </ion-icon>
+          </ion-button>
+        </ion-item>
+
+        <!-- Dummy Role Dropdown (cosmetic only) -->
+        <ion-item class="form-item" lines="none">
+          <ion-icon name="shield-checkmark-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-select
+            [(ngModel)]="selectedRole"
+            label="Login As"
+            labelPlacement="floating"
+            interface="action-sheet"
+            class="role-select">
+            <ion-select-option *ngFor="let r of roles" [value]="r.value">
+              {{ r.label }}
+            </ion-select-option>
+          </ion-select>
         </ion-item>
 
         <!-- Error Message -->
@@ -76,7 +101,7 @@
           {{ isLoading ? 'Logging in...' : 'Login' }}
         </ion-button>
 
-        <!-- Credentials Hint (dev only — remove in production) -->
+        <!-- Credentials Hint -->
         <div class="credentials-hint">
           <small>
             <ion-icon name="information-circle-outline"></ion-icon>
