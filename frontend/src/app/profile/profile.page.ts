@@ -1,99 +1,84 @@
+// ============================================================
+// FILE: src/app/profile/profile.page.ts
+// PURPOSE: Profile — role-aware (admin gets password tools)
+// ============================================================
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule, FormsModule]
+  imports: [CommonModule, IonicModule, RouterModule, FormsModule],
 })
 export class ProfilePage implements OnInit {
-  isDarkMode: boolean = false;
-  stats = {
-    totalBills: 42,
-    totalAmount: '₹12,450',
-    thisMonth: 8
-  };
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    public auth: AuthService,
+  ) {
     console.log('🚆 Railway Profile Page initialized');
-    const savedTheme = localStorage.getItem('app-theme');
-    this.isDarkMode = savedTheme === 'dark';
   }
 
-  ngOnInit() {
-    // Load user data
-    this.loadUserData();
+  ngOnInit() {}
+
+  // ============================================================
+  // USER INFO
+  // ============================================================
+  get user() {
+    return this.auth.getCurrentUser();
   }
 
-  loadUserData() {
-    // In a real app, this would load from a service
-    console.log('📋 Loading user data...');
-  }
-
-  toggleTheme() {
-    console.log('🌓 Theme toggled:', this.isDarkMode);
-    if (this.isDarkMode) {
-      document.documentElement.classList.add('dark-theme');
-      localStorage.setItem('app-theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark-theme');
-      localStorage.setItem('app-theme', 'light');
+  get roleLabel(): string {
+    const r = this.auth.getRole();
+    if (r === 'admin')       return 'ADMIN';
+    if (r === 'super_admin') {
+      return this.auth.getCategoryGroup() === 'adfm_1'
+        ? 'ADFM/I — Rengasamy'
+        : 'ADFM/II — Gopinath';
     }
+    if (r === 'clerk')       return 'CLERK';
+    return '—';
   }
 
-  editProfile() {
-    console.log('🟢 Edit Profile clicked');
-    // Navigate to edit profile page
-    // this.router.navigateByUrl('/edit-profile');
+  get groupLabel(): string {
+    const g = this.auth.getCategoryGroup();
+    if (g === 'adfm_1') return 'ADFM/I Group';
+    if (g === 'adfm_2') return 'ADFM/II Group';
+    return 'All Categories';
   }
 
-  changePassword() {
-    console.log('🟢 Change Password clicked');
-    // Navigate to change password page
-    // this.router.navigateByUrl('/change-password');
+  // ============================================================
+  // PERMISSIONS
+  // ============================================================
+  get canManageUsers(): boolean {
+    // admin + super_admin
+    return this.auth.canManageUsers();
   }
 
-  goToHelp() {
-    console.log('🟢 Help & Support clicked');
-    // Navigate to help page
-    // this.router.navigateByUrl('/help');
+  get canChangePassword(): boolean {
+    // ONLY admin
+    return this.auth.isAdmin();
   }
 
-  goToAbout() {
-    console.log('🟢 About clicked');
-    // Navigate to about page
-    // this.router.navigateByUrl('/about');
+  // ============================================================
+  // ACTIONS
+  // ============================================================
+  goToUsers() {
+    this.router.navigateByUrl('/users');
+  }
+
+  goToChangePassword() {
+    this.router.navigateByUrl('/admin-passwords');
   }
 
   logout() {
-    console.log('🚪 Logging out...');
-    // Clear local storage
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('user_data');
-    localStorage.removeItem('app-theme');
-    
-    // Navigate to login page
-    this.router.navigateByUrl('/login');
-  }
-
-  goToDashboard() {
-    this.router.navigateByUrl('/dashboard');
-  }
-
-  goToBills() {
-    this.router.navigateByUrl('/bills');
-  }
-
-  goToUpload() {
-    this.router.navigateByUrl('/upload');
-  }
-
-  goToExport() {
-    this.router.navigateByUrl('/export');
+    this.auth.logout();
   }
 }

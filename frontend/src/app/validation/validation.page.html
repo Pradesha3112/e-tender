@@ -1,36 +1,63 @@
 <!-- ============================================ -->
-<!-- FILE: validation.page.html                   -->
-<!-- RAILWAY E-BILLING SYSTEM - VALIDATION PAGE  -->
+<!-- FILE: src/app/validation/validation.page.html -->
+<!-- REVIEW + CATEGORY + SAVE (External CSS)        -->
 <!-- ============================================ -->
 
 <ion-header>
   <ion-toolbar class="validation-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button></ion-back-button>
+      <ion-back-button defaultHref="/upload"></ion-back-button>
     </ion-buttons>
     <ion-title>
       <ion-icon name="checkmark-circle-outline" class="header-icon"></ion-icon>
-      Validate Bill
+   Engineering Management System
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="validation-content">
-
+<ion-content class="validation-content ion-padding">
   <div class="validation-container">
-    
+
     <!-- HEADER -->
     <div class="validation-header">
       <h2>📋 Review Bill</h2>
       <p>Please check the extracted data</p>
     </div>
 
+    <!-- CATEGORY CARD -->
+    <div class="category-card">
+      <div class="category-header">
+        <ion-icon name="pricetag-outline"></ion-icon>
+        Bill Category
+      </div>
+
+      <div *ngIf="isLoadingCategories" class="category-loading">
+        <ion-spinner name="dots"></ion-spinner>
+      </div>
+
+      <ion-item *ngIf="!isLoadingCategories" lines="none" class="category-select-item">
+        <ion-select
+          [(ngModel)]="selectedCategory"
+          placeholder="Select category"
+          interface="action-sheet">
+          <ion-select-option *ngFor="let cat of categories" [value]="cat">
+            {{ cat }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <p class="category-hint">
+        {{ allowAllCategories
+            ? 'Admin: any of the 12 categories.'
+            : 'Only categories you can manage.' }}
+      </p>
+    </div>
+
     <!-- DATA CARD -->
-    <ion-card class="data-card">
-      
+    <div class="data-card">
+
       <!-- VIEW MODE -->
       <ng-container *ngIf="!isEditing">
-        
         <div class="field-group">
           <div class="field-label">Bill Number</div>
           <div class="field-value highlight">{{ billData?.bill_number || 'Not found' }}</div>
@@ -66,7 +93,6 @@
           <div class="field-value total-amount">₹{{ billData?.total || '0' }}</div>
         </div>
 
-        <!-- ITEMS -->
         <div *ngIf="billData?.items?.length > 0">
           <div class="field-label" style="margin-top: 12px;">Items</div>
           <div class="items-list">
@@ -76,65 +102,60 @@
             </div>
           </div>
         </div>
-
-       
       </ng-container>
 
       <!-- EDIT MODE -->
       <ng-container *ngIf="isEditing">
-        
         <div class="field-group">
           <div class="field-label">Bill Number</div>
-          <input class="field-value editable" [(ngModel)]="editData.bill_number" placeholder="Enter bill number" />
+          <input class="field-value editable" [(ngModel)]="editData.bill_number" />
         </div>
-
         <div class="field-group">
           <div class="field-label">Vendor</div>
-          <input class="field-value editable" [(ngModel)]="editData.vendor" placeholder="Enter vendor name" />
+          <input class="field-value editable" [(ngModel)]="editData.vendor" />
         </div>
-
         <div class="field-group">
           <div class="field-label">Date</div>
-          <input class="field-value editable" [(ngModel)]="editData.date" placeholder="Enter date" />
+          <input class="field-value editable" [(ngModel)]="editData.date" />
         </div>
-
         <div class="field-group">
           <div class="field-label">GSTIN</div>
-          <input class="field-value editable" [(ngModel)]="editData.gstin" placeholder="Enter GSTIN" />
+          <input class="field-value editable" [(ngModel)]="editData.gstin" />
         </div>
-
         <div class="field-group">
           <div class="field-label">Subtotal</div>
-          <input class="field-value editable" [(ngModel)]="editData.subtotal" placeholder="Enter subtotal" />
+          <input class="field-value editable" [(ngModel)]="editData.subtotal" />
         </div>
-
         <div class="field-group">
           <div class="field-label">Tax</div>
-          <input class="field-value editable" [(ngModel)]="editData.tax" placeholder="Enter tax" />
+          <input class="field-value editable" [(ngModel)]="editData.tax" />
         </div>
-
         <div class="field-group">
           <div class="field-label">Total</div>
-          <input class="field-value editable" [(ngModel)]="editData.total" placeholder="Enter total" />
+          <input class="field-value editable" [(ngModel)]="editData.total" />
         </div>
-
       </ng-container>
 
-    </ion-card>
+    </div>
 
-    <!-- ACTIONS - VIEW MODE -->
+    <!-- ACTIONS — VIEW -->
     <ng-container *ngIf="!isEditing">
       <div class="button-group">
-        <ion-button expand="block" (click)="confirmBill()" [disabled]="isSaving" class="confirm-btn">
-          <ion-icon name="checkmark-circle" slot="start"></ion-icon>
+        <ion-button
+          expand="block"
+          (click)="confirmBill()"
+          [disabled]="isSaving || !selectedCategory"
+          class="confirm-btn">
+          <ion-spinner *ngIf="isSaving" name="crescent" slot="start"></ion-spinner>
+          <ion-icon *ngIf="!isSaving" name="checkmark-circle" slot="start"></ion-icon>
           {{ isSaving ? 'Saving...' : 'Confirm & Save' }}
         </ion-button>
-        
+
         <ion-button expand="block" fill="outline" (click)="retakePhoto()" class="retake-btn">
           <ion-icon name="camera" slot="start"></ion-icon>
           Retake Photo
         </ion-button>
-        
+
         <ion-button expand="block" fill="clear" (click)="toggleEdit()" class="edit-btn">
           <ion-icon name="create-outline" slot="start"></ion-icon>
           Edit Data Manually
@@ -142,14 +163,13 @@
       </div>
     </ng-container>
 
-    <!-- ACTIONS - EDIT MODE -->
+    <!-- ACTIONS — EDIT -->
     <ng-container *ngIf="isEditing">
       <div class="button-group">
         <ion-button expand="block" (click)="saveEdits()" class="save-btn">
           <ion-icon name="save-outline" slot="start"></ion-icon>
           Save Changes
         </ion-button>
-        
         <ion-button expand="block" fill="outline" (click)="toggleEdit()" class="cancel-btn">
           <ion-icon name="close-outline" slot="start"></ion-icon>
           Cancel Edit

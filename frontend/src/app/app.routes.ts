@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
 
 export const routes: Routes = [
   {
@@ -26,6 +27,28 @@ export const routes: Routes = [
     loadComponent: () => import('./bills/bills.page').then(m => m.BillsPage),
     canActivate: [AuthGuard]
   },
+    // USER MANAGEMENT — admin + super_admin only
+  {
+    path: 'users',
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['admin', 'super_admin'] },
+    loadComponent: () =>
+      import('./users/users.page').then(m => m.UsersPage),
+  },
+  {
+    path: 'user-form',
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['admin', 'super_admin'] },
+    loadComponent: () =>
+      import('./user-form/user-form.page').then(m => m.UserFormPage),
+  },
+  {
+    path: 'user-form/:id',
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['admin', 'super_admin'] },
+    loadComponent: () =>
+      import('./user-form/user-form.page').then(m => m.UserFormPage),
+  },
   {
     path: 'profile',
     loadComponent: () => import('./profile/profile.page').then(m => m.ProfilePage),
@@ -40,6 +63,14 @@ export const routes: Routes = [
     path: 'bill-detail/:id',
     loadComponent: () => import('./bill-detail/bill-detail.page').then(m => m.BillDetailPage),
     canActivate: [AuthGuard]
+  },  // ADMIN-ONLY — Password reset
+  {
+    path: 'admin-passwords',
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['admin'] },
+    loadComponent: () =>
+      import('./admin-passwords/admin-passwords.page')
+        .then(m => m.AdminPasswordsPage),
   },
   {
     path: 'validation',

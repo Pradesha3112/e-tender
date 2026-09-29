@@ -1,13 +1,13 @@
 <!-- ============================================ -->
-<!-- FILE: login.page.html                       -->
-<!-- RAILWAY E-BILLING SYSTEM - LOGIN PAGE      -->
+<!-- FILE: src/app/login/login.page.html           -->
+<!-- RAILWAY E-BILLING - LOGIN PAGE                -->
 <!-- ============================================ -->
 
 <ion-header>
   <ion-toolbar class="login-toolbar">
     <ion-title>
       <ion-icon name="train-outline" class="header-icon"></ion-icon>
-   Engineering Management System
+      Engineering Management System
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -15,7 +15,7 @@
 <ion-content class="login-content">
 
   <div class="login-container">
-    
+
     <!-- LOGIN HEADER -->
     <div class="login-header">
       <div class="logo-container">
@@ -30,27 +30,31 @@
     <!-- LOGIN FORM -->
     <ion-card class="login-card">
       <ion-card-content>
-        
+
         <!-- Username -->
         <ion-item class="form-item">
           <ion-icon name="person-outline" slot="start" class="input-icon"></ion-icon>
-          <ion-input 
-            [(ngModel)]="username" 
+          <ion-input
+            [(ngModel)]="username"
             placeholder="Username"
             label="Username"
             labelPlacement="floating"
+            autocomplete="username"
+            (keyup.enter)="login()"
           ></ion-input>
         </ion-item>
 
         <!-- Password -->
         <ion-item class="form-item">
           <ion-icon name="lock-closed-outline" slot="start" class="input-icon"></ion-icon>
-          <ion-input 
-            [(ngModel)]="password" 
+          <ion-input
+            [(ngModel)]="password"
             placeholder="Password"
             label="Password"
             labelPlacement="floating"
             type="password"
+            autocomplete="current-password"
+            (keyup.enter)="login()"
           ></ion-input>
         </ion-item>
 
@@ -61,38 +65,33 @@
         </div>
 
         <!-- Login Button -->
-        <ion-button 
-          expand="block" 
-          (click)="login()" 
+        <ion-button
+          expand="block"
+          (click)="login()"
           [disabled]="isLoading"
           class="login-btn"
         >
-          <ion-icon name="log-in-outline" slot="start"></ion-icon>
+          <ion-spinner *ngIf="isLoading" name="crescent" slot="start"></ion-spinner>
+          <ion-icon *ngIf="!isLoading" name="log-in-outline" slot="start"></ion-icon>
           {{ isLoading ? 'Logging in...' : 'Login' }}
         </ion-button>
 
-        <!-- Credentials Hint -->
+        <!-- Credentials Hint (dev only — remove in production) -->
         <div class="credentials-hint">
-          <ion-text color="medium">
-            <small>
-              <ion-icon name="information-circle-outline"></ion-icon>
-              Username: admin | Password: admin
-            </small>
-          </ion-text>
+          <small>
+            <ion-icon name="information-circle-outline"></ion-icon>
+            Default admin: <strong>admin / admin</strong>
+            &nbsp;·&nbsp;
+            <a (click)="fillAdmin()">fill</a>
+          </small>
         </div>
 
       </ion-card-content>
     </ion-card>
 
-    <!-- Pendrive Status -->
-    <div class="pendrive-status">
-      <ion-icon name="usb-outline"></ion-icon>
-      <span>✅ Pendrive authenticated</span>
-    </div>
-
     <!-- Version -->
     <div class="version-info">
-      <span>Engineering Management System v2.0</span>
+      <span>Engineering Management System v3.0 (RBAC)</span>
     </div>
 
   </div>

@@ -1,22 +1,29 @@
 /* ============================================ */
 /* FILE: bill-detail.page.scss                  */
-/* RAILWAY E-BILLING SYSTEM - BILL DETAIL STYLES */
+/* RAILWAY E-BILLING - BILL DETAIL (Blue Theme) */
 /* ============================================ */
 
 /* ============================================ */
 /*           GLOBAL STYLES                      */
 /* ============================================ */
 
+:host, :host * {
+  font-family: "Times New Roman", "Times", "Georgia", "Cambria",
+               "Garamond", serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 .detail-content {
-  --background: #f5f7fa;
+  --background: #eef2f7;
 }
 
 /* ============================================ */
-/*           TOOLBAR - RAILWAY RED             */
+/*           TOOLBAR — RAILWAY BLUE             */
 /* ============================================ */
 
 .detail-toolbar {
-  --background: #cc0000 !important;
+  --background: linear-gradient(135deg, #1a3a6c, #2c5282) !important;
   --color: white !important;
 }
 
@@ -36,12 +43,13 @@
 .detail-toolbar ion-title {
   display: flex;
   align-items: center;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.4px;
   color: white !important;
 }
 
 /* ============================================ */
-/*           LOADING                           */
+/*           LOADING                            */
 /* ============================================ */
 
 .loading-container {
@@ -53,19 +61,20 @@
 }
 
 .loading-container ion-spinner {
-  --color: #cc0000;
+  --color: #2563eb;
   width: 48px;
   height: 48px;
 }
 
 .loading-container p {
   margin-top: 16px;
-  color: #999;
+  color: #64748b;
   font-size: 14px;
+  font-style: italic;
 }
 
 /* ============================================ */
-/*           CONTAINER                         */
+/*           CONTAINER                          */
 /* ============================================ */
 
 .detail-container {
@@ -75,7 +84,7 @@
 }
 
 /* ============================================ */
-/*           STATUS BADGE                      */
+/*           STATUS BADGE                       */
 /* ============================================ */
 
 .status-badge {
@@ -89,21 +98,22 @@
   padding: 6px 16px;
   border-radius: 20px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
 }
 
 /* ============================================ */
-/*           BILL HEADER CARD                  */
+/*           BILL HEADER CARD                   */
 /* ============================================ */
 
 .bill-header-card {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(26, 58, 108, 0.08);
   margin-bottom: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  border-left: 4px solid #2563eb;
 }
 
 .bill-header-card ion-card-content {
@@ -116,71 +126,74 @@
   align-items: flex-start;
   margin-bottom: 12px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #f0f2f5;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .bill-number-section .label {
   font-size: 11px;
-  font-weight: 600;
-  color: #999;
+  font-weight: 700;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 
 .bill-number-section h2 {
   font-size: 20px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #1e293b;
   margin: 2px 0 0;
+  letter-spacing: 0.2px;
 }
 
 .bill-date-section .label {
   font-size: 11px;
-  font-weight: 600;
-  color: #999;
+  font-weight: 700;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 
 .bill-date-section p {
   font-size: 14px;
   font-weight: 500;
-  color: #1a1a2e;
+  color: #1e293b;
   margin: 2px 0 0;
   text-align: right;
 }
 
 .bill-vendor .label {
   font-size: 11px;
-  font-weight: 600;
-  color: #999;
+  font-weight: 700;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 
 .bill-vendor h3 {
   font-size: 18px;
-  font-weight: 600;
-  color: #1a1a2e;
+  font-weight: 700;
+  color: #1a3a6c;
   margin: 2px 0 4px;
+  letter-spacing: 0.2px;
 }
 
 .bill-vendor .gstin {
   font-size: 13px;
-  color: #999;
+  color: #64748b;
   margin: 0;
+  font-style: italic;
 }
 
 /* ============================================ */
-/*           ITEMS CARD                        */
+/*           ITEMS CARD                         */
 /* ============================================ */
 
 .items-card {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(26, 58, 108, 0.08);
   margin-bottom: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .items-card ion-card-header {
@@ -190,12 +203,13 @@
 .items-card ion-card-title {
   font-size: 18px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #1a3a6c;
 }
 
 .items-card ion-card-subtitle {
   font-size: 13px;
-  color: #999;
+  color: #64748b;
+  font-style: italic;
 }
 
 .items-card ion-card-content {
@@ -210,7 +224,7 @@
   display: flex;
   align-items: center;
   padding: 10px 0;
-  border-bottom: 1px solid #f0f2f5;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .item-row:last-child {
@@ -221,13 +235,13 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #f8f9fc;
+  background: #eff6ff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
-  font-weight: 600;
-  color: #999;
+  font-weight: 700;
+  color: #2563eb;
   flex-shrink: 0;
   margin-right: 12px;
 }
@@ -239,8 +253,8 @@
 
 .item-details .item-name {
   font-size: 14px;
-  font-weight: 500;
-  color: #1a1a2e;
+  font-weight: 600;
+  color: #1e293b;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -251,28 +265,30 @@
   gap: 12px;
   margin-top: 2px;
   font-size: 12px;
-  color: #999;
+  color: #64748b;
 }
 
 .item-details .item-meta .item-qty {
-  background: #f8f9fc;
+  background: #f1f5f9;
   padding: 1px 8px;
   border-radius: 4px;
+  color: #1e293b;
+  font-weight: 600;
 }
 
 .item-total {
   font-size: 14px;
-  font-weight: 600;
-  color: #1a1a2e;
+  font-weight: 700;
+  color: #1a3a6c;
   flex-shrink: 0;
 }
 
 /* ============================================ */
-/*           SUMMARY                           */
+/*           SUMMARY                            */
 /* ============================================ */
 
 .summary {
-  border-top: 2px solid #f0f2f5;
+  border-top: 2px solid #e2e8f0;
   padding-top: 12px;
   margin-top: 4px;
 }
@@ -285,42 +301,45 @@
 }
 
 .summary-row .summary-label {
-  color: #999;
+  color: #64748b;
+  font-style: italic;
 }
 
 .summary-row .summary-value {
-  color: #1a1a2e;
-  font-weight: 500;
+  color: #1e293b;
+  font-weight: 600;
 }
 
 .summary-row.total {
   padding-top: 8px;
-  border-top: 1px solid #f0f2f5;
+  border-top: 1px solid #e2e8f0;
   margin-top: 4px;
 }
 
 .summary-row.total .summary-label {
   font-size: 16px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #1e293b;
+  font-style: normal;
 }
 
 .summary-row.total .summary-value {
   font-size: 20px;
   font-weight: 700;
-  color: #2e7d32;
+  color: #2563eb;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ============================================ */
-/*           INFO CARD                         */
+/*           INFO CARD                          */
 /* ============================================ */
 
 .info-card {
   background: white;
   border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(26, 58, 108, 0.08);
   margin-bottom: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(226, 232, 240, 0.8);
 }
 
 .info-card ion-card-content {
@@ -331,7 +350,7 @@
   display: flex;
   justify-content: space-between;
   padding: 6px 0;
-  border-bottom: 1px solid #f0f2f5;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .info-row:last-child {
@@ -340,22 +359,23 @@
 
 .info-row .info-label {
   font-size: 12px;
-  font-weight: 600;
-  color: #999;
+  font-weight: 700;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
 }
 
 .info-row .info-value {
   font-size: 14px;
-  color: #1a1a2e;
+  color: #1e293b;
   text-align: right;
   max-width: 60%;
   word-break: break-word;
+  font-weight: 500;
 }
 
 /* ============================================ */
-/*           ACTION BUTTONS                    */
+/*           ACTION BUTTONS — ALL BLUE          */
 /* ============================================ */
 
 .action-buttons {
@@ -369,9 +389,10 @@
   --border-radius: 14px;
   height: 48px;
   font-size: 15px;
-  font-weight: 600;
-  --background: #cc0000 !important;
-  --box-shadow: 0 4px 16px rgba(204, 0, 0, 0.35) !important;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  --background: linear-gradient(135deg, #1a3a6c, #2563eb) !important;
+  --box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35) !important;
   --color: white !important;
 }
 
@@ -379,22 +400,26 @@
   --border-radius: 14px;
   height: 48px;
   font-size: 15px;
-  font-weight: 600;
-  --border-color: #cc0000 !important;
-  --color: #cc0000 !important;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  --border-color: #2563eb !important;
+  --color: #2563eb !important;
+  --border-width: 2px;
 }
 
 .delete-btn {
   --border-radius: 14px;
   height: 48px;
   font-size: 15px;
-  font-weight: 600;
-  --border-color: #d32f2f !important;
-  --color: #d32f2f !important;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  --border-color: #dc2626 !important;
+  --color: #dc2626 !important;
+  --border-width: 2px;
 }
 
 /* ============================================ */
-/*           EMPTY STATE                       */
+/*           EMPTY STATE                        */
 /* ============================================ */
 
 .empty-state {
@@ -408,19 +433,20 @@
 
 .empty-state .empty-icon {
   font-size: 80px;
-  color: #ccc;
+  color: #cbd5e1;
 }
 
 .empty-state h3 {
   font-size: 22px;
-  color: #1a1a2e;
+  color: #1e293b;
   margin: 16px 0 8px;
   font-weight: 700;
 }
 
 .empty-state p {
-  color: #999;
+  color: #64748b;
   font-size: 14px;
+  font-style: italic;
   margin: 0 0 24px;
 }
 
@@ -428,15 +454,16 @@
   --border-radius: 14px;
   --padding-start: 24px;
   --padding-end: 24px;
-  --background: #cc0000 !important;
-  --box-shadow: 0 4px 16px rgba(204, 0, 0, 0.35) !important;
+  --background: linear-gradient(135deg, #1a3a6c, #2563eb) !important;
+  --box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35) !important;
   height: 48px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.4px;
   --color: white !important;
 }
 
 /* ============================================ */
-/*           RESPONSIVE                        */
+/*           RESPONSIVE                         */
 /* ============================================ */
 
 @media (max-width: 480px) {
@@ -477,122 +504,63 @@
 }
 
 /* ============================================ */
-/*           DARK THEME                        */
+/*           DARK THEME                         */
 /* ============================================ */
 
 .dark-theme {
   .detail-content {
-    --background: #1a1a2e;
+    --background: #0f172a;
   }
 
-  .bill-header-card {
-    background: #1e1e3a;
-    border-color: rgba(255, 255, 255, 0.06);
-  }
-
-  .bill-number-section h2 {
-    color: #ffffff;
-  }
-
-  .bill-date-section p {
-    color: #ffffff;
-  }
-
-  .bill-vendor h3 {
-    color: #ffffff;
-  }
-
-  .bill-vendor .gstin {
-    color: #888;
-  }
-
-  .items-card {
-    background: #1e1e3a;
-    border-color: rgba(255, 255, 255, 0.06);
-  }
-
-  .items-card ion-card-title {
-    color: #ffffff;
-  }
-
-  .items-card ion-card-subtitle {
-    color: #888;
-  }
-
-  .item-row {
-    border-bottom-color: #333355;
-  }
-
-  .item-details .item-name {
-    color: #ffffff;
-  }
-
-  .item-details .item-meta {
-    color: #888;
-  }
-
-  .item-details .item-meta .item-qty {
-    background: #2a2a4a;
-  }
-
-  .item-total {
-    color: #ffffff;
-  }
-
-  .summary {
-    border-top-color: #333355;
-  }
-
-  .summary-row .summary-label {
-    color: #888;
-  }
-
-  .summary-row .summary-value {
-    color: #ffffff;
-  }
-
-  .summary-row.total {
-    border-top-color: #333355;
-  }
-
-  .summary-row.total .summary-label {
-    color: #ffffff;
-  }
-
+  .bill-header-card,
+  .items-card,
   .info-card {
-    background: #1e1e3a;
+    background: #1e293b;
     border-color: rgba(255, 255, 255, 0.06);
   }
 
-  .info-row {
-    border-bottom-color: #333355;
-  }
-
-  .info-row .info-label {
-    color: #888;
-  }
-
-  .info-row .info-value {
-    color: #ffffff;
-  }
-
+  .bill-number-section h2,
+  .bill-date-section p,
+  .bill-vendor h3,
+  .item-details .item-name,
+  .item-total,
+  .summary-row .summary-value,
+  .summary-row.total .summary-label,
+  .info-row .info-value,
   .empty-state h3 {
     color: #ffffff;
   }
 
+  .bill-vendor .gstin,
+  .item-details .item-meta,
+  .summary-row .summary-label,
+  .info-row .info-label,
+  .empty-state p {
+    color: #94a3b8;
+  }
+
+  .item-row,
+  .summary,
+  .summary-row.total,
+  .info-row {
+    border-color: #334155;
+  }
+
+  .item-sno {
+    background: #334155;
+    color: #60a5fa;
+  }
+
+  .item-details .item-meta .item-qty {
+    background: #334155;
+    color: #ffffff;
+  }
+
   .loading-container ion-spinner {
-    --color: #ff6b6b;
+    --color: #60a5fa;
   }
 
-  .status-badge ion-badge[color="success"] {
-    --background: #2e7d32;
-  }
-
-  .status-badge ion-badge[color="warning"] {
-    --background: #e65100;
-  }
-
-  .status-badge ion-badge[color="medium"] {
-    --background: #555;
+  .summary-row.total .summary-value {
+    color: #60a5fa;
   }
 }

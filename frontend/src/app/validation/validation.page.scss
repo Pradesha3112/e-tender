@@ -1,22 +1,21 @@
 /* ============================================ */
 /* FILE: validation.page.scss                   */
-/* RAILWAY E-BILLING SYSTEM - VALIDATION STYLES */
+/* RAILWAY E-BILLING - VALIDATION (Blue Theme)  */
 /* ============================================ */
 
-/* ============================================ */
-/*           GLOBAL STYLES                      */
-/* ============================================ */
-
-.validation-content {
-  --background: #f5f7fa;
+:host, :host * {
+  font-family: "Times New Roman", "Times", "Georgia", "Cambria",
+               "Garamond", serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ============================================ */
-/*           TOOLBAR - RAILWAY RED             */
+/*           TOOLBAR — BLUE                     */
 /* ============================================ */
 
 .validation-toolbar {
-  --background: #cc0000 !important;
+  --background: linear-gradient(135deg, #1a3a6c, #2c5282) !important;
   --color: white !important;
 }
 
@@ -32,13 +31,18 @@
 .validation-toolbar ion-title {
   display: flex;
   align-items: center;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.4px;
   color: white !important;
 }
 
 /* ============================================ */
-/*           CONTAINER                         */
+/*           PAGE / CONTAINER                   */
 /* ============================================ */
+
+.validation-content {
+  --background: #eef2f7;
+}
 
 .validation-container {
   max-width: 500px;
@@ -47,7 +51,7 @@
 }
 
 /* ============================================ */
-/*           HEADER                            */
+/*           HEADER                             */
 /* ============================================ */
 
 .validation-header {
@@ -58,27 +62,88 @@
 .validation-header h2 {
   font-size: 24px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #1a3a6c;
   margin: 0 0 4px;
+  letter-spacing: 0.3px;
 }
 
 .validation-header p {
-  color: #999;
+  color: #64748b;
   font-size: 14px;
+  font-style: italic;
   margin: 0;
 }
 
 /* ============================================ */
-/*           DATA CARD                         */
+/*           CATEGORY CARD                      */
+/* ============================================ */
+
+.category-card {
+  background: white;
+  border-radius: 20px;
+  padding: 14px 16px 12px;
+  box-shadow: 0 4px 20px rgba(26, 58, 108, 0.08);
+  margin-bottom: 16px;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #2563eb;
+}
+
+.category-header {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a3a6c;
+  letter-spacing: 0.4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.category-header ion-icon {
+  color: #2563eb;
+  font-size: 16px;
+}
+
+.category-loading {
+  padding: 16px;
+  text-align: center;
+}
+
+.category-loading ion-spinner {
+  --color: #2563eb;
+}
+
+.category-select-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  --min-height: 44px;
+}
+
+.category-select-item ion-select {
+  --padding-start: 0;
+  font-size: 14px;
+  color: #1e293b;
+}
+
+.category-hint {
+  font-size: 11px;
+  color: #64748b;
+  font-style: italic;
+  margin: 6px 0 0;
+}
+
+/* ============================================ */
+/*           DATA CARD                          */
 /* ============================================ */
 
 .data-card {
   background: white;
   border-radius: 20px;
   padding: 20px 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(26, 58, 108, 0.08);
   margin-bottom: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
 }
 
 .data-card .field-group {
@@ -91,51 +156,57 @@
 
 .data-card .field-label {
   font-size: 11px;
-  font-weight: 600;
-  color: #999;
+  font-weight: 700;
+  color: #64748b;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
   margin-bottom: 2px;
 }
 
 .data-card .field-value {
   font-size: 16px;
-  color: #1a1a2e;
+  color: #1e293b;
   font-weight: 500;
   padding: 4px 0;
+  line-height: 1.4;
 }
 
 .data-card .field-value.highlight {
   font-size: 18px;
-  color: #cc0000;
+  color: #1a3a6c;
   font-weight: 700;
+  letter-spacing: 0.2px;
 }
 
 .data-card .field-value.total-amount {
   font-size: 22px;
-  color: #2e7d32;
+  color: #2563eb;
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }
 
 .data-card .field-value.editable {
-  background: #f8f9fc;
+  background: #f1f5f9;
   border-radius: 8px;
   padding: 10px 14px;
-  border: 2px solid #e8ecf1;
-  transition: all 0.3s;
+  border: 2px solid #e2e8f0;
+  transition: all 0.25s;
   width: 100%;
   font-size: 14px;
-  color: #1a1a2e;
+  color: #1e293b;
+  font-family: inherit;
+  box-sizing: border-box;
 }
 
 .data-card .field-value.editable:focus {
-  border-color: #cc0000;
+  border-color: #2563eb;
   background: white;
   outline: none;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 /* ============================================ */
-/*           ITEMS LIST                        */
+/*           ITEMS LIST                         */
 /* ============================================ */
 
 .items-list {
@@ -146,7 +217,7 @@
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  border-bottom: 1px solid #f0f2f5;
+  border-bottom: 1px solid #e2e8f0;
   font-size: 14px;
 }
 
@@ -155,18 +226,20 @@
 }
 
 .item-name {
-  color: #333;
+  color: #1e293b;
   flex: 1;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .item-detail {
-  color: #666;
-  font-weight: 400;
+  color: #64748b;
+  font-weight: 500;
+  font-style: italic;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ============================================ */
-/*           BUTTON GROUP                      */
+/*           BUTTON GROUP                       */
 /* ============================================ */
 
 .button-group {
@@ -179,147 +252,103 @@
   --border-radius: 14px;
   height: 48px;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.4px;
 }
 
-/* CONFIRM BUTTON - GREEN */
+/* CONFIRM — BLUE GRADIENT (primary action) */
 .confirm-btn {
-  --background: #2e7d32 !important;
-  --box-shadow: 0 4px 16px rgba(46, 125, 50, 0.35) !important;
+  --background: linear-gradient(135deg, #1a3a6c, #2563eb) !important;
+  --box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35) !important;
   --color: white !important;
 }
 
 .confirm-btn:disabled {
-  --background: #cccccc !important;
+  --background: #cbd5e1 !important;
   --box-shadow: none !important;
+  --color: #64748b !important;
 }
 
-/* RETAKE BUTTON - RED OUTLINE */
+/* RETAKE — BLUE OUTLINE */
 .retake-btn {
-  --border-color: #cc0000 !important;
-  --color: #cc0000 !important;
+  --border-color: #2563eb !important;
+  --color: #2563eb !important;
+  --border-width: 2px;
 }
 
-/* EDIT BUTTON - ORANGE */
+/* EDIT — ORANGE (semantic for "edit") */
 .edit-btn {
-  --color: #e65100 !important;
+  --color: #ea580c !important;
 }
 
-/* SAVE BUTTON - RED */
+/* SAVE — BLUE GRADIENT */
 .save-btn {
-  --background: #cc0000 !important;
-  --box-shadow: 0 4px 16px rgba(204, 0, 0, 0.35) !important;
+  --background: linear-gradient(135deg, #1a3a6c, #2563eb) !important;
+  --box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35) !important;
   --color: white !important;
 }
 
-/* CANCEL BUTTON - RED OUTLINE */
+/* CANCEL — BLUE OUTLINE */
 .cancel-btn {
-  --border-color: #cc0000 !important;
-  --color: #cc0000 !important;
+  --border-color: #2563eb !important;
+  --color: #2563eb !important;
+  --border-width: 2px;
 }
 
 /* ============================================ */
-/*           RESPONSIVE                        */
+/*           RESPONSIVE                         */
 /* ============================================ */
 
 @media (max-width: 480px) {
-  .validation-container {
-    padding: 0 4px;
-  }
-  
-  .data-card {
-    padding: 16px 12px;
-  }
-  
-  .data-card .field-value.total-amount {
-    font-size: 18px;
-  }
-  
-  .data-card .field-value.highlight {
-    font-size: 16px;
-  }
+  .validation-container { padding: 0 4px; }
+
+  .data-card { padding: 16px 12px; }
+
+  .data-card .field-value.total-amount { font-size: 18px; }
+
+  .data-card .field-value.highlight { font-size: 16px; }
 }
 
 /* ============================================ */
-/*           DARK THEME                        */
+/*           DARK THEME                         */
 /* ============================================ */
 
 .dark-theme {
-  .validation-content {
-    --background: #1a1a2e;
+  .validation-content { --background: #0f172a; }
+
+  .validation-header h2 { color: #ffffff; }
+  .validation-header p  { color: #94a3b8; }
+
+  .category-card {
+    background: #1e293b;
+    border-color: #334155;
   }
 
-  .validation-header h2 {
-    color: #ffffff;
-  }
-
-  .validation-header p {
-    color: #888;
-  }
+  .category-header { color: #ffffff; }
+  .category-hint   { color: #94a3b8; }
 
   .data-card {
-    background: #1e1e3a;
-    border-color: rgba(255, 255, 255, 0.06);
+    background: #1e293b;
+    border-color: #334155;
   }
 
-  .data-card .field-label {
-    color: #888;
-  }
-
-  .data-card .field-value {
-    color: #ffffff;
-  }
-
-  .data-card .field-value.highlight {
-    color: #ff6b6b;
-  }
-
-  .data-card .field-value.total-amount {
-    color: #66bb6a;
-  }
+  .data-card .field-label { color: #94a3b8; }
+  .data-card .field-value { color: #ffffff; }
+  .data-card .field-value.highlight    { color: #93c5fd; }
+  .data-card .field-value.total-amount { color: #60a5fa; }
 
   .data-card .field-value.editable {
-    background: #2a2a4a;
-    border-color: #333355;
+    background: #334155;
+    border-color: #475569;
     color: #ffffff;
   }
 
   .data-card .field-value.editable:focus {
-    border-color: #ff6b6b;
-    background: #333355;
+    border-color: #2563eb;
+    background: #1e293b;
   }
 
-  .item-row {
-    border-bottom-color: #333355;
-  }
-
-  .item-name {
-    color: #ffffff;
-  }
-
-  .item-detail {
-    color: #888;
-  }
-
-  .confirm-btn {
-    --background: #2e7d32 !important;
-  }
-
-  .retake-btn {
-    --border-color: #ff6b6b !important;
-    --color: #ff6b6b !important;
-  }
-
-  .edit-btn {
-    --color: #ff9800 !important;
-  }
-
-  .save-btn {
-    --background: #cc0000 !important;
-  }
-
-  .cancel-btn {
-    --border-color: #ff6b6b !important;
-    --color: #ff6b6b !important;
-  }
+  .item-row   { border-bottom-color: #334155; }
+  .item-name  { color: #ffffff; }
+  .item-detail { color: #94a3b8; }
 }

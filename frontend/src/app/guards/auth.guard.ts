@@ -1,27 +1,22 @@
+// ============================================================
+// FILE: src/app/guards/auth.guard.ts
+// PURPOSE: Protect routes from unauthenticated access
+// ============================================================
+
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, UrlTree } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AuthGuard implements CanActivate {
 
-  constructor(private router: Router) {}
+  constructor(private auth: AuthService, private router: Router) {}
 
   canActivate(): boolean | UrlTree {
-
-    const isLoggedIn =
-      localStorage.getItem('isLoggedIn') === 'true' ||
-      !!localStorage.getItem('authToken') ||
-      !!localStorage.getItem('token');
-
-    if (isLoggedIn) {
-      console.log('✅ AuthGuard: User authenticated');
+    if (this.auth.isLoggedIn()) {
       return true;
     }
-
-    console.warn('❌ AuthGuard: User not authenticated');
-
+    // Not logged in — redirect to login
     return this.router.createUrlTree(['/login']);
   }
 }

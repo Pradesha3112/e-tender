@@ -1,0 +1,114 @@
+<!-- ============================================ -->
+<!-- FILE: src/app/users/users.page.html           -->
+<!-- USER MANAGEMENT LIST (Blue Theme)              -->
+<!-- ============================================ -->
+
+<ion-header>
+  <ion-toolbar class="users-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="people-outline" class="header-icon"></ion-icon>
+      Engineering Management System
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="openUserForm()" *ngIf="canCreateSuperAdmin || canCreateClerk">
+        <ion-icon name="person-add-outline"></ion-icon>
+      </ion-button>
+      <ion-button (click)="loadUsers()">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="users-content ion-padding">
+
+  <!-- ROLE BADGE -->
+  <div class="role-info">
+    Logged in as <strong>{{ roleLabel }}</strong>
+  </div>
+
+  <!-- SEARCH -->
+  <ion-item class="search-item">
+    <ion-icon name="search-outline" slot="start"></ion-icon>
+    <ion-input
+      [(ngModel)]="searchTerm"
+      placeholder="Search by name, username, or role..."
+      (ionInput)="filterUsers()"
+      clear-input>
+    </ion-input>
+    <ion-button *ngIf="searchTerm" fill="clear" slot="end" (click)="clearSearch()">
+      <ion-icon name="close-circle"></ion-icon>
+    </ion-button>
+  </ion-item>
+
+  <!-- LOADING -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading users...</p>
+  </div>
+
+  <!-- EMPTY -->
+  <div *ngIf="!isLoading && filteredUsers.length === 0" class="empty-container">
+    <ion-icon name="people-outline"></ion-icon>
+    <h3>{{ searchTerm ? 'No users match your search' : 'No users yet' }}</h3>
+    <p *ngIf="!searchTerm">Tap + to create your first user</p>
+  </div>
+
+  <!-- USER LIST -->
+  <div *ngIf="!isLoading && filteredUsers.length > 0" class="user-list">
+
+    <div *ngFor="let user of filteredUsers"
+         (click)="canManage(user) ? openUserForm(user) : null"
+         class="user-card"
+         [class.not-manageable]="!canManage(user)">
+
+      <div class="user-avatar">
+        {{ user.full_name?.charAt(0) || 'U' }}
+      </div>
+
+      <div class="user-info">
+        <div class="user-name">{{ user.full_name }}</div>
+        <div class="user-meta">
+          &#64;{{ user.username }}
+          <span *ngIf="user.designation"> · {{ user.designation }}</span>
+        </div>
+        <div class="user-badges">
+          <ion-badge [color]="getRoleColor(user.role)">
+            {{ getRoleLabel(user.role) }}
+          </ion-badge>
+          <ion-badge color="light">
+            {{ getGroupLabel(user.category_group) }}
+          </ion-badge>
+          <ion-badge [color]="user.is_active ? 'success' : 'medium'">
+            {{ user.is_active ? 'Active' : 'Inactive' }}
+          </ion-badge>
+        </div>
+      </div>
+
+      <div class="user-actions">
+        <ion-button
+          fill="clear"
+          size="small"
+          *ngIf="canManage(user)"
+          (click)="toggleUser(user, $event)"
+          [color]="user.is_active ? 'warning' : 'success'"
+          class="action-btn">
+          <ion-icon [name]="user.is_active ? 'pause-outline' : 'play-outline'"></ion-icon>
+        </ion-button>
+        <ion-button
+          fill="clear"
+          size="small"
+          color="danger"
+          *ngIf="canManage(user)"
+          (click)="deleteUser(user, $event)"
+          class="action-btn">
+          <ion-icon name="trash-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+</ion-content>

@@ -1,22 +1,30 @@
 /* ============================================ */
-/* FILE: login.page.scss                       */
-/* RAILWAY E-BILLING SYSTEM - LOGIN STYLES    */
+/* FILE: login.page.scss                        */
+/* RAILWAY E-BILLING - LOGIN (Blue Theme)       */
 /* ============================================ */
 
-/* ============================================ */
-/*           GLOBAL STYLES                      */
-/* ============================================ */
-
-.login-content {
-  --background: #f5f7fa;
+/* Times New Roman everywhere */
+:host, :host * {
+  font-family: "Times New Roman", "Times", "Georgia", "Cambria",
+               "Garamond", serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ============================================ */
-/*           TOOLBAR - RAILWAY RED             */
+/*           GLOBAL                             */
+/* ============================================ */
+
+.login-content {
+  --background: #eef2f7;
+}
+
+/* ============================================ */
+/*           TOOLBAR — RAILWAY BLUE             */
 /* ============================================ */
 
 .login-toolbar {
-  --background: #cc0000 !important;
+  --background: linear-gradient(135deg, #1a3a6c, #2c5282) !important;
   --color: white !important;
 }
 
@@ -28,12 +36,13 @@
 ion-title {
   display: flex;
   align-items: center;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.4px;
   color: white !important;
 }
 
 /* ============================================ */
-/*           CONTAINER                         */
+/*           CONTAINER                          */
 /* ============================================ */
 
 .login-container {
@@ -46,7 +55,7 @@ ion-title {
 }
 
 /* ============================================ */
-/*           LOGIN HEADER                      */
+/*           LOGIN HEADER                       */
 /* ============================================ */
 
 .login-header {
@@ -65,11 +74,11 @@ ion-title {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(145deg, #cc0000, #990000);
+  background: linear-gradient(145deg, #1a3a6c, #2563eb);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 30px rgba(204, 0, 0, 0.3);
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.3);
   transition: transform 0.3s ease;
 }
 
@@ -85,24 +94,26 @@ ion-title {
 .login-header h1 {
   font-size: 24px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #1a3a6c;
   margin: 0 0 4px;
+  letter-spacing: 0.3px;
 }
 
 .login-header p {
-  color: #888;
+  color: #64748b;
   font-size: 14px;
   margin: 0;
+  font-style: italic;
 }
 
 /* ============================================ */
-/*           LOGIN CARD                        */
+/*           LOGIN CARD                         */
 /* ============================================ */
 
 .login-card {
   border-radius: 20px;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
-  border: 1px solid rgba(204, 0, 0, 0.05);
+  box-shadow: 0 8px 40px rgba(26, 58, 108, 0.10);
+  border: 1px solid rgba(37, 99, 235, 0.08);
   margin: 0;
   animation: fadeInUp 0.6s ease;
 }
@@ -112,7 +123,7 @@ ion-title {
 }
 
 /* ============================================ */
-/*           FORM ITEMS                        */
+/*           FORM ITEMS                         */
 /* ============================================ */
 
 .form-item {
@@ -120,47 +131,47 @@ ion-title {
   --padding-end: 0;
   --inner-padding-end: 0;
   margin-bottom: 20px;
-  border-bottom: 2px solid #f0f0f5;
+  border-bottom: 2px solid #e2e8f0;
   transition: border-color 0.3s ease;
 }
 
 .form-item:focus-within {
-  border-bottom-color: #cc0000;
+  border-bottom-color: #2563eb;
 }
 
 .input-icon {
-  color: #cc0000;
+  color: #2563eb;
   font-size: 20px;
   margin-right: 12px;
-  opacity: 0.7;
+  opacity: 0.85;
 }
 
 .form-item ion-input {
   --padding-start: 0;
-  --color: #1a1a2e;
+  --color: #1e293b;
   font-size: 15px;
 }
 
 .form-item ion-label {
-  color: #888 !important;
+  color: #64748b !important;
   font-weight: 500;
 }
 
 /* ============================================ */
-/*           ERROR MESSAGE                     */
+/*           ERROR MESSAGE                      */
 /* ============================================ */
 
 .error-message {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #ffebee;
+  background: #fee2e2;
   padding: 10px 14px;
   border-radius: 10px;
-  color: #c62828;
+  color: #b91c1c;
   font-size: 13px;
   margin-bottom: 16px;
-  border: 1px solid #ffcdd2;
+  border: 1px solid #fecaca;
   animation: shake 0.4s ease;
 }
 
@@ -170,23 +181,24 @@ ion-title {
 }
 
 /* ============================================ */
-/*           LOGIN BUTTON - RED                */
+/*           LOGIN BUTTON — BLUE GRADIENT       */
 /* ============================================ */
 
 .login-btn {
   --border-radius: 12px;
   height: 48px;
   font-size: 16px;
-  font-weight: 600;
-  --background: linear-gradient(145deg, #cc0000, #990000) !important;
-  --box-shadow: 0 4px 16px rgba(204, 0, 0, 0.35) !important;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  --background: linear-gradient(145deg, #1a3a6c, #2563eb) !important;
+  --box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35) !important;
   --color: white !important;
   margin-top: 8px;
   transition: all 0.3s ease;
 }
 
 .login-btn:hover:not(:disabled) {
-  --box-shadow: 0 6px 24px rgba(204, 0, 0, 0.45) !important;
+  --box-shadow: 0 6px 24px rgba(37, 99, 235, 0.45) !important;
   transform: translateY(-2px);
 }
 
@@ -195,9 +207,10 @@ ion-title {
 }
 
 .login-btn:disabled {
-  --background: #cccccc !important;
+  --background: #cbd5e1 !important;
   --box-shadow: none !important;
-  opacity: 0.7;
+  --color: #64748b !important;
+  opacity: 0.8;
 }
 
 .login-btn ion-icon {
@@ -205,20 +218,20 @@ ion-title {
 }
 
 /* ============================================ */
-/*           CREDENTIALS HINT                  */
+/*           CREDENTIALS HINT                   */
 /* ============================================ */
 
 .credentials-hint {
   text-align: center;
   margin-top: 16px;
   padding: 10px;
-  background: #fff8f0;
+  background: #eff6ff;
   border-radius: 10px;
-  border: 1px dashed #ffcc80;
+  border: 1px dashed #bfdbfe;
 }
 
 .credentials-hint small {
-  color: #e65100;
+  color: #1e40af;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -226,182 +239,105 @@ ion-title {
   font-size: 12px;
 }
 
+.credentials-hint small strong {
+  font-weight: 700;
+  color: #1a3a6c;
+}
+
+.credentials-hint small a {
+  color: #2563eb;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
 .credentials-hint ion-icon {
   font-size: 16px;
-  color: #ff9800;
+  color: #2563eb;
 }
 
 /* ============================================ */
-/*           PENDRIVE STATUS                   */
-/* ============================================ */
-
-.pendrive-status {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 16px;
-  padding: 12px 16px;
-  background: #e8f5e9;
-  border-radius: 12px;
-  color: #2e7d32;
-  border: 1px solid #a5d6a7;
-  font-weight: 500;
-  font-size: 14px;
-  animation: fadeInUp 0.8s ease;
-}
-
-.pendrive-status ion-icon {
-  font-size: 20px;
-}
-
-/* ============================================ */
-/*           VERSION INFO                      */
+/*           VERSION INFO                       */
 /* ============================================ */
 
 .version-info {
   text-align: center;
   margin-top: auto;
   padding-top: 24px;
-  color: #999;
+  color: #94a3b8;
   font-size: 12px;
+  font-style: italic;
 }
 
 /* ============================================ */
-/*           ANIMATIONS                        */
+/*           ANIMATIONS                         */
 /* ============================================ */
 
 @keyframes fadeInDown {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
-  20% { transform: translateX(-8px); }
-  40% { transform: translateX(8px); }
-  60% { transform: translateX(-4px); }
-  80% { transform: translateX(4px); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
 }
 
 /* ============================================ */
-/*           RESPONSIVE DESIGN                 */
+/*           RESPONSIVE                         */
 /* ============================================ */
 
 @media (max-width: 480px) {
-  .login-container {
-    padding: 16px 12px 30px;
-  }
-
-  .logo {
-    width: 64px;
-    height: 64px;
-  }
-
-  .logo ion-icon {
-    font-size: 32px;
-  }
-
-  .login-header h1 {
-    font-size: 20px;
-  }
-
-  .login-header p {
-    font-size: 13px;
-  }
-
-  .login-card ion-card-content {
-    padding: 16px;
-  }
-
-  .login-btn {
-    height: 44px;
-    font-size: 15px;
-  }
-
-  .pendrive-status {
-    font-size: 13px;
-    padding: 10px 14px;
-  }
+  .login-container { padding: 16px 12px 30px; }
+  .logo { width: 64px; height: 64px; }
+  .logo ion-icon { font-size: 32px; }
+  .login-header h1 { font-size: 20px; }
+  .login-header p  { font-size: 13px; }
+  .login-card ion-card-content { padding: 16px; }
+  .login-btn { height: 44px; font-size: 15px; }
 }
 
 /* ============================================ */
-/*           DARK THEME SUPPORT                */
+/*           DARK THEME                         */
 /* ============================================ */
 
 .dark-theme {
-  .login-content {
-    --background: #1a1a2e;
-  }
+  .login-content { --background: #0f172a; }
 
-  .login-header h1 {
-    color: #ffffff;
-  }
-
-  .login-header p {
-    color: #888;
-  }
+  .login-header h1 { color: #ffffff; }
+  .login-header p  { color: #94a3b8; }
 
   .login-card {
-    background: #1e1e3a;
+    background: #1e293b;
     border-color: rgba(255, 255, 255, 0.06);
   }
 
-  .login-card ion-card-content {
-    background: transparent;
-  }
+  .login-card ion-card-content { background: transparent; }
 
-  .form-item {
-    border-bottom-color: #333355;
-  }
-
-  .form-item ion-input {
-    --color: #ffffff;
-  }
-
-  .form-item ion-label {
-    color: #888 !important;
-  }
+  .form-item { border-bottom-color: #334155; }
+  .form-item ion-input { --color: #ffffff; }
+  .form-item ion-label { color: #94a3b8 !important; }
 
   .credentials-hint {
-    background: #2a1a1a;
-    border-color: #4a1a1a;
+    background: #1e3a5f;
+    border-color: #2563eb;
   }
 
-  .credentials-hint small {
-    color: #ff9800;
-  }
+  .credentials-hint small { color: #93c5fd; }
+  .credentials-hint small strong { color: #ffffff; }
 
-  .pendrive-status {
-    background: #1a2a1a;
-    border-color: #2d5a2d;
-    color: #66bb6a;
-  }
-
-  .version-info {
-    color: #666;
-  }
+  .version-info { color: #64748b; }
 
   .error-message {
-    background: #2a1a1a;
-    border-color: #4a1a1a;
-    color: #ff6b6b;
+    background: #4c1d1d;
+    border-color: #7f1d1d;
+    color: #fca5a5;
   }
 }

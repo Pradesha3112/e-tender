@@ -1,3 +1,8 @@
+// ============================================================
+// FILE: src/app/validation/validation.page.ts
+// PURPOSE: Review bill + category before saving
+// ============================================================
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -11,71 +16,110 @@ import { AlertController } from '@ionic/angular';
   templateUrl: './validation.page.html',
   styleUrls: ['./validation.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule, FormsModule]
+  imports: [CommonModule, IonicModule, RouterModule, FormsModule],
 })
 export class ValidationPage implements OnInit {
+
   billData: any = {};
-  isEditing = false;
   editData: any = {};
+  isEditing = false;
   isSaving = false;
+
+  // Category — comes from upload page OR user changes here
+  selectedCategory = '';
+  categories: string[] = [];
+  allowAllCategories = false;
+  isLoadingCategories = true;
 
   constructor(
     private router: Router,
     private apiService: ApiService,
-    private alertController: AlertController
+    private alertController: AlertController,
   ) {
     console.log('✅ VALIDATION PAGE LOADED!');
-    
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras?.state) {
-      this.billData = navigation.extras.state['billData'];
+
+    const nav = this.router.getCurrentNavigation();
+    if (nav?.extras?.state) {
+      this.billData = nav.extras.state['billData'] || {};
+      this.selectedCategory = nav.extras.state['category'] || '';
       this.editData = { ...this.billData };
-      console.log('📋 Bill data received:', this.billData);
     } else {
-      // Fallback data if none passed
+      // Fallback (should not happen)
       this.billData = {
-        bill_number: 'Not found',
-        vendor: 'Not found',
-        date: 'Not found',
-        subtotal: 0,
-        tax: 0,
-        total: 0,
-        gstin: 'Not found',
-        items: [],
-        amount_words: 'Not found'
+        bill_number: '', vendor: '', date: '',
+        subtotal: 0, tax: 0, total: 0,
+        gstin: '', items: [], amount_words: '',
       };
       this.editData = { ...this.billData };
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.loadCategories();
+  }
 
-  async confirmBill() {
-    console.log('💾 Saving bill...', this.billData);
-    this.isSaving = true;
-    
-    try {
-      this.apiService.saveBill(this.billData).subscribe({
-        next: (response: any) => {
-          console.log('✅ Bill saved:', response);
-          this.isSaving = false;
-          this.showSuccessAlert('✅ Bill Saved!', 'Your bill has been stored successfully!');
-        },
-        error: (error) => {
-          console.error('❌ Save error:', error);
-          this.isSaving = false;
-          this.showAlert('Error', 'Failed to save bill. Please try again.');
+  // ============================================================
+  // LOAD CATEGORIES (for editing on this page)
+  // ============================================================
+  loadCategories() {
+    this.isLoadingCategories = true;
+
+    this.apiService.getCategories().subscribe({
+      next: (res: any) => {
+        if (res && res.success) {
+          this.categories = res.data?.categories || [];
+          this.allowAllCategories = !!res.data?.allow_all;
+
+          // If nothing was passed from upload page, auto-select first
+          if (!this.selectedCategory && this.categories.length > 0) {
+            this.selectedCategory = this.categories[0];
+          }
         }
-      });
-    } catch (error) {
-      console.error('❌ Error:', error);
-      this.isSaving = false;
-      this.showAlert('Error', 'Something went wrong. Please try again.');
+        this.isLoadingCategories = false;
+      },
+      error: () => {
+        this.isLoadingCategories = false;
+      },
+    });
+  }
+
+  // ============================================================
+  // SAVE
+  // ============================================================
+  confirmBill() {
+    if (!this.selectedCategory) {
+      this.showAlert('Missing Category', 'Please select a category first.');
+      return;
     }
+
+    const payload = {
+      ...this.billData,
+      category: this.selectedCategory,
+    };
+
+    console.log('💾 Saving bill:', payload);
+    this.isSaving = true;
+
+    this.apiService.saveBill(payload).subscribe({
+      next: () => {
+        this.isSaving = false;
+        this.showSuccessAlert(
+          '✅ Bill Saved!',
+          `Saved as "${this.selectedCategory}"`
+        );
+      },
+      error: (err) => {
+        console.error('❌ Save error:', err);
+        this.isSaving = false;
+        this.showAlert(
+          'Error',
+          err?.error?.error || 'Failed to save bill. Please try again.'
+        );
+      },
+    });
   }
 
   retakePhoto() {
-    console.log('📸 Retaking photo...');
     this.router.navigateByUrl('/upload');
   }
 
@@ -83,44 +127,41 @@ export class ValidationPage implements OnInit {
     this.isEditing = !this.isEditing;
     if (this.isEditing) {
       this.editData = { ...this.billData };
-      console.log('✏️ Edit mode enabled');
     }
   }
 
   saveEdits() {
     this.billData = { ...this.editData };
     this.isEditing = false;
-    console.log('✅ Data updated:', this.billData);
     this.showAlert('Success', 'Data updated successfully!');
   }
 
+  // ============================================================
+  // ALERTS
+  // ============================================================
   async showSuccessAlert(header: string, message: string) {
     const alert = await this.alertController.create({
-      header: header,
-      message: message,
+      header,
+      message,
       buttons: [
         {
           text: 'View Bills',
-          handler: () => {
-            this.router.navigateByUrl('/bills');
-          }
+          handler: () => this.router.navigateByUrl('/bills'),
         },
         {
           text: 'Scan Another',
-          handler: () => {
-            this.router.navigateByUrl('/upload');
-          }
-        }
-      ]
+          handler: () => this.router.navigateByUrl('/upload'),
+        },
+      ],
     });
     await alert.present();
   }
 
   async showAlert(header: string, message: string) {
     const alert = await this.alertController.create({
-      header: header,
-      message: message,
-      buttons: ['OK']
+      header,
+      message,
+      buttons: ['OK'],
     });
     await alert.present();
   }

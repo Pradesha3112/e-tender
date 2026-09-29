@@ -1,13 +1,17 @@
 /* ============================================
-   EXPORT PAGE - RAILWAY RED THEME
+   EXPORT PAGE — RAILWAY eOFFICE BLUE THEME
    ============================================ */
 
-/* ============================================ */
-/*           GLOBAL STYLES                      */
-/* ============================================ */
+/* Times New Roman everywhere */
+:host, :host * {
+  font-family: "Times New Roman", "Times", "Georgia", "Cambria",
+               "Garamond", serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 ion-content {
-  --background: #f5f7fa;
+  --background: #eef2f7;
 }
 
 .export-container {
@@ -17,33 +21,35 @@ ion-content {
 }
 
 /* ============================================ */
-/*           HEADER                            */
+/*           HEADER                             */
 /* ============================================ */
 
 .export-header {
   text-align: center;
   margin-bottom: 20px;
-  
+
   h2 {
     font-size: 24px;
     font-weight: 700;
-    color: #1a1a2e;
+    color: #1a3a6c;
     margin: 0 0 4px;
+    letter-spacing: 0.3px;
   }
-  
+
   p {
-    color: #999;
+    color: #64748b;
     font-size: 14px;
     margin: 0;
+    font-style: italic;
   }
 }
 
 /* ============================================ */
-/*           TOOLBAR - RAILWAY RED             */
+/*           TOOLBAR — RAILWAY BLUE             */
 /* ============================================ */
 
 ion-toolbar {
-  --background: #cc0000 !important;
+  --background: linear-gradient(135deg, #1a3a6c, #2c5282) !important;
   --color: white !important;
 }
 
@@ -59,102 +65,105 @@ ion-back-button {
 ion-title {
   display: flex;
   align-items: center;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.4px;
   color: white !important;
 }
 
 /* ============================================ */
-/*           OPTION CARD                       */
+/*           OPTION CARD                        */
 /* ============================================ */
 
 .option-card {
   background: white;
   border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(26, 58, 108, 0.08);
   margin-bottom: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  
+  border: 1px solid rgba(226, 232, 240, 0.8);
+
   ion-card-header {
     padding-bottom: 8px;
-    
+
     ion-card-title {
       font-size: 17px;
-      font-weight: 600;
-      color: #1a1a2e;
+      font-weight: 700;
+      color: #1a3a6c;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      
+
       ion-button {
         --padding-start: 4px;
         --padding-end: 4px;
-        --color: #cc0000 !important;
+        --color: #2563eb !important;
         height: 30px;
       }
     }
-    
+
     ion-card-subtitle {
       font-size: 13px;
-      color: #999;
+      color: #64748b;
+      font-style: italic;
     }
   }
-  
+
   ion-card-content {
     padding-top: 8px;
   }
 }
 
 /* ============================================ */
-/*           SELECT ALL CARD - RED             */
+/*           SELECT ALL CARD — BLUE             */
 /* ============================================ */
 
 .select-all-card {
-  background: #fff5f5;
-  border: 1px solid #ffcccc;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
 }
 
 .select-all-container {
   display: flex;
   align-items: center;
   gap: 14px;
-  
+
   .select-all-checkbox {
     --size: 24px;
-    --background-checked: #cc0000 !important;
-    --border-color-checked: #cc0000 !important;
+    --background-checked: #2563eb !important;
+    --border-color-checked: #2563eb !important;
     flex-shrink: 0;
   }
-  
+
   .select-all-info {
     flex: 1;
-    
+
     h4 {
       font-size: 15px;
-      font-weight: 600;
-      color: #1a1a2e;
+      font-weight: 700;
+      color: #1e293b;
       margin: 0 0 2px;
     }
-    
+
     p {
       font-size: 12px;
-      color: #999;
+      color: #64748b;
       margin: 0;
+      font-style: italic;
     }
   }
-  
+
   ion-badge {
     --padding-start: 12px;
     --padding-end: 12px;
     padding: 6px 12px;
     font-size: 12px;
     border-radius: 20px;
-    --background: #cc0000 !important;
+    --background: #2563eb !important;
     --color: white !important;
   }
 }
 
 /* ============================================ */
-/*           BILLS LIST                        */
+/*           BILLS LIST                         */
 /* ============================================ */
 
 .bills-list-card {
@@ -168,20 +177,20 @@ ion-title {
     display: flex;
     align-items: center;
     padding: 10px 12px;
-    background: #f8f9fc;
+    background: #f1f5f9;
     border-radius: 8px;
     margin-bottom: 6px;
     gap: 12px;
     transition: all 0.2s;
 
     &:hover {
-      background: #f0f0f5;
+      background: #e2e8f0;
     }
 
     .bill-checkbox {
       --size: 20px;
-      --background-checked: #cc0000 !important;
-      --border-color-checked: #cc0000 !important;
+      --background-checked: #2563eb !important;
+      --border-color-checked: #2563eb !important;
       flex-shrink: 0;
     }
 
@@ -193,8 +202,8 @@ ion-title {
 
       .bill-name {
         font-size: 14px;
-        font-weight: 500;
-        color: #1a1a2e;
+        font-weight: 600;
+        color: #1e293b;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -202,13 +211,14 @@ ion-title {
 
       .bill-number {
         font-size: 11px;
-        color: #999;
+        color: #64748b;
+        font-style: italic;
       }
     }
 
     .bill-date {
       font-size: 12px;
-      color: #888;
+      color: #64748b;
       flex-shrink: 0;
       text-align: center;
       min-width: 80px;
@@ -216,17 +226,18 @@ ion-title {
 
     .bill-amount {
       font-size: 14px;
-      font-weight: 600;
-      color: #cc0000;
+      font-weight: 700;
+      color: #2563eb;
       flex-shrink: 0;
       text-align: right;
       min-width: 70px;
+      font-variant-numeric: tabular-nums;
     }
   }
 }
 
 /* ============================================ */
-/*           SELECTED BILLS PREVIEW            */
+/*           SELECTED BILLS PREVIEW             */
 /* ============================================ */
 
 .selected-bills-list {
@@ -239,30 +250,32 @@ ion-title {
   display: flex;
   align-items: center;
   padding: 8px 12px;
-  background: #f8f9fc;
+  background: #f1f5f9;
   border-radius: 8px;
   margin-bottom: 6px;
   gap: 12px;
-  
+
   .bill-name {
     flex: 1;
     font-size: 13px;
-    font-weight: 500;
-    color: #1a1a2e;
+    font-weight: 600;
+    color: #1e293b;
   }
-  
+
   .bill-number {
     font-size: 12px;
-    color: #999;
+    color: #64748b;
     background: white;
     padding: 2px 10px;
     border-radius: 4px;
+    font-style: italic;
   }
-  
+
   .bill-amount-small {
     font-size: 13px;
-    font-weight: 600;
-    color: #cc0000;
+    font-weight: 700;
+    color: #2563eb;
+    font-variant-numeric: tabular-nums;
   }
 }
 
@@ -270,13 +283,18 @@ ion-title {
   text-align: right;
   padding: 8px 4px 0;
   font-size: 14px;
-  border-top: 1px solid #f0f2f5;
+  border-top: 1px solid #e2e8f0;
   margin-top: 8px;
-  color: #1a1a2e;
+  color: #1e293b;
+  font-weight: 600;
+
+  strong {
+    color: #1a3a6c;
+  }
 }
 
 /* ============================================ */
-/*           DATE RANGE                        */
+/*           DATE RANGE                         */
 /* ============================================ */
 
 .date-range-container {
@@ -284,27 +302,28 @@ ion-title {
     display: flex;
     gap: 16px;
     margin-bottom: 12px;
-    
+
     .date-input-item {
       flex: 1;
-      
+
       .date-label {
         font-size: 12px;
-        font-weight: 600;
-        color: #999;
+        font-weight: 700;
+        color: #64748b;
         margin-bottom: 4px;
+        letter-spacing: 0.4px;
       }
-      
+
       .date-input {
-        --background: #f8f9fc;
+        --background: #f1f5f9;
         --border-radius: 10px;
         --padding-start: 14px;
         --padding-end: 14px;
-        border: 1px solid #e8ecf1;
+        border: 1px solid #e2e8f0;
         border-radius: 10px;
         height: 44px;
         font-size: 14px;
-        color: #1a1a2e;
+        color: #1e293b;
       }
     }
   }
@@ -314,18 +333,20 @@ ion-title {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  
+
   .filter-btn {
     --border-radius: 20px;
     font-size: 12px;
     height: 32px;
     --padding-start: 14px;
     --padding-end: 14px;
-    --border-color: #cc0000 !important;
-    --color: #cc0000 !important;
-    
+    --border-color: #2563eb !important;
+    --color: #2563eb !important;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+
     &:hover {
-      --background: #cc0000 !important;
+      --background: #2563eb !important;
       --color: white !important;
     }
   }
@@ -334,15 +355,16 @@ ion-title {
 .filtered-count {
   text-align: center;
   margin-top: 8px;
-  
+
   small {
-    color: #999;
+    color: #64748b;
     font-size: 12px;
+    font-style: italic;
   }
 }
 
 /* ============================================ */
-/*           EXPORT OPTIONS - RED              */
+/*           EXPORT OPTIONS — BLUE              */
 /* ============================================ */
 
 .export-options {
@@ -356,57 +378,58 @@ ion-title {
   align-items: center;
   padding: 14px 16px;
   border-radius: 14px;
-  border: 2px solid #e8ecf1;
+  border: 2px solid #e2e8f0;
   cursor: pointer;
   transition: all 0.3s;
-  
+
   &:hover {
-    border-color: #cc000050;
-    background: #f8f9fc;
+    border-color: #2563eb80;
+    background: #f8fafc;
   }
-  
+
   &.active {
-    border-color: #cc0000;
-    background: #fff5f5;
+    border-color: #2563eb;
+    background: #eff6ff;
   }
-  
+
   .option-icon {
     font-size: 32px;
     margin-right: 14px;
     flex-shrink: 0;
   }
-  
+
   .pdf-icon {
-    color: #cc0000;
+    color: #2563eb;
   }
-  
+
   .excel-icon {
-    color: #27ae60;
+    color: #10b981;
   }
-  
+
   .option-info {
     flex: 1;
-    
+
     h4 {
       font-size: 15px;
-      font-weight: 600;
-      color: #1a1a2e;
+      font-weight: 700;
+      color: #1e293b;
       margin: 0 0 2px;
     }
-    
+
     p {
       font-size: 12px;
-      color: #999;
+      color: #64748b;
       margin: 0;
+      font-style: italic;
     }
   }
-  
+
   .check-icon {
     font-size: 24px;
-    color: #cc0000;
+    color: #2563eb;
     opacity: 0;
     transition: all 0.3s;
-    
+
     &.visible {
       opacity: 1;
     }
@@ -414,7 +437,7 @@ ion-title {
 }
 
 /* ============================================ */
-/*           SUMMARY - RED                     */
+/*           SUMMARY — BLUE                     */
 /* ============================================ */
 
 .summary-grid {
@@ -424,70 +447,77 @@ ion-title {
 }
 
 .summary-item {
-  background: #f8f9fc;
+  background: #f1f5f9;
   border-radius: 12px;
   padding: 12px 14px;
   text-align: center;
-  
+  border: 1px solid #e2e8f0;
+
   .summary-label {
     display: block;
     font-size: 11px;
-    color: #999;
+    color: #64748b;
     margin-bottom: 4px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
   }
-  
+
   .summary-value {
     display: block;
     font-size: 16px;
     font-weight: 700;
-    color: #1a1a2e;
+    color: #1a3a6c;
+    font-variant-numeric: tabular-nums;
   }
 }
 
 /* ============================================ */
-/*           EXPORT BUTTON - RED               */
+/*           EXPORT BUTTON — BLUE GRADIENT      */
 /* ============================================ */
 
 .export-btn {
   --border-radius: 14px;
   height: 52px;
   font-size: 16px;
-  font-weight: 600;
-  --background: #cc0000 !important;
-  --box-shadow: 0 4px 16px rgba(204, 0, 0, 0.35) !important;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  --background: linear-gradient(135deg, #1a3a6c, #2563eb) !important;
+  --box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35) !important;
   margin-top: 8px;
   --color: white !important;
-  
+
   &:disabled {
-    --background: #cccccc !important;
+    --background: #cbd5e1 !important;
     --box-shadow: none !important;
+    --color: #64748b !important;
   }
 }
 
 /* ============================================ */
-/*           PROGRESS - RED                    */
+/*           PROGRESS — BLUE                    */
 /* ============================================ */
 
 .progress-container {
   margin-top: 16px;
   text-align: center;
-  
+
   ion-progress-bar {
-    --background: #e8ecf1;
-    --progress-background: #cc0000 !important;
+    --background: #e2e8f0;
+    --progress-background: #2563eb !important;
     height: 8px;
     border-radius: 10px;
   }
-  
+
   p {
     font-size: 13px;
-    color: #999;
+    color: #64748b;
     margin-top: 8px;
+    font-style: italic;
   }
 }
 
 /* ============================================ */
-/*           INFO MESSAGE - RED                */
+/*           INFO MESSAGE — BLUE                */
 /* ============================================ */
 
 .info-message {
@@ -496,56 +526,61 @@ ion-title {
   justify-content: center;
   gap: 10px;
   padding: 20px;
-  background: #f8f9fc;
+  background: #eff6ff;
   border-radius: 16px;
-  border: 1px dashed #ddd;
+  border: 1px dashed #bfdbfe;
   margin: 16px 0;
-  
+
   ion-icon {
     font-size: 24px;
-    color: #cc0000;
+    color: #2563eb;
   }
-  
+
   p {
     margin: 0;
-    color: #999;
+    color: #1e40af;
     font-size: 14px;
+    font-style: italic;
   }
 }
 
 /* ============================================ */
-/*           EMPTY STATE                       */
+/*           EMPTY STATE                        */
 /* ============================================ */
 
 .empty-state {
   text-align: center;
   padding: 30px 20px;
-  
+
   .empty-icon {
     font-size: 64px;
-    color: #ddd;
+    color: #cbd5e1;
   }
-  
+
   h3 {
     font-size: 18px;
-    color: #333;
+    color: #1e293b;
     margin: 12px 0 8px;
+    font-weight: 700;
   }
-  
+
   p {
-    color: #999;
+    color: #64748b;
     font-size: 14px;
     margin: 0 0 16px;
+    font-style: italic;
   }
 }
 
 .empty-state ion-button {
-  --border-color: #cc0000 !important;
-  --color: #cc0000 !important;
+  --border-color: #2563eb !important;
+  --color: #2563eb !important;
+  --border-width: 2px;
+  font-weight: 700;
 }
 
 /* ============================================ */
-/*           LOADING - RED                     */
+/*           LOADING — BLUE                     */
 /* ============================================ */
 
 .loading-container {
@@ -554,135 +589,105 @@ ion-title {
   align-items: center;
   justify-content: center;
   padding: 40px;
-  
+
   ion-spinner {
-    --color: #cc0000 !important;
+    --color: #2563eb !important;
     width: 48px;
     height: 48px;
   }
-  
+
   p {
     margin-top: 12px;
-    color: #999;
+    color: #64748b;
     font-size: 14px;
+    font-style: italic;
   }
 }
 
 /* ============================================ */
-/*           DARK THEME SUPPORT                */
+/*           DARK THEME SUPPORT                 */
 /* ============================================ */
 
 .dark-theme {
   ion-content {
-    --background: #1a1a2e;
+    --background: #0f172a;
   }
 
-  .export-header {
-    h2 {
-      color: #ffffff;
-    }
+  .export-header h2 {
+    color: #ffffff;
   }
 
   .option-card {
-    background: #1e1e3a;
+    background: #1e293b;
     border-color: rgba(255, 255, 255, 0.06);
 
     ion-card-title {
       color: #ffffff;
     }
-
-    ion-card-subtitle {
-      color: #888;
-    }
   }
 
   .select-all-card {
-    background: #2a1a2a;
-    border-color: #4a1a1a;
+    background: #1e3a5f;
+    border-color: #2563eb;
 
-    .select-all-info {
-      h4 {
-        color: #ffffff;
-      }
+    .select-all-info h4 {
+      color: #ffffff;
     }
   }
 
   .bills-list-card {
     .bill-item {
-      background: #2a2a4a;
+      background: #334155;
 
       &:hover {
-        background: #333355;
+        background: #475569;
       }
 
-      .bill-info {
-        .bill-name {
-          color: #ffffff;
-        }
-      }
-
-      .bill-date {
-        color: #888;
+      .bill-info .bill-name {
+        color: #ffffff;
       }
     }
   }
 
   .selected-bill-item {
-    background: #2a2a4a;
+    background: #334155;
 
     .bill-name {
       color: #ffffff;
     }
 
     .bill-number {
-      background: #1a1a2e;
-      color: #888;
+      background: #1e293b;
     }
   }
 
   .selected-total {
     color: #ffffff;
-    border-top-color: #333355;
+    border-top-color: #334155;
   }
 
   .date-input {
-    --background: #2a2a4a;
+    --background: #334155;
     --color: #ffffff;
-    border-color: #333355;
-  }
-
-  .filter-btn {
-    --border-color: #cc0000 !important;
-    --color: #ff6b6b !important;
-
-    &:hover {
-      --background: #cc0000 !important;
-      --color: white !important;
-    }
+    border-color: #334155;
   }
 
   .option-item {
-    border-color: #333355;
-
-    &:hover {
-      border-color: #cc000050;
-      background: #2a2a4a;
-    }
+    border-color: #334155;
 
     &.active {
-      border-color: #cc0000;
-      background: #2a1a2a;
+      border-color: #2563eb;
+      background: #1e3a5f;
     }
 
-    .option-info {
-      h4 {
-        color: #ffffff;
-      }
+    .option-info h4 {
+      color: #ffffff;
     }
   }
 
   .summary-item {
-    background: #2a2a4a;
+    background: #334155;
+    border-color: #334155;
 
     .summary-value {
       color: #ffffff;
@@ -690,29 +695,21 @@ ion-title {
   }
 
   .info-message {
-    background: #2a2a4a;
-    border-color: #333355;
+    background: #1e293b;
+    border-color: #2563eb;
 
     p {
-      color: #888;
+      color: #93c5fd;
     }
   }
 
-  .empty-state {
-    h3 {
-      color: #ffffff;
-    }
-  }
-
-  .loading-container {
-    ion-spinner {
-      --color: #ff6b6b !important;
-    }
+  .empty-state h3 {
+    color: #ffffff;
   }
 }
 
 /* ============================================ */
-/*           RESPONSIVE                        */
+/*           RESPONSIVE                         */
 /* ============================================ */
 
 @media (max-width: 480px) {
@@ -720,21 +717,21 @@ ion-title {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .summary-grid {
     grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
-  
+
   .option-item {
     padding: 12px;
-    
+
     .option-icon {
       font-size: 28px;
       margin-right: 10px;
     }
   }
-  
+
   .select-all-container {
     gap: 10px;
   }

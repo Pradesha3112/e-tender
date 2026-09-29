@@ -1,10 +1,18 @@
 /* ============================================ */
-/* FILE 2: bills.page.scss                      */
-/* RAILWAY E-BILLING SYSTEM - BILLS STYLES     */
+/* FILE: bills.page.scss                        */
+/* RAILWAY E-BILLING - BILLS LIST (Blue Theme)  */
 /* ============================================ */
 
+/* Times New Roman everywhere */
+:host, :host * {
+  font-family: "Times New Roman", "Times", "Georgia", "Cambria",
+               "Garamond", serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 ion-content {
-  --background: #f8f9fc;
+  --background: #eef2f7;
 }
 
 /* ----- SEARCH BAR ----- */
@@ -17,23 +25,24 @@ ion-content {
   --border-radius: 14px;
   --padding-start: 12px;
   --padding-end: 8px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 12px rgba(26, 58, 108, 0.08);
   border-radius: 14px !important;
   margin-bottom: 12px;
+  border: 1px solid #e2e8f0;
 }
 
 .search-bar .search-icon {
-  color: #888;
+  color: #64748b;
   font-size: 20px;
 }
 
 .search-bar .search-input {
-  --color: #1a1a2e;
+  --color: #1e293b;
   font-size: 14px;
 }
 
 .search-bar .clear-btn {
-  --color: #888;
+  --color: #64748b;
   --padding-start: 4px;
   --padding-end: 4px;
   height: 30px;
@@ -54,7 +63,8 @@ ion-content {
 .filter-chips ion-chip {
   --border-radius: 20px;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 700;
+  letter-spacing: 0.4px;
   padding: 4px 14px;
   cursor: pointer;
   transition: all 0.2s;
@@ -65,7 +75,7 @@ ion-content {
 }
 
 .filter-chips ion-chip[color="danger"] {
-  --background: #cc0000;
+  --background: #2563eb;
   --color: white;
 }
 
@@ -82,32 +92,35 @@ ion-content {
   border-radius: 16px;
   padding: 16px;
   text-align: center;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  border-left: 4px solid #cc0000;
+  box-shadow: 0 2px 12px rgba(26, 58, 108, 0.08);
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #2563eb;
 }
 
 .stat-card .stat-number {
   font-size: 22px;
   font-weight: 700;
-  color: #1a1a2e;
+  color: #1a3a6c;
   display: block;
+  font-variant-numeric: tabular-nums;
 }
 
 .stat-card .stat-number.amount {
-  color: #cc0000;
+  color: #2563eb;
 }
 
 .stat-card .stat-label {
   font-size: 11px;
-  color: #888;
-  margin-top: 2px;
+  color: #64748b;
+  margin-top: 4px;
   display: block;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 .stat-card .stat-label ion-icon {
   font-size: 12px;
-  color: #cc0000;
+  color: #2563eb;
 }
 
 /* ----- BILL ITEMS ----- */
@@ -125,16 +138,16 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 14px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 12px rgba(26, 58, 108, 0.08);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border: 1px solid #e2e8f0;
 }
 
 .bill-item:hover {
   transform: translateX(4px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  border-color: #cc000040;
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.18);
+  border-color: #2563eb60;
 }
 
 .bill-item:active {
@@ -145,12 +158,12 @@ ion-content {
   width: 46px;
   height: 46px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #cc0000, #990000);
+  background: linear-gradient(135deg, #1a3a6c, #2563eb);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(204, 0, 0, 0.25);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
 }
 
 .bill-item .bill-icon ion-icon {
@@ -165,8 +178,8 @@ ion-content {
 
 .bill-item .bill-info .bill-vendor {
   font-size: 15px;
-  font-weight: 600;
-  color: #1a1a2e;
+  font-weight: 700;
+  color: #1e293b;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -175,18 +188,18 @@ ion-content {
 .bill-item .bill-info .bill-details {
   display: flex;
   gap: 10px;
-  margin-top: 2px;
+  margin-top: 3px;
   font-size: 12px;
-  color: #888;
+  color: #64748b;
   flex-wrap: wrap;
 }
 
 .bill-item .bill-info .bill-details .bill-number {
-  background: #f0f2f5;
-  padding: 1px 10px;
+  background: #f1f5f9;
+  padding: 2px 10px;
   border-radius: 4px;
-  font-weight: 500;
-  color: #666;
+  font-weight: 600;
+  color: #1e293b;
   font-size: 11px;
 }
 
@@ -194,8 +207,9 @@ ion-content {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #888;
+  color: #64748b;
   font-size: 11px;
+  font-style: italic;
 }
 
 .bill-item .bill-info .bill-details .bill-date ion-icon {
@@ -209,14 +223,15 @@ ion-content {
   gap: 4px;
   font-size: 16px;
   font-weight: 700;
-  color: #cc0000;
+  color: #2563eb;
   flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 .bill-item .bill-amount ion-button {
   --padding-start: 4px;
   --padding-end: 4px;
-  --color: #cc0000;
+  --color: #dc2626;
   --background: transparent;
   height: 28px;
 }
@@ -235,15 +250,16 @@ ion-content {
 }
 
 .loading-container ion-spinner {
-  --color: #cc0000;
+  --color: #2563eb;
   width: 48px;
   height: 48px;
 }
 
 .loading-container p {
   margin-top: 16px;
-  color: #888;
+  color: #64748b;
   font-size: 14px;
+  font-style: italic;
 }
 
 /* ----- EMPTY STATE ----- */
@@ -258,38 +274,41 @@ ion-content {
 
 .empty-state .empty-icon {
   font-size: 80px;
-  color: #e0e0e0;
+  color: #cbd5e1;
   margin-bottom: 16px;
 }
 
 .empty-state h3 {
   font-size: 20px;
-  color: #1a1a2e;
+  color: #1e293b;
   margin: 0 0 8px;
   font-weight: 700;
 }
 
 .empty-state p {
-  color: #888;
+  color: #64748b;
   font-size: 14px;
   margin: 0 0 24px;
   max-width: 300px;
+  font-style: italic;
 }
 
 .empty-state ion-button {
   --border-radius: 14px;
   --padding-start: 24px;
   --padding-end: 24px;
-  --background: #cc0000;
-  --box-shadow: 0 4px 16px rgba(204, 0, 0, 0.35);
+  --background: linear-gradient(135deg, #1a3a6c, #2563eb);
+  --box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
   height: 48px;
-  font-weight: 600;
+  font-weight: 700;
+  letter-spacing: 0.4px;
   --color: white;
 }
 
 /* ----- DARK THEME SUPPORT ----- */
 .dark-theme .search-bar {
-  --background: #1e1e1e;
+  --background: #1e293b;
+  border-color: #334155;
 }
 
 .dark-theme .search-bar .search-input {
@@ -297,8 +316,9 @@ ion-content {
 }
 
 .dark-theme .stat-card {
-  background: #1e1e1e;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #1e293b;
+  border-color: #334155;
+  border-left-color: #2563eb;
 }
 
 .dark-theme .stat-card .stat-number {
@@ -306,12 +326,12 @@ ion-content {
 }
 
 .dark-theme .stat-card .stat-label {
-  color: #888;
+  color: #94a3b8;
 }
 
 .dark-theme .bill-item {
-  background: #1e1e1e;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #1e293b;
+  border-color: #334155;
 }
 
 .dark-theme .bill-item .bill-info .bill-vendor {
@@ -319,12 +339,12 @@ ion-content {
 }
 
 .dark-theme .bill-item .bill-info .bill-details .bill-number {
-  background: #2a2a2a;
-  color: #888;
+  background: #334155;
+  color: #e2e8f0;
 }
 
 .dark-theme .bill-item .bill-info .bill-details .bill-date {
-  color: #888;
+  color: #94a3b8;
 }
 
 .dark-theme .empty-state h3 {
@@ -332,12 +352,12 @@ ion-content {
 }
 
 .dark-theme .empty-state p {
-  color: #888;
+  color: #94a3b8;
 }
 
 .dark-theme .filter-chips ion-chip[color="medium"] {
-  --background: #2a2a2a;
-  --color: #888;
+  --background: #334155;
+  --color: #94a3b8;
 }
 
 /* ----- RESPONSIVE ----- */

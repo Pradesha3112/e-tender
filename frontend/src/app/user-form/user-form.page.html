@@ -1,0 +1,159 @@
+<!-- ============================================ -->
+<!-- FILE: src/app/user-form/user-form.page.html  -->
+<!-- CREATE / EDIT USER (Blue Theme)              -->
+<!-- ============================================ -->
+
+<ion-header>
+  <ion-toolbar class="user-form-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/users"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon
+        [name]="isEditMode ? 'create-outline' : 'person-add-outline'"
+        class="header-icon"></ion-icon>
+      {{ isEditMode ? 'Edit User' : 'New User' }}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="user-form-content ion-padding">
+
+  <div *ngIf="isLoading" class="form-loading">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <div *ngIf="!isLoading">
+
+    <!-- ACCOUNT -->
+    <ion-card class="form-card">
+      <ion-card-header>
+        <ion-card-title>Account</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item class="form-item" lines="none">
+          <ion-input
+            label="Username"
+            labelPlacement="stacked"
+            [(ngModel)]="form.username"
+            [disabled]="isEditMode"
+            placeholder="e.g. rengasamy"
+            autocapitalize="off">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none">
+          <ion-input
+            [label]="isEditMode ? 'New Password (leave blank to keep)' : 'Password'"
+            labelPlacement="stacked"
+            [(ngModel)]="form.password"
+            type="password"
+            placeholder="Min 4 characters">
+          </ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- PROFILE -->
+    <ion-card class="form-card">
+      <ion-card-header>
+        <ion-card-title>Profile</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item class="form-item" lines="none">
+          <ion-input
+            label="Full Name"
+            labelPlacement="stacked"
+            [(ngModel)]="form.full_name"
+            placeholder="e.g. Shri. P. Rengasamy">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none">
+          <ion-input
+            label="Designation"
+            labelPlacement="stacked"
+            [(ngModel)]="form.designation"
+            placeholder="e.g. ADFM/I/MDU">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none">
+          <ion-input
+            label="Phone"
+            labelPlacement="stacked"
+            [(ngModel)]="form.phone"
+            placeholder="Optional">
+          </ion-input>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none">
+          <ion-input
+            label="Email"
+            labelPlacement="stacked"
+            [(ngModel)]="form.email"
+            placeholder="Optional">
+          </ion-input>
+        </ion-item>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ROLE -->
+    <ion-card class="form-card">
+      <ion-card-header>
+        <ion-card-title>Role &amp; Group</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item class="form-item" lines="none">
+          <ion-select
+            label="Role"
+            labelPlacement="stacked"
+            [(ngModel)]="form.role"
+            [disabled]="!canEditRole"
+            interface="action-sheet">
+            <ion-select-option *ngFor="let r of availableRoles" [value]="r.value">
+              {{ r.label }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item class="form-item" lines="none" *ngIf="form.role === 'super_admin'">
+          <ion-select
+            label="Category Group"
+            labelPlacement="stacked"
+            [(ngModel)]="form.category_group"
+            [disabled]="!canChangeGroup && isEditMode">
+            <ion-select-option value="adfm_1">ADFM/I — Rengasamy</ion-select-option>
+            <ion-select-option value="adfm_2">ADFM/II — Gopinath</ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <div *ngIf="form.role === 'clerk'" class="info-box">
+          <ion-icon name="information-circle-outline"></ion-icon>
+          Clerks inherit the category group of their creator.
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- ACTIONS -->
+    <ion-button
+      expand="block"
+      (click)="save()"
+      [disabled]="isSaving"
+      class="save-btn">
+      <ion-spinner *ngIf="isSaving" name="crescent" slot="start"></ion-spinner>
+      <ion-icon *ngIf="!isSaving" name="checkmark-circle-outline" slot="start"></ion-icon>
+      {{ isSaving ? 'Saving...' : (isEditMode ? 'Save Changes' : 'Create User') }}
+    </ion-button>
+
+    <ion-button
+      expand="block"
+      fill="clear"
+      (click)="goBack()"
+      class="cancel-btn">
+      Cancel
+    </ion-button>
+
+  </div>
+
+</ion-content>
