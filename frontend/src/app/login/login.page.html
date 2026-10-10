@@ -7,7 +7,7 @@
   <ion-toolbar class="login-toolbar">
     <ion-title>
       <ion-icon name="train-outline" class="header-icon"></ion-icon>
-      Engineering Management System
+      Electronic Via System
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -30,7 +30,20 @@
     <!-- LOGIN FORM -->
     <ion-card class="login-card">
       <ion-card-content>
-
+     <!-- Dummy Role Dropdown (cosmetic only) -->
+        <ion-item class="form-item" lines="none">
+          <ion-icon name="shield-checkmark-outline" slot="start" class="input-icon"></ion-icon>
+          <ion-select
+            [(ngModel)]="selectedRole"
+            label="Login As"
+            labelPlacement="floating"
+            interface="action-sheet"
+            class="role-select">
+            <ion-select-option *ngFor="let r of roles" [value]="r.value">
+              {{ r.label }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
         <!-- Username -->
         <ion-item class="form-item" lines="none">
           <ion-icon name="person-outline" slot="start" class="input-icon"></ion-icon>
@@ -68,20 +81,7 @@
           </ion-button>
         </ion-item>
 
-        <!-- Dummy Role Dropdown (cosmetic only) -->
-        <ion-item class="form-item" lines="none">
-          <ion-icon name="shield-checkmark-outline" slot="start" class="input-icon"></ion-icon>
-          <ion-select
-            [(ngModel)]="selectedRole"
-            label="Login As"
-            labelPlacement="floating"
-            interface="action-sheet"
-            class="role-select">
-            <ion-select-option *ngFor="let r of roles" [value]="r.value">
-              {{ r.label }}
-            </ion-select-option>
-          </ion-select>
-        </ion-item>
+       
 
         <!-- Error Message -->
         <div *ngIf="errorMessage" class="error-message">

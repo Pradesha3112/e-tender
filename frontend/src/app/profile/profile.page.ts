@@ -1,6 +1,6 @@
 // ============================================================
 // FILE: src/app/profile/profile.page.ts
-// PURPOSE: Profile — role-aware (admin gets password tools)
+// PURPOSE: Profile — role-aware (admin gets password + recycle)
 // ============================================================
 
 import { Component, OnInit } from '@angular/core';
@@ -9,13 +9,14 @@ import { IonicModule } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
+import { AppShellComponent } from '../shared/shell/shell.component';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.page.html',
   styleUrls: ['./profile.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule, FormsModule],
+  imports: [CommonModule, IonicModule, RouterModule, FormsModule,  AppShellComponent,  ],
 })
 export class ProfilePage implements OnInit {
 
@@ -37,13 +38,13 @@ export class ProfilePage implements OnInit {
 
   get roleLabel(): string {
     const r = this.auth.getRole();
-    if (r === 'admin')       return 'ADMIN';
+    if (r === 'admin')       return 'Sr. DRM';
     if (r === 'super_admin') {
       return this.auth.getCategoryGroup() === 'adfm_1'
-        ? 'ADFM/I — Rengasamy'
-        : 'ADFM/II — Gopinath';
+        ? 'ADRM I/MDU'
+        : 'ADRM II/MDU';
     }
-    if (r === 'clerk')       return 'CLERK';
+    if (r === 'clerk')       return 'SSO';
     return '—';
   }
 
@@ -58,13 +59,15 @@ export class ProfilePage implements OnInit {
   // PERMISSIONS
   // ============================================================
   get canManageUsers(): boolean {
-    // admin + super_admin
     return this.auth.canManageUsers();
   }
 
   get canChangePassword(): boolean {
-    // ONLY admin
     return this.auth.isAdmin();
+  }
+
+  get canViewRecycleBin(): boolean {
+    return this.auth.canViewRecycleBin();
   }
 
   // ============================================================
@@ -76,6 +79,10 @@ export class ProfilePage implements OnInit {
 
   goToChangePassword() {
     this.router.navigateByUrl('/admin-passwords');
+  }
+
+  goToRecycleBin() {
+    this.router.navigateByUrl('/recycle-bin');
   }
 
   logout() {

@@ -1,7 +1,4 @@
-// ============================================================
-// FILE: src/app/users/users.page.ts
-// PURPOSE: User Management — list / toggle / delete users
-// ============================================================
+import { AppShellComponent } from '../shared/shell/shell.component';
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -17,7 +14,7 @@ import { AlertController, ToastController } from '@ionic/angular';
   templateUrl: './users.page.html',
   styleUrls: ['./users.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule, FormsModule],
+  imports: [CommonModule, IonicModule, RouterModule, FormsModule, AppShellComponent],
 })
 export class UsersPage implements OnInit {
 
@@ -109,14 +106,19 @@ export class UsersPage implements OnInit {
     if (role === 'clerk')       return 'primary';
     return 'medium';
   }
-
-  getRoleLabel(role: string): string {
-    if (role === 'admin')       return 'Admin';
-    if (role === 'super_admin') return 'Super Admin';
-    if (role === 'clerk')       return 'Clerk';
+  getRoleLabel(user: any): string {
+    if (!user) return '—';
+    const role = user.role;
+    if (role === 'admin')       return 'Sr. DRM';
+    if (role === 'clerk')       return 'SSO';
+    if (role === 'super_admin') {
+      const g = user.category_group;
+      if (g === 'adfm_1') return 'ADRM I/MDU';
+      if (g === 'adfm_2') return 'ADRM II/MDU';
+      return 'ADRM';
+    }
     return role;
   }
-
   getGroupLabel(group: string): string {
     if (group === 'adfm_1') return 'ADFM/I';
     if (group === 'adfm_2') return 'ADFM/II';

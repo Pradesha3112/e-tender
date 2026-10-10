@@ -40,19 +40,19 @@ export class LoginPage implements OnInit {
   // Form fields
   username = '';
   password = '';
-  selectedRole = 'admin';    // ⚠️ DUMMY — cosmetic only, never sent to backend
-
+   selectedRole = 'sr_drm';   // ⚠️ DUMMY — cosmetic only, never sent to backend
   // UI state
   showPassword = false;
   isLoading = false;
   errorMessage = '';
 
-  // Dummy roles for dropdown
   roles = [
-    { value: 'admin',       label: 'Admin' },
-    { value: 'super_admin', label: 'Super Admin' },
-    { value: 'clerk',       label: 'Clerk' },
-  ];
+    { value: 'sr_drm',    label: 'Sr. DRM' },
+    { value: 'adrm_1',    label: 'ADRM I/MDU' },
+    { value: 'adrm_2',    label: 'ADRM II/MDU' },
+    { value: 'sso',       label: 'SSO' },
+    { value: 'sso_admin', label: 'SSO Admin' },
+  ];;
 
   constructor(
     private auth: AuthService,
@@ -112,9 +112,9 @@ export class LoginPage implements OnInit {
     this.router.navigateByUrl('/dashboard', { replaceUrl: true });
   }
 
-  fillAdmin(): void {
+   fillAdmin(): void {
     this.username = 'admin';
     this.password = 'admin';
-    this.selectedRole = 'admin';
+    this.selectedRole = 'sr_drm';
   }
 }

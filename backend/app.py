@@ -1,6 +1,6 @@
 # ============================================================
 # FILE: app.py
-# PURPOSE: Flask API with RBAC
+# PURPOSE: Flask API with RBAC + Soft Delete / Recycle Bin
 # ============================================================
 
 from flask import Flask, request, jsonify
@@ -25,7 +25,6 @@ import os
 
 app = Flask(__name__)
 
-# Enable CORS
 CORS(app, resources={
     r"/*": {
         "origins": "*",
@@ -35,17 +34,16 @@ CORS(app, resources={
     }
 })
 
-# Initialize MySQL
 db = MySQLClient()
 
 
 # ============================================================
-# AUTH MIDDLEWARE (runs before every request)
+# AUTH MIDDLEWARE
 # ============================================================
 @app.before_request
 def _load_user():
     if request.method == "OPTIONS":
-        return  # let CORS preflight pass
+        return
     load_current_user()
 
 
@@ -54,7 +52,7 @@ def _load_user():
 # ============================================================
 @app.route('/')
 def home():
-    return "Bill Scanner API (RBAC enabled) is working! 🎉"
+    return "Bill Scanner API (RBAC + Recycle Bin) is working! 🎉"
 
 
 @app.route('/login', methods=['POST'])
@@ -65,19 +63,12 @@ def login():
         password = data.get('password', '')
 
         if not username or not password:
-            return jsonify({
-                'success': False,
-                'error': 'Username and password required'
-            }), 400
+            return jsonify({'success': False, 'error': 'Username and password required'}), 400
 
         user = authenticate(db, username, password)
         if not user:
-            return jsonify({
-                'success': False,
-                'error': 'Invalid credentials or inactive account'
-            }), 401
+            return jsonify({'success': False, 'error': 'Invalid credentials or inactive account'}), 401
 
-        # Update last_login (skip for hardcoded admin)
         if user.get('id', 0) != 0:
             db.touch_last_login(user['username'])
 
@@ -105,16 +96,12 @@ def login():
 @app.route('/me', methods=['GET'])
 @require_auth
 def me():
-    return jsonify({
-        'success': True,
-        'user': request.current_user
-    })
+    return jsonify({'success': True, 'user': request.current_user})
 
 
 @app.route('/categories', methods=['GET'])
 @require_auth
 def categories():
-    """Return categories allowed for the current user."""
     user = request.current_user
     payload = build_category_payload(
         user_group=user.get('category_group', 'all'),
@@ -154,10 +141,8 @@ def save_bill():
         bill_data = request.json or {}
         user = request.current_user
 
-        # ---- Auto-inject RBAC fields ----
         category = bill_data.get('category')
 
-        # Validate category against user's allowed set
         allowed = build_category_payload(
             user_group=user.get('category_group', 'all'),
             user_role=user.get('role')
@@ -169,7 +154,6 @@ def save_bill():
                 'error': f"Category '{category}' not allowed for your role"
             }), 403
 
-        # Default category if admin didn't pick one
         if not category:
             bill_data['category'] = allowed[0] if allowed else None
             category = bill_data['category']
@@ -200,6 +184,7 @@ def save_bill():
 @app.route('/bills', methods=['GET'])
 @require_auth
 def get_bills():
+    """Active (non-deleted) bills for current user's scope."""
     try:
         bills = db.get_all_bills(user=request.current_user)
         return jsonify({'success': True, 'data': bills})
@@ -208,16 +193,26 @@ def get_bills():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
+@app.route('/bills/deleted', methods=['GET'])
+@require_auth
+def get_deleted_bills():
+    """Recycle bin — soft-deleted bills for current user's scope."""
+    try:
+        bills = db.get_deleted_bills(user=request.current_user)
+        return jsonify({'success': True, 'data': bills})
+    except Exception as e:
+        print(f"❌ Get deleted bills error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
 @app.route('/bills/<int:bill_id>', methods=['GET'])
 @require_auth
 def get_bill(bill_id):
     try:
-        # 1. Check existence FIRST
         bill = db.get_bill(bill_id)
         if not bill:
             return jsonify({'success': False, 'error': 'Bill not found'}), 404
 
-        # 2. Then check permission
         if not db.user_can_access_bill(request.current_user, bill_id):
             return jsonify({'success': False, 'error': 'Access denied'}), 403
 
@@ -227,23 +222,146 @@ def get_bill(bill_id):
 
 @app.route('/bills/<int:bill_id>', methods=['DELETE'])
 @require_auth
-def delete_bill(bill_id):
+def soft_delete_bill(bill_id):
+    """
+    Soft-delete a bill — moved to recycle bin.
+
+    Reason rules:
+      - admin       → reason optional (never asked)
+      - super_admin → reason REQUIRED (3-500 chars)
+      - clerk       → reason REQUIRED (3-500 chars)
+    """
     try:
         user = request.current_user
+        role = user.get('role')
+
+        bill = db.get_bill(bill_id)
+        if not bill:
+            return jsonify({'success': False, 'error': 'Bill not found'}), 404
+
+        if bill.get('is_deleted'):
+            return jsonify({'success': False, 'error': 'Bill is already in recycle bin'}), 400
+
         if not db.user_can_access_bill(user, bill_id):
             return jsonify({'success': False, 'error': 'Access denied'}), 403
 
-        # Clerks can only delete their own
-        if user.get('role') == ROLE_CLERK:
-            bill = db.get_bill(bill_id)
+        if role == ROLE_CLERK:
             if bill.get('created_by') != user.get('username'):
                 return jsonify({'success': False, 'error': 'Access denied'}), 403
 
-        ok = db.delete_bill(bill_id)
+        # ---- Reason handling ----
+        data = request.json or {}
+        reason = data.get('reason') or ''
+
+        if role in (ROLE_SUPER_ADMIN, ROLE_CLERK):
+            reason = str(reason).strip()
+            if not reason:
+                return jsonify({
+                    'success': False,
+                    'error': 'Reason for deletion is required'
+                }), 400
+            if len(reason) < 3:
+                return jsonify({
+                    'success': False,
+                    'error': 'Reason must be at least 3 characters'
+                }), 400
+            if len(reason) > 500:
+                return jsonify({
+                    'success': False,
+                    'error': 'Reason must be at most 500 characters'
+                }), 400
+        else:
+            # Admin: ignore any reason sent
+            reason = None
+
+        ok = db.soft_delete_bill(
+            bill_id,
+            username=user.get('username'),
+            role=role,
+            reason=reason
+        )
         if ok:
-            return jsonify({'success': True, 'message': 'Bill deleted'})
-        return jsonify({'success': False, 'error': 'Delete failed'}), 500
+            return jsonify({
+                'success': True,
+                'message': 'Bill moved to recycle bin'
+            })
+        return jsonify({'success': False, 'error': 'Soft delete failed'}), 500
     except Exception as e:
+        print(f"❌ soft_delete_bill error: {e}")
+        import traceback
+        print(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+    
+# ---------- RESTORE (admin only) ----------
+@app.route('/bills/<int:bill_id>/restore', methods=['PUT'])
+@require_auth
+def restore_bill(bill_id):
+    """
+    Restore a soft-deleted bill back to active.
+    Admin only.
+    """
+    try:
+        user = request.current_user
+        if user.get('role') != ROLE_ADMIN:
+            return jsonify({
+                'success': False,
+                'error': 'Only admin can restore bills'
+            }), 403
+
+        bill = db.get_bill(bill_id)
+        if not bill:
+            return jsonify({'success': False, 'error': 'Bill not found'}), 404
+
+        if not bill.get('is_deleted'):
+            return jsonify({'success': False, 'error': 'Bill is not deleted'}), 400
+
+        ok = db.restore_bill(bill_id)
+        if ok:
+            return jsonify({
+                'success': True,
+                'message': 'Bill restored successfully'
+            })
+        return jsonify({'success': False, 'error': 'Restore failed'}), 500
+    except Exception as e:
+        print(f"❌ restore_bill error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+
+# ---------- HARD DELETE (admin only) ----------
+@app.route('/bills/<int:bill_id>/hard', methods=['DELETE'])
+@require_auth
+def hard_delete_bill(bill_id):
+    """
+    Permanently delete a soft-deleted bill.
+    Admin only.
+    """
+    try:
+        user = request.current_user
+        if user.get('role') != ROLE_ADMIN:
+            return jsonify({
+                'success': False,
+                'error': 'Only admin can permanently delete bills'
+            }), 403
+
+        bill = db.get_bill(bill_id)
+        if not bill:
+            return jsonify({'success': False, 'error': 'Bill not found'}), 404
+
+        if not bill.get('is_deleted'):
+            return jsonify({
+                'success': False,
+                'error': 'Bill must be in recycle bin first'
+            }), 400
+
+        ok = db.hard_delete_bill(bill_id)
+        if ok:
+            return jsonify({
+                'success': True,
+                'message': 'Bill permanently deleted'
+            })
+        return jsonify({'success': False, 'error': 'Permanent delete failed'}), 500
+    except Exception as e:
+        print(f"❌ hard_delete_bill error: {e}")
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
@@ -256,16 +374,13 @@ def get_stats():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
+
 # ============================================================
 # SELF-SERVICE PASSWORD CHANGE
 # ============================================================
 @app.route('/me/password', methods=['PUT'])
 @require_auth
 def change_own_password():
-    """
-    Any authenticated user can change their OWN password.
-    Body: { current_password, new_password }
-    """
     try:
         actor = request.current_user
         data = request.json or {}
@@ -273,91 +388,48 @@ def change_own_password():
         new     = data.get('new_password', '')
 
         if not current or not new:
-            return jsonify({
-                'success': False,
-                'error': 'current_password and new_password required'
-            }), 400
+            return jsonify({'success': False, 'error': 'current_password and new_password required'}), 400
 
         if len(new) < 4:
-            return jsonify({
-                'success': False,
-                'error': 'New password must be at least 4 characters'
-            }), 400
+            return jsonify({'success': False, 'error': 'New password must be at least 4 characters'}), 400
 
-        # --- Admin (hardcoded) case ---
         if actor.get('username') == HARDCODED_ADMIN_USERNAME:
-            # Verify current password
             if not authenticate(db, HARDCODED_ADMIN_USERNAME, current):
-                return jsonify({
-                    'success': False,
-                    'error': 'Current password is incorrect'
-                }), 401
+                return jsonify({'success': False, 'error': 'Current password is incorrect'}), 401
 
             row = db.get_user_by_username(HARDCODED_ADMIN_USERNAME)
             if not row:
-                return jsonify({
-                    'success': False,
-                    'error': 'Admin row missing in DB'
-                }), 500
+                return jsonify({'success': False, 'error': 'Admin row missing in DB'}), 500
 
-            ok = db.update_user(row['id'], {
-                'password_hash': hash_password(new)
-            })
+            ok = db.update_user(row['id'], {'password_hash': hash_password(new)})
             if not ok:
-                return jsonify({
-                    'success': False,
-                    'error': 'Update failed'
-                }), 500
+                return jsonify({'success': False, 'error': 'Update failed'}), 500
 
-            return jsonify({
-                'success': True,
-                'message': 'Password updated — please login again'
-            })
+            return jsonify({'success': True, 'message': 'Password updated — please login again'})
 
-        # --- Normal DB user case ---
         user = db.get_user_by_username(actor.get('username'))
         if not user:
-            return jsonify({
-                'success': False,
-                'error': 'User not found'
-            }), 404
+            return jsonify({'success': False, 'error': 'User not found'}), 404
 
         if not verify_password(current, user.get('password_hash')):
-            return jsonify({
-                'success': False,
-                'error': 'Current password is incorrect'
-            }), 401
+            return jsonify({'success': False, 'error': 'Current password is incorrect'}), 401
 
-        ok = db.update_user(user['id'], {
-            'password_hash': hash_password(new)
-        })
+        ok = db.update_user(user['id'], {'password_hash': hash_password(new)})
         if not ok:
-            return jsonify({
-                'success': False,
-                'error': 'Update failed'
-            }), 500
+            return jsonify({'success': False, 'error': 'Update failed'}), 500
 
-        return jsonify({
-            'success': True,
-            'message': 'Password updated — please login again'
-        })
-
+        return jsonify({'success': True, 'message': 'Password updated — please login again'})
     except Exception as e:
         print(f"❌ change_own_password error: {e}")
-        import traceback
-        print(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
 # ============================================================
-# USER MANAGEMENT ROUTES
+# USER MANAGEMENT ROUTES (unchanged)
 # ============================================================
 @app.route('/users', methods=['GET'])
 @require_auth
 def list_users():
-    """
-    - admin       → all users (except admin itself)
-    - super_admin → only clerks they created (or all clerks? we choose: only own-created)
-    - clerk       → forbidden
-    """
     try:
         user = request.current_user
         role = user.get('role')
@@ -365,7 +437,6 @@ def list_users():
         if role == ROLE_ADMIN:
             users = db.get_all_users(exclude_admin=True)
         elif role == ROLE_SUPER_ADMIN:
-            # Super admin sees clerks they created + all clerks belonging to their group
             all_users = db.get_all_users(exclude_admin=True)
             users = [
                 u for u in all_users
@@ -391,51 +462,29 @@ def create_user():
 
         target_role = data.get('role')
         if target_role not in (ROLE_SUPER_ADMIN, ROLE_CLERK):
-            return jsonify({
-                'success': False,
-                'error': 'Role must be super_admin or clerk'
-            }), 400
+            return jsonify({'success': False, 'error': 'Role must be super_admin or clerk'}), 400
 
         if not can_create_role(actor_role, target_role):
-            return jsonify({
-                'success': False,
-                'error': f"You ({actor_role}) cannot create a {target_role}"
-            }), 403
+            return jsonify({'success': False, 'error': f"You ({actor_role}) cannot create a {target_role}"}), 403
 
-        # Required fields
         username = (data.get('username') or '').strip().lower()
         password = data.get('password') or ''
         full_name = (data.get('full_name') or '').strip()
 
         if not username or not password or not full_name:
-            return jsonify({
-                'success': False,
-                'error': 'username, password, full_name required'
-            }), 400
+            return jsonify({'success': False, 'error': 'username, password, full_name required'}), 400
 
         if username == HARDCODED_ADMIN_USERNAME:
-            return jsonify({
-                'success': False,
-                'error': 'Reserved username'
-            }), 400
+            return jsonify({'success': False, 'error': 'Reserved username'}), 400
 
         if db.get_user_by_username(username):
-            return jsonify({
-                'success': False,
-                'error': 'Username already exists'
-            }), 409
+            return jsonify({'success': False, 'error': 'Username already exists'}), 409
 
-        # Category group rules
         category_group = data.get('category_group')
         if target_role == ROLE_SUPER_ADMIN:
-            # Super admins must be in a specific group
             if category_group not in ('adfm_1', 'adfm_2'):
-                return jsonify({
-                    'success': False,
-                    'error': 'super_admin must have category_group adfm_1 or adfm_2'
-                }), 400
+                return jsonify({'success': False, 'error': 'super_admin must have category_group adfm_1 or adfm_2'}), 400
         else:
-            # Clerk inherits from creator's group (if creator is S.A.)
             if actor_role == ROLE_SUPER_ADMIN:
                 category_group = actor.get('category_group')
             elif not category_group:
@@ -458,10 +507,8 @@ def create_user():
 
         new_user.pop('password_hash', None)
         return jsonify({'success': True, 'data': new_user}), 201
-
     except Exception as e:
         print(f"❌ create_user error: {e}")
-        print(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
@@ -474,7 +521,6 @@ def update_user(user_id):
         if not target:
             return jsonify({'success': False, 'error': 'User not found'}), 404
 
-        # ---- Special case: admin editing own record ----
         is_self_admin = (
             target.get('role') == ROLE_ADMIN
             and actor.get('username') == target.get('username') == HARDCODED_ADMIN_USERNAME
@@ -486,31 +532,19 @@ def update_user(user_id):
         data = request.json or {}
         fields = {}
 
-        # ----- Self-admin: ONLY allow password -----
         if is_self_admin:
             if not data.get('password'):
-                return jsonify({
-                    'success': False,
-                    'error': 'Admin can only change own password here'
-                }), 400
+                return jsonify({'success': False, 'error': 'Admin can only change own password here'}), 400
             if len(data['password']) < 4:
-                return jsonify({
-                    'success': False,
-                    'error': 'Password must be at least 4 characters'
-                }), 400
+                return jsonify({'success': False, 'error': 'Password must be at least 4 characters'}), 400
             fields['password_hash'] = hash_password(data['password'])
             db.update_user(user_id, fields)
             return jsonify({'success': True, 'message': 'Password updated'})
 
-        # ----- Normal update flow -----
-        if 'full_name' in data:
-            fields['full_name'] = data['full_name']
-        if 'designation' in data:
-            fields['designation'] = data['designation']
-        if 'phone' in data:
-            fields['phone'] = data['phone']
-        if 'email' in data:
-            fields['email'] = data['email']
+        if 'full_name' in data:  fields['full_name'] = data['full_name']
+        if 'designation' in data: fields['designation'] = data['designation']
+        if 'phone' in data:      fields['phone'] = data['phone']
+        if 'email' in data:      fields['email'] = data['email']
 
         if 'category_group' in data and target['role'] == ROLE_SUPER_ADMIN:
             if actor.get('role') != ROLE_ADMIN:
@@ -521,10 +555,7 @@ def update_user(user_id):
 
         if data.get('password'):
             if len(data['password']) < 4:
-                return jsonify({
-                    'success': False,
-                    'error': 'Password must be at least 4 characters'
-                }), 400
+                return jsonify({'success': False, 'error': 'Password must be at least 4 characters'}), 400
             fields['password_hash'] = hash_password(data['password'])
 
         if not fields:
@@ -537,16 +568,14 @@ def update_user(user_id):
                 updated.pop('password_hash', None)
             return jsonify({'success': True, 'data': updated})
         return jsonify({'success': False, 'error': 'Update failed'}), 500
-
     except Exception as e:
         print(f"❌ update_user error: {e}")
-        import traceback; print(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
+
 
 @app.route('/users/<int:user_id>/toggle', methods=['POST'])
 @require_auth
 def toggle_user(user_id):
-    """Activate / deactivate a user."""
     try:
         actor = request.current_user
         target = db.get_user_by_id(user_id)
@@ -565,7 +594,6 @@ def toggle_user(user_id):
                 'message': 'Activated' if new_state else 'Deactivated'
             })
         return jsonify({'success': False, 'error': 'Toggle failed'}), 500
-
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
@@ -582,7 +610,6 @@ def delete_user(user_id):
         if not can_manage_user(actor.get('role'), target.get('role')):
             return jsonify({'success': False, 'error': 'Access denied'}), 403
 
-        # Rule: S.A. cannot delete another S.A. (only admin can)
         if target['role'] == ROLE_SUPER_ADMIN and actor.get('role') != ROLE_ADMIN:
             return jsonify({'success': False, 'error': 'Only admin can delete super_admin'}), 403
 
@@ -590,7 +617,6 @@ def delete_user(user_id):
         if ok:
             return jsonify({'success': True, 'message': 'User deleted'})
         return jsonify({'success': False, 'error': 'Delete failed'}), 500
-
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
 
@@ -607,41 +633,23 @@ def _404(e):
 def _500(e):
     return jsonify({'success': False, 'error': 'Server error'}), 500
 
+
 # ============================================================
 # DASHBOARD DATA — Notices & Activity
 # ============================================================
 @app.route('/notices', methods=['GET'])
 @require_auth
 def get_notices():
-    """
-    Return active system notices.
-    For now: static list. Later: read from notices table.
-    """
     notices = [
-        {
-            "id": 1,
-            "title": "OCR-Powered Bill Processing",
-            "message": "Upload railway bills via camera or file. OCR extracts data automatically.",
-            "type": "info",
-            "priority": 1,
-            "created_at": "2026-09-23T10:00:00",
-        },
-        {
-            "id": 2,
-            "title": "Role-Based Access Enabled",
-            "message": "Each officer sees only their assigned category group bills.",
-            "type": "success",
-            "priority": 2,
-            "created_at": "2026-09-22T09:00:00",
-        },
-        {
-            "id": 3,
-            "title": "System Maintenance Window",
-            "message": "Scheduled maintenance every Sunday 02:00–04:00 IST.",
-            "type": "warning",
-            "priority": 3,
-            "created_at": "2026-09-20T08:00:00",
-        },
+        {"id": 1, "title": "OCR-Powered Bill Processing",
+         "message": "Upload railway bills via camera or file. OCR extracts data automatically.",
+         "type": "info", "priority": 1, "created_at": "2026-09-23T10:00:00"},
+        {"id": 2, "title": "Role-Based Access Enabled",
+         "message": "Each officer sees only their assigned category group bills.",
+         "type": "success", "priority": 2, "created_at": "2026-09-22T09:00:00"},
+        {"id": 3, "title": "Soft Delete + Recycle Bin",
+         "message": "Deleted bills go to recycle bin. Admin can restore or permanently delete.",
+         "type": "warning", "priority": 3, "created_at": "2026-10-01T08:00:00"},
     ]
     return jsonify({'success': True, 'data': notices})
 
@@ -649,15 +657,10 @@ def get_notices():
 @app.route('/activity', methods=['GET'])
 @require_auth
 def get_activity():
-    """
-    Return recent activity derived from existing tables.
-    Last 5 events = most recent bills + recently created users.
-    """
     try:
         user = request.current_user
         events = []
 
-        # ---- Last 3 visible bills ----
         bills = db.get_all_bills(user=user)
         for bill in bills[:3]:
             events.append({
@@ -671,7 +674,6 @@ def get_activity():
                 "username": bill.get('created_by'),
             })
 
-        # ---- Last 2 users (only for admin/S.A.) ----
         if user.get('role') in ('admin', 'super_admin'):
             all_users = db.get_all_users(exclude_admin=True)
             for u in all_users[:2]:
@@ -685,20 +687,14 @@ def get_activity():
                     "username": u.get('created_by'),
                 })
 
-        # Sort by created_at desc, take top 5
-        events.sort(
-            key=lambda e: e.get('created_at') or '',
-            reverse=True
-        )
+        events.sort(key=lambda e: e.get('created_at') or '', reverse=True)
         events = events[:5]
 
         return jsonify({'success': True, 'data': events})
-
     except Exception as e:
         print(f"❌ get_activity error: {e}")
-        import traceback; print(traceback.format_exc())
         return jsonify({'success': False, 'error': str(e)}), 500
 
-    
+
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

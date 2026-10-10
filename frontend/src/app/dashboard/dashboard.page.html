@@ -1,364 +1,237 @@
 <!-- ============================================ -->
 <!-- FILE: src/app/dashboard/dashboard.page.html    -->
-<!-- RAILWAY eOFFICE BLUE DASHBOARD                 -->
+<!-- DASHBOARD — content only (shell provides layout) -->
 <!-- ============================================ -->
 
-<!-- ============================================================ -->
-<!-- TOP NAVIGATION BAR                                            -->
-<!-- ============================================================ -->
-<ion-header class="rly-header">
-  <ion-toolbar class="rly-toolbar">
+<app-shell
+  pageTitle="Dashboard"
+  [showRightPanel]="true"
+  (refresh)="loadAll()">
+  <!-- ============================================================ -->
+  <!-- MAIN CONTENT (default slot)                                    -->
+  <!-- ============================================================ -->
 
-    <!-- LEFT: Hamburger (mobile/tablet) + Branding -->
-    <ion-buttons slot="start">
-      <ion-button class="rly-icon-btn" (click)="toggleSidebar()">
-        <ion-icon name="menu-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
+  <!-- NOTICE BANNER -->
+  <div *ngIf="topNotice"
+       class="notice-banner"
+       [ngClass]="getNoticeClass(topNotice.type)">
+    <ion-icon [name]="getNoticeIcon(topNotice.type)"
+              class="notice-icon"></ion-icon>
+    <div class="notice-content">
+      <strong>{{ topNotice.title }}</strong>
+      <span class="notice-message">{{ topNotice.message }}</span>
+    </div>
+  </div>
 
-    <ion-title class="rly-title">
-      <div class="brand">
-        <ion-icon name="train-outline" class="brand-icon"></ion-icon>
-        <div class="brand-text">
-          <span class="brand-main">Engineering Management System</span>
-          <span class="brand-sub">OCR-BASED BILL MANAGEMENT</span>
-        </div>
+  <!-- WELCOME CARD -->
+  <section class="welcome-card">
+    <div class="welcome-left">
+      <div class="welcome-icon">
+        <ion-icon name="train-outline"></ion-icon>
       </div>
-    </ion-title>
+      <div>
+        <h1 class="welcome-title">
+          Welcome, {{ user?.full_name || 'User' }}
+        </h1>
+        <p class="welcome-subtitle">{{ groupLabel }}</p>
+      </div>
+    </div>
+    <div class="welcome-right">
+      <span class="welcome-badge">{{ roleLabel }}</span>
+    </div>
+  </section>
 
-    <!-- RIGHT: User info + actions -->
-    <ion-buttons slot="end" class="top-actions">
-      <ion-button class="rly-icon-btn desktop-only" (click)="refreshDashboard()">
-        <ion-icon name="refresh-outline"></ion-icon>
+  <!-- STATS GRID -->
+  <section class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon">
+        <ion-icon name="document-text-outline"></ion-icon>
+      </div>
+      <div class="stat-body">
+        <div class="stat-value">{{ stats.totalBills }}</div>
+        <div class="stat-label">TOTAL BILLS</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <ion-icon name="cash-outline"></ion-icon>
+      </div>
+      <div class="stat-body">
+        <div class="stat-value">{{ formatCompactCurrency(stats.totalAmount) }}</div>
+        <div class="stat-label">TOTAL AMOUNT</div>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </div>
+      <div class="stat-body">
+        <div class="stat-value">{{ stats.thisMonth }}</div>
+        <div class="stat-label">THIS MONTH</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- RECENT BILLS -->
+  <section class="recent-section">
+    <div class="section-header">
+      <h3>
+        <ion-icon name="time-outline"></ion-icon>
+        RECENT BILLS
+      </h3>
+      <a class="see-all" (click)="goToBills()">
+        SEE ALL <ion-icon name="chevron-forward-outline"></ion-icon>
+      </a>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-inline">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <div *ngIf="!isLoading && recentBills.length === 0" class="empty-inline">
+      <ion-icon name="document-outline"></ion-icon>
+      <p>No bills yet. Start by scanning your first bill.</p>
+      <ion-button fill="solid" class="rly-btn-primary" (click)="goToUpload()">
+        <ion-icon name="camera-outline" slot="start"></ion-icon>
+        Scan Now
       </ion-button>
-      <ion-button class="rly-icon-btn desktop-only" (click)="goToProfile()">
+    </div>
+
+    <table *ngIf="!isLoading && recentBills.length > 0" class="bills-table">
+      <thead>
+        <tr>
+          <th style="width: 40px;">#</th>
+          <th>VENDOR</th>
+          <th>CATEGORY</th>
+          <th class="text-right">AMOUNT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let bill of recentBills; let i = index"
+            (click)="viewBill(bill.id)">
+          <td class="text-center">{{ i + 1 }}</td>
+          <td>
+            <div class="vendor-name">{{ bill.vendor || 'Unknown Vendor' }}</div>
+            <div class="vendor-meta">#{{ bill.bill_number || 'N/A' }}</div>
+          </td>
+          <td>
+            <span class="category-chip">
+              {{ getCategoryShortName(bill.category) }}
+            </span>
+          </td>
+          <td class="text-right amount-cell">
+            {{ formatCurrency(bill.total) }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ============================================================ -->
+  <!-- RIGHT PANEL CONTENT (projected slot)                          -->
+  <!-- ============================================================ -->
+  <div rightPanel>
+
+    <!-- USER INFO -->
+    <div class="right-card">
+      <div class="right-heading">
         <ion-icon name="person-circle-outline"></ion-icon>
-      </ion-button>
-
-      <div class="user-chip">
-        <div class="user-avatar">{{ user?.full_name?.charAt(0) || 'U' }}</div>
-        <div class="user-info desktop-only">
-          <div class="user-name">{{ user?.full_name || 'User' }}</div>
-          <div class="user-role">{{ roleLabel }}</div>
-        </div>
+        USER
       </div>
-    </ion-buttons>
+      <div class="info-row">
+        <span class="info-label">Role</span>
+        <span class="info-value">{{ roleLabel }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Group</span>
+        <span class="info-value">{{ groupLabel }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Username</span>
+        <span class="info-value">@{{ user?.username }}</span>
+      </div>
+    </div>
 
-  </ion-toolbar>
-</ion-header>
-
-<!-- ============================================================ -->
-<!-- MAIN LAYOUT — 3-COLUMN DESKTOP                               -->
-<!-- ============================================================ -->
-<ion-content class="rly-content">
-  <div class="rly-layout" [class.sidebar-collapsed]="sidebarCollapsed"
-                          [class.right-hidden]="!rightPanelOpen">
-
-    <!-- ==================================================== -->
-    <!-- LEFT SIDEBAR                                          -->
-    <!-- ==================================================== -->
-    <aside class="rly-sidebar">
-      <nav class="sidebar-nav">
-
-        <a class="nav-item active" (click)="goToDashboard()">
-          <ion-icon name="home-outline"></ion-icon>
-          <span class="nav-label">DASHBOARD</span>
-        </a>
-
-        <a class="nav-item" (click)="goToUpload()">
+    <!-- QUICK ACTIONS -->
+    <div class="right-card">
+      <div class="right-heading">
+        <ion-icon name="flash-outline"></ion-icon>
+        QUICK ACTIONS
+      </div>
+      <div class="quick-actions">
+        <button class="qa-btn" (click)="goToUpload()">
           <ion-icon name="camera-outline"></ion-icon>
-          <span class="nav-label">SCAN BILL</span>
-        </a>
-
-        <a class="nav-item" (click)="goToBills()">
-          <ion-icon name="document-text-outline"></ion-icon>
-          <span class="nav-label">BILLS</span>
-        </a>
-
-        <a class="nav-item" (click)="goToExport()">
-          <ion-icon name="download-outline"></ion-icon>
-          <span class="nav-label">EXPORT</span>
-        </a>
-
-        <a class="nav-item" *ngIf="canManageUsers" (click)="goToUsers()">
+          <span>Scan Bill</span>
+        </button>
+        <button class="qa-btn" *ngIf="canManageUsers" (click)="goToUsers()">
           <ion-icon name="people-outline"></ion-icon>
-          <span class="nav-label">USERS</span>
-        </a>
-
-        <a class="nav-item" (click)="goToProfile()">
-          <ion-icon name="person-outline"></ion-icon>
-          <span class="nav-label">PROFILE</span>
-        </a>
-
-      </nav>
-
-      <div class="sidebar-divider"></div>
-
-      
-    </aside>
-
-    <!-- ==================================================== -->
-    <!-- CENTER — MAIN CONTENT                                 -->
-    <!-- ==================================================== -->
-    <main class="rly-main">
-
- 
-
-      <!-- WELCOME CARD -->
-      <section class="welcome-card">
-        <div class="welcome-left">
-          <div class="welcome-icon">
-            <ion-icon name="train-outline"></ion-icon>
-          </div>
-          <div>
-            <h1 class="welcome-title">
-              Welcome, {{ user?.full_name || 'User' }}
-            </h1>
-            <p class="welcome-subtitle">{{ groupLabel }}</p>
-          </div>
-        </div>
-        <div class="welcome-right">
-          <span class="welcome-badge">{{ roleLabel }}</span>
-        </div>
-      </section>
-
-      <!-- STATS GRID -->
-      <section class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">
-            <ion-icon name="document-text-outline"></ion-icon>
-          </div>
-          <div class="stat-body">
-            <div class="stat-value">{{ stats.totalBills }}</div>
-            <div class="stat-label">TOTAL BILLS</div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">
-            <ion-icon name="cash-outline"></ion-icon>
-          </div>
-          <div class="stat-body">
-            <div class="stat-value">{{ formatCompactCurrency(stats.totalAmount) }}</div>
-            <div class="stat-label">TOTAL AMOUNT</div>
-          </div>
-        </div>
-
-        <div class="stat-card">
-          <div class="stat-icon">
-            <ion-icon name="calendar-outline"></ion-icon>
-          </div>
-          <div class="stat-body">
-            <div class="stat-value">{{ stats.thisMonth }}</div>
-            <div class="stat-label">THIS MONTH</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- SCAN CTA -->
-      <section class="scan-cta" (click)="goToUpload()">
-        <div class="scan-left">
-          <div class="scan-icon">
-            <ion-icon name="camera-outline"></ion-icon>
-          </div>
-          <div>
-            <h3 class="scan-title">SCAN NEW BILL</h3>
-            <p class="scan-subtitle">Capture / Upload Railway Bill</p>
-            <p class="scan-flow">OCR → Validate → Category → Save</p>
-          </div>
-        </div>
-        <div class="scan-badge">+ NEW</div>
-      </section>
-
-      <!-- RECENT BILLS -->
-      <section class="recent-section">
-        <div class="section-header">
-          <h3>
-            <ion-icon name="time-outline"></ion-icon>
-            RECENT BILLS
-          </h3>
-          <a class="see-all" (click)="goToBills()">
-            SEE ALL <ion-icon name="chevron-forward-outline"></ion-icon>
-          </a>
-        </div>
-
-        <div *ngIf="isLoading" class="loading-inline">
-          <ion-spinner name="crescent"></ion-spinner>
-        </div>
-
-        <div *ngIf="!isLoading && recentBills.length === 0" class="empty-inline">
-          <ion-icon name="document-outline"></ion-icon>
-          <p>No bills yet. Start by scanning your first bill.</p>
-          <ion-button fill="solid" class="rly-btn-primary" (click)="goToUpload()">
-            <ion-icon name="camera-outline" slot="start"></ion-icon>
-            Scan Now
-          </ion-button>
-        </div>
-
-        <table *ngIf="!isLoading && recentBills.length > 0" class="bills-table">
-          <thead>
-            <tr>
-              <th style="width: 40px;">#</th>
-              <th>VENDOR</th>
-              <th>CATEGORY</th>
-              <th class="text-right">AMOUNT</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let bill of recentBills; let i = index"
-                (click)="viewBill(bill.id)">
-              <td class="text-center">{{ i + 1 }}</td>
-              <td>
-                <div class="vendor-name">{{ bill.vendor || 'Unknown Vendor' }}</div>
-                <div class="vendor-meta">#{{ bill.bill_number || 'N/A' }}</div>
-              </td>
-              <td>
-                <span class="category-chip">
-                  {{ getCategoryShortName(bill.category) }}
-                </span>
-              </td>
-              <td class="text-right amount-cell">
-                {{ formatCurrency(bill.total) }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-     
-    </main>
-
-    <!-- ==================================================== -->
-    <!-- RIGHT PANEL                                           -->
-    <!-- ==================================================== -->
-    <aside class="rly-right" [class.mobile-collapsed]="!rightPanelOpen">
-
-      <button class="right-toggle mobile-only"
-              (click)="toggleRightPanel()">
-        <ion-icon [name]="rightPanelOpen ? 'chevron-up' : 'chevron-down'"></ion-icon>
-        <span>{{ rightPanelOpen ? 'Hide' : 'Show' }} Info</span>
-      </button>
-
-      <!-- USER INFO -->
-      <div class="right-card">
-        <div class="right-heading">
-          <ion-icon name="person-circle-outline"></ion-icon>
-          USER
-        </div>
-        <div class="info-row">
-          <span class="info-label">Role</span>
-          <span class="info-value">{{ roleLabel }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Group</span>
-          <span class="info-value">{{ groupLabel }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Username</span>
-          <span class="info-value">@{{ user?.username }}</span>
-        </div>
+          <span>Users</span>
+        </button>
+        <button class="qa-btn" (click)="goToBills()">
+          <ion-icon name="document-text-outline"></ion-icon>
+          <span>Bills</span>
+        </button>
+        <button class="qa-btn" (click)="goToExport()">
+          <ion-icon name="download-outline"></ion-icon>
+          <span>Export</span>
+        </button>
+        <button class="qa-btn" (click)="refreshDashboard()">
+          <ion-icon name="refresh-outline"></ion-icon>
+          <span>Refresh</span>
+        </button>
       </div>
+    </div>
 
-      <!-- QUICK ACTIONS -->
-      <div class="right-card">
-        <div class="right-heading">
-          <ion-icon name="flash-outline"></ion-icon>
-          QUICK ACTIONS
-        </div>
-        <div class="quick-actions">
-          <button class="qa-btn" (click)="goToUpload()">
-            <ion-icon name="camera-outline"></ion-icon>
-            <span>Scan Bill</span>
-          </button>
-          <button class="qa-btn" *ngIf="canManageUsers" (click)="goToUsers()">
-            <ion-icon name="people-outline"></ion-icon>
-            <span>Users</span>
-          </button>
-          <button class="qa-btn" (click)="goToBills()">
-            <ion-icon name="document-text-outline"></ion-icon>
-            <span>Bills</span>
-          </button>
-          <button class="qa-btn" (click)="goToExport()">
-            <ion-icon name="download-outline"></ion-icon>
-            <span>Export</span>
-          </button>
-          <button class="qa-btn" (click)="refreshDashboard()">
-            <ion-icon name="refresh-outline"></ion-icon>
-            <span>Refresh</span>
-          </button>
-        </div>
+    <!-- SYSTEM INFO -->
+    <div class="right-card">
+      <div class="right-heading">
+        <ion-icon name="server-outline"></ion-icon>
+        SYSTEM INFO
       </div>
-
-      <!-- SYSTEM INFO -->
-      <div class="right-card">
-        <div class="right-heading">
-          <ion-icon name="server-outline"></ion-icon>
-          SYSTEM INFO
-        </div>
-        <div class="info-row">
-          <span class="info-label">Total Bills</span>
-          <span class="info-value">{{ stats.totalBills }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Total Amount</span>
-          <span class="info-value">{{ formatCompactCurrency(stats.totalAmount) }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">This Month</span>
-          <span class="info-value">{{ stats.thisMonth }}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Role</span>
-          <span class="info-value">{{ roleLabel }}</span>
-        </div>
+      <div class="info-row">
+        <span class="info-label">Total Bills</span>
+        <span class="info-value">{{ stats.totalBills }}</span>
       </div>
+      <div class="info-row">
+        <span class="info-label">Total Amount</span>
+        <span class="info-value">{{ formatCompactCurrency(stats.totalAmount) }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">This Month</span>
+        <span class="info-value">{{ stats.thisMonth }}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Role</span>
+        <span class="info-value">{{ roleLabel }}</span>
+      </div>
+    </div>
 
-      <!-- ACTIVITY -->
-      <div class="right-card">
-        <div class="right-heading">
-          <ion-icon name="pulse-outline"></ion-icon>
-          RECENT ACTIVITY
-        </div>
-        <div *ngIf="activity.length === 0" class="activity-empty">
-          No recent activity
-        </div>
-        <ul class="activity-list" *ngIf="activity.length > 0">
-          <li *ngFor="let a of activity">
-            <ion-icon [name]="a.icon || 'ellipse-outline'"
-                      class="activity-icon"></ion-icon>
-            <div class="activity-body">
-              <div class="activity-message">{{ a.message }}</div>
-              <div class="activity-meta" *ngIf="a.username">
-                by @{{ a.username }}
-              </div>
+    <!-- ACTIVITY -->
+    <div class="right-card">
+      <div class="right-heading">
+        <ion-icon name="pulse-outline"></ion-icon>
+        RECENT ACTIVITY
+      </div>
+      <div *ngIf="activity.length === 0" class="activity-empty">
+        No recent activity
+      </div>
+      <ul class="activity-list" *ngIf="activity.length > 0">
+        <li *ngFor="let a of activity">
+          <ion-icon [name]="a.icon || 'ellipse-outline'"
+                    class="activity-icon"></ion-icon>
+          <div class="activity-body">
+            <div class="activity-message">{{ a.message }}</div>
+            <div class="activity-meta" *ngIf="a.username">
+              by @{{ a.username }}
             </div>
-          </li>
-        </ul>
-      </div>
-
-    </aside>
+          </div>
+        </li>
+      </ul>
+    </div>
 
   </div>
-</ion-content>
 
-<!-- ============================================================ -->
-<!-- BOTTOM NAV (mobile only)                                     -->
-<!-- ============================================================ -->
-<footer class="bottom-nav">
-  <button class="nav-btn active" (click)="goToDashboard()">
-    <ion-icon name="home-outline"></ion-icon>
-    <span>Home</span>
-  </button>
-  <button class="nav-btn" (click)="goToUpload()">
-    <ion-icon name="camera-outline"></ion-icon>
-    <span>Scan</span>
-  </button>
-  <button class="nav-btn" (click)="goToBills()">
-    <ion-icon name="document-text-outline"></ion-icon>
-    <span>Bills</span>
-  </button>
-  <button class="nav-btn" (click)="goToProfile()">
-    <ion-icon name="person-outline"></ion-icon>
-    <span>Profile</span>
-  </button>
-</footer>
+</app-shell>

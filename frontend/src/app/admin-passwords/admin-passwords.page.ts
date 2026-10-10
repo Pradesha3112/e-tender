@@ -274,11 +274,17 @@ export class AdminPasswordsPage implements OnInit {
     if (role === 'clerk')       return 'primary';
     return 'medium';
   }
-
-  getRoleLabel(role: string): string {
-    if (role === 'admin')       return 'Admin';
-    if (role === 'super_admin') return 'Super Admin';
-    if (role === 'clerk')       return 'Clerk';
+  getRoleLabel(user: any): string {
+    if (!user) return '—';
+    const role = user.role;
+    if (role === 'admin')       return 'Sr. DRM';
+    if (role === 'clerk')       return 'SSO';
+    if (role === 'super_admin') {
+      const g = user.category_group;
+      if (g === 'adfm_1') return 'ADRM I/MDU';
+      if (g === 'adfm_2') return 'ADRM II/MDU';
+      return 'ADRM';
+    }
     return role;
   }
 

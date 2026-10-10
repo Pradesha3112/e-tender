@@ -1,140 +1,119 @@
 <!-- ============================================ -->
-<!-- FILE: bills.page.html                        -->
-<!-- RAILWAY E-BILLING - BILLS LIST (Blue Theme)  -->
+<!-- FILE: src/app/bills/bills.page.html          -->
+<!-- BILLS LIST + RECYCLE BIN QUICK ACCESS         -->
 <!-- ============================================ -->
 
-<ion-header>
-  <ion-toolbar style="--background: linear-gradient(135deg, #1a3a6c, #2c5282); --color: white;">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard" style="--color: white;"></ion-back-button>
-    </ion-buttons>
-    <ion-title>
-      <ion-icon name="train-outline" style="margin-right: 10px; font-size: 22px;"></ion-icon>
-Engineering Management System
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="goToExport()" style="--color: white;">
-        <ion-icon name="download-outline"></ion-icon>
-      </ion-button>
-      <ion-button (click)="refreshBills()" style="--color: white;">
-        <ion-icon name="refresh-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content class="ion-padding" style="--background: #eef2f7;">
-
+<app-shell pageTitle="Bills" (refresh)="refreshBills()">
   <!-- SEARCH BAR -->
-  <div class="search-container" style="margin-bottom: 16px;">
-    <ion-item class="search-bar" style="--background: white; --border-radius: 14px; --padding-start: 12px; --padding-end: 8px; box-shadow: 0 2px 12px rgba(26,58,108,0.08); border-radius: 14px !important; margin-bottom: 12px; border: 1px solid #e2e8f0;">
-      <ion-icon name="search-outline" slot="start" class="search-icon" style="color: #64748b; font-size: 20px;"></ion-icon>
+  <div class="search-container">
+    <ion-item class="search-bar" lines="none">
+      <ion-icon name="search-outline" slot="start" class="search-icon"></ion-icon>
       <ion-input
         [(ngModel)]="searchTerm"
         placeholder="Search by vendor or bill number..."
         (ionInput)="filterBills()"
         clear-input
-        class="search-input"
-        style="--color: #1e293b; font-size: 14px;"
-      ></ion-input>
+        class="search-input">
+      </ion-input>
       <ion-button
         *ngIf="searchTerm"
         fill="clear"
         slot="end"
         (click)="clearSearch()"
-        class="clear-btn"
-        style="--color: #64748b; --padding-start: 4px; --padding-end: 4px; height: 30px;"
-      >
-        <ion-icon name="close-circle" style="font-size: 22px;"></ion-icon>
+        class="clear-btn">
+        <ion-icon name="close-circle"></ion-icon>
       </ion-button>
     </ion-item>
 
     <!-- Filter Chips -->
-    <div class="filter-chips" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+    <div class="filter-chips">
       <ion-chip
         *ngFor="let filter of filters"
-        [color]="filter.active ? 'danger' : 'medium'"
+        [class.active]="filter.active"
         (click)="applyFilter(filter)"
-        style="--border-radius: 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.4px; padding: 4px 14px; cursor: pointer; transition: all 0.2s;"
-        [style.--background]="filter.active ? '#2563eb' : 'var(--ion-color-medium)'"
-        [style.--color]="filter.active ? 'white' : 'var(--ion-color-medium-contrast)'"
-      >
-        <ion-icon *ngIf="filter.active" name="checkmark-circle" style="margin-right: 4px;"></ion-icon>
+        class="filter-chip">
+        <ion-icon *ngIf="filter.active" name="checkmark-circle"></ion-icon>
         {{ filter.label }}
       </ion-chip>
     </div>
   </div>
 
-  <!-- Loading Spinner -->
-  <div *ngIf="isLoading" class="loading-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px;">
-    <ion-spinner name="crescent" style="--color: #2563eb; width: 48px; height: 48px;"></ion-spinner>
-    <p style="margin-top: 16px; color: #64748b; font-size: 14px; font-style: italic;">Loading railway bills...</p>
+  <!-- LOADING -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading railway bills...</p>
   </div>
 
-  <!-- Stats Summary -->
-  <div *ngIf="!isLoading && filteredBills.length > 0" class="stats-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-    <div class="stat-card" style="background: white; border-radius: 16px; padding: 16px; text-align: center; box-shadow: 0 2px 12px rgba(26,58,108,0.08); border: 1px solid #e2e8f0; border-left: 4px solid #2563eb;">
-      <div class="stat-number" style="font-size: 22px; font-weight: 700; color: #1a3a6c; display: block;">{{ filteredBills.length }}</div>
-      <div class="stat-label" style="font-size: 11px; color: #64748b; margin-top: 4px; display: block; font-weight: 600; letter-spacing: 0.3px;">
-        <ion-icon name="train" style="font-size: 12px; color: #2563eb;"></ion-icon> Found Bills
+  <!-- STATS SUMMARY -->
+  <div *ngIf="!isLoading && filteredBills.length > 0" class="stats-container">
+    <div class="stat-card">
+      <div class="stat-number">{{ filteredBills.length }}</div>
+      <div class="stat-label">
+        <ion-icon name="train"></ion-icon> Found Bills
       </div>
     </div>
-    <div class="stat-card" style="background: white; border-radius: 16px; padding: 16px; text-align: center; box-shadow: 0 2px 12px rgba(26,58,108,0.08); border: 1px solid #e2e8f0; border-left: 4px solid #2563eb;">
-      <div class="stat-number" style="font-size: 22px; font-weight: 700; color: #2563eb; display: block;">{{ formatCurrency(stats.totalAmount) }}</div>
-      <div class="stat-label" style="font-size: 11px; color: #64748b; margin-top: 4px; display: block; font-weight: 600; letter-spacing: 0.3px;">
-        <ion-icon name="cash-outline" style="font-size: 12px; color: #2563eb;"></ion-icon> Total Amount
+    <div class="stat-card">
+      <div class="stat-number amount">{{ formatCurrency(stats.totalAmount) }}</div>
+      <div class="stat-label">
+        <ion-icon name="cash-outline"></ion-icon> Total Amount
       </div>
     </div>
   </div>
 
-  <!-- Bills List -->
-  <div *ngIf="!isLoading && filteredBills.length > 0" class="bills-container" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+  <!-- BILLS LIST -->
+  <div *ngIf="!isLoading && filteredBills.length > 0" class="bills-container">
     <div
       class="bill-item"
       *ngFor="let bill of filteredBills"
-      (click)="viewBill(bill.id)"
-      style="background: white; border-radius: 16px; padding: 14px 16px; display: flex; align-items: center; gap: 14px; box-shadow: 0 2px 12px rgba(26,58,108,0.08); cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #e2e8f0;"
-    >
-      <div class="bill-icon" style="width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg, #1a3a6c, #2563eb); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px rgba(37,99,235,0.25);">
-        <ion-icon name="receipt-outline" style="font-size: 22px; color: white;"></ion-icon>
+      (click)="viewBill(bill.id)">
+
+      <div class="bill-icon">
+        <ion-icon name="receipt-outline"></ion-icon>
       </div>
-      <div class="bill-info" style="flex: 1; min-width: 0;">
-        <div class="bill-vendor" style="font-size: 15px; font-weight: 700; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+
+      <div class="bill-info">
+        <div class="bill-vendor">
           {{ bill.vendor || 'Unknown Vendor' }}
         </div>
-        <div class="bill-details" style="display: flex; gap: 10px; margin-top: 3px; font-size: 12px; color: #64748b; flex-wrap: wrap;">
-          <span class="bill-number" style="background: #f1f5f9; padding: 2px 10px; border-radius: 4px; font-weight: 600; color: #1e293b; font-size: 11px;">#{{ bill.bill_number || 'N/A' }}</span>
-          <span class="bill-date" style="display: flex; align-items: center; gap: 4px; color: #64748b; font-size: 11px; font-style: italic;">
-            <ion-icon name="calendar-outline" style="font-size: 14px;"></ion-icon>
+        <div class="bill-details">
+          <span class="bill-number">#{{ bill.bill_number || 'N/A' }}</span>
+          <span class="bill-date">
+            <ion-icon name="calendar-outline"></ion-icon>
             {{ bill.date || 'No date' }}
+          </span>
+          <span class="bill-category" *ngIf="bill.category">
+            <ion-icon name="pricetag-outline"></ion-icon>
+            {{ bill.category }}
           </span>
         </div>
       </div>
-      <div class="bill-amount" style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; font-size: 16px; font-weight: 700; color: #2563eb; flex-shrink: 0;">
+
+      <div class="bill-amount">
         {{ formatCurrency(bill.total) }}
         <ion-button
           fill="clear"
           size="small"
           (click)="deleteBill(bill.id, $event)"
-          style="--padding-start: 4px; --padding-end: 4px; --color: #dc2626; --background: transparent; height: 28px;"
-        >
-          <ion-icon name="trash-outline" style="font-size: 18px;"></ion-icon>
+          class="delete-btn"
+          title="Move to recycle bin">
+          <ion-icon name="trash-outline"></ion-icon>
         </ion-button>
       </div>
     </div>
   </div>
 
-  <!-- No Data Message -->
-  <div *ngIf="!isLoading && filteredBills.length === 0" class="empty-state" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center;">
-    <ion-icon name="document-outline" class="empty-icon" style="font-size: 80px; color: #cbd5e1; margin-bottom: 16px;"></ion-icon>
-    <h3 style="font-size: 20px; color: #1e293b; margin: 0 0 8px; font-weight: 700;">{{ searchTerm ? 'No Results Found' : 'No Railway Bills Found' }}</h3>
-    <p style="color: #64748b; font-size: 14px; margin: 0 0 24px; max-width: 300px; font-style: italic;">
-      {{ searchTerm ? 'Try adjusting your search criteria' : 'You haven\'t scanned any railway bills yet.' }}
+  <!-- EMPTY STATE -->
+  <div *ngIf="!isLoading && filteredBills.length === 0" class="empty-state">
+    <ion-icon name="document-outline" class="empty-icon"></ion-icon>
+    <h3>{{ searchTerm ? 'No Results Found' : 'No Railway Bills Found' }}</h3>
+    <p>
+      {{ searchTerm
+          ? 'Try adjusting your search criteria'
+          : 'You haven\'t scanned any railway bills yet.' }}
     </p>
-    <ion-button (click)="goToUpload()" style="--border-radius: 14px; --padding-start: 24px; --padding-end: 24px; --background: linear-gradient(135deg, #1a3a6c, #2563eb); --box-shadow: 0 4px 16px rgba(37,99,235,0.35); height: 48px; font-weight: 700; letter-spacing: 0.4px; --color: white;">
+    <ion-button (click)="goToUpload()" class="empty-btn">
       <ion-icon name="camera-outline" slot="start"></ion-icon>
       {{ searchTerm ? 'Clear Search' : 'Scan Your First Bill' }}
     </ion-button>
-  </div>
-
-</ion-content>
+  </div></app-shell>

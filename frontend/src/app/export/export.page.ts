@@ -5,7 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
 import { AlertController, LoadingController } from '@ionic/angular';
-
+import { AppShellComponent } from '../shared/shell/shell.component';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -18,7 +18,8 @@ import autoTable from 'jspdf-autotable';
     CommonModule,
     IonicModule,
     RouterModule,
-    FormsModule
+    FormsModule , 
+    AppShellComponent,  
   ]
 })
 export class ExportPage implements OnInit {

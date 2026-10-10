@@ -255,7 +255,50 @@
 
   .empty-container h3 { color: #ffffff; }
 }
+/* ============================================ */
+/*           FAB — Add User Button              */
+/* ============================================ */
 
+/* ============================================ */
+/*           HEADER ROW + ADD BUTTON            */
+/* ============================================ */
+
+.users-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.users-header-row .role-info {
+  margin-bottom: 0;
+  text-align: left;
+  flex: 1;
+  min-width: 150px;
+}
+
+.add-user-btn {
+  --background: linear-gradient(135deg, #1a3a6c, #2563eb);
+  --background-hover: #1d4ed8;
+  --box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  --color: white;
+  --border-radius: 10px;
+  height: 38px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+
+.add-user-btn ion-icon {
+  font-size: 16px;
+}
+
+.dark-theme .add-user-btn {
+  --background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
 /* ============================================ */
 /*           RESPONSIVE                         */
 /* ============================================ */

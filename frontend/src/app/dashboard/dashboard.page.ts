@@ -1,6 +1,6 @@
 // ============================================================
 // FILE: src/app/dashboard/dashboard.page.ts
-// PURPOSE: Railway eOffice blue dashboard
+// PURPOSE: Dashboard using shared AppShellComponent
 // ============================================================
 
 import { Component, OnInit, OnDestroy } from '@angular/core';
@@ -9,13 +9,19 @@ import { IonicModule } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { ApiService } from '../services/api.service';
 import { AuthService } from '../services/auth.service';
+import { AppShellComponent } from '../shared/shell/shell.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule],
+  imports: [
+    CommonModule,
+    IonicModule,
+    RouterModule,
+    AppShellComponent,
+  ],
 })
 export class DashboardPage implements OnInit, OnDestroy {
 
@@ -26,8 +32,6 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   // State
   isLoading = true;
-  sidebarCollapsed = false;      // desktop toggle
-  rightPanelOpen = true;         // desktop right panel
 
   stats = {
     totalBills: 0,
@@ -48,11 +52,11 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Reserved for future cleanup
+    // Reserved for cleanup
   }
 
   // ============================================================
-  // LOAD ALL DATA IN PARALLEL
+  // LOAD ALL DATA
   // ============================================================
   loadAll() {
     this.isLoading = true;
@@ -101,7 +105,7 @@ export class DashboardPage implements OnInit, OnDestroy {
   }
 
   // ============================================================
-  // USER / ROLE HELPERS
+  // USER HELPERS (used by dashboard content)
   // ============================================================
   get user() {
     return this.auth.getCurrentUser();
@@ -109,14 +113,14 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   get roleLabel(): string {
     const r = this.auth.getRole();
-    if (r === 'admin')       return 'ADMIN';
+    if (r === 'admin')       return 'Sr. DRM';
     if (r === 'super_admin') {
       return this.auth.getCategoryGroup() === 'adfm_1'
-        ? 'ADFM/I — RENGASAMY'
-        : 'ADFM/II — GOPINATH';
+        ? 'ADRM I/MDU'
+        : 'ADRM II/MDU';
     }
-    if (r === 'clerk')       return 'CLERK';
-    return '';
+    if (r === 'clerk')       return 'SSO';
+    return '—';
   }
 
   get groupLabel(): string {
@@ -128,32 +132,6 @@ export class DashboardPage implements OnInit, OnDestroy {
 
   get canManageUsers(): boolean {
     return this.auth.canManageUsers();
-  }
-
-  // ============================================================
-  // THEME
-  // ============================================================
-  get isDarkMode(): boolean {
-    return localStorage.getItem('app-theme') === 'dark';
-  }
-
-  toggleTheme() {
-    const next = !this.isDarkMode;
-    if (next) {
-      document.documentElement.classList.add('dark-theme');
-      localStorage.setItem('app-theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark-theme');
-      localStorage.setItem('app-theme', 'light');
-    }
-  }
-
-  toggleSidebar() {
-    this.sidebarCollapsed = !this.sidebarCollapsed;
-  }
-
-  toggleRightPanel() {
-    this.rightPanelOpen = !this.rightPanelOpen;
   }
 
   // ============================================================
@@ -182,7 +160,6 @@ export class DashboardPage implements OnInit, OnDestroy {
   // ============================================================
   getCategoryShortName(category: string): string {
     if (!category) return 'Uncategorized';
-    // Truncate long names
     const short = category.split(':')[0].split('/')[0].trim();
     return short.length > 20 ? short.substring(0, 20) + '…' : short;
   }
@@ -205,7 +182,6 @@ export class DashboardPage implements OnInit, OnDestroy {
   // ============================================================
   goToUpload()    { this.router.navigateByUrl('/upload'); }
   goToBills()     { this.router.navigateByUrl('/bills'); }
-  goToDashboard() { this.router.navigateByUrl('/dashboard'); }
   goToExport()    { this.router.navigateByUrl('/export'); }
   goToProfile()   { this.router.navigateByUrl('/profile'); }
   goToUsers()     { this.router.navigateByUrl('/users'); }

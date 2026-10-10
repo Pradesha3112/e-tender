@@ -1,0 +1,161 @@
+<!-- ============================================ -->
+<!-- FILE: src/app/recycle-bin/recycle-bin.page.html -->
+<!-- RECYCLE BIN — soft-deleted bills              -->
+<!-- ============================================ -->
+
+<ion-header>
+  <ion-toolbar class="recycle-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/profile"></ion-back-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="trash-bin-outline" class="header-icon"></ion-icon>
+      Recycle Bin
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refresh()">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="recycle-content ion-padding">
+
+  <!-- INFO BANNER -->
+  <div class="info-banner">
+    <ion-icon name="information-circle-outline"></ion-icon>
+    <div>
+      <strong>Deleted bills stay here until admin permanently removes them.</strong>
+      <span *ngIf="canRestore">
+        You can restore or permanently delete any bill.
+      </span>
+      <span *ngIf="!canRestore">
+        Only admin can restore or permanently delete bills.
+      </span>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <ion-item class="search-item" lines="none">
+    <ion-icon name="search-outline" slot="start"></ion-icon>
+    <ion-input
+      [(ngModel)]="searchTerm"
+      placeholder="Search by vendor, bill #, or deleted by..."
+      (ionInput)="filterBills()"
+      clear-input>
+    </ion-input>
+    <ion-button *ngIf="searchTerm" fill="clear" slot="end" (click)="clearSearch()">
+      <ion-icon name="close-circle"></ion-icon>
+    </ion-button>
+  </ion-item>
+
+  <!-- LOADING -->
+  <div *ngIf="isLoading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Loading recycle bin...</p>
+  </div>
+
+  <!-- EMPTY -->
+  <div *ngIf="!isLoading && filteredBills.length === 0" class="empty-container">
+    <ion-icon name="trash-bin-outline"></ion-icon>
+    <h3>{{ searchTerm ? 'No matching bills' : 'Recycle bin is empty' }}</h3>
+    <p *ngIf="!searchTerm">Deleted bills will appear here.</p>
+    <ion-button
+      expand="block"
+      class="back-btn"
+      (click)="goBack()">
+      <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+      Back to Profile
+    </ion-button>
+  </div>
+
+  <!-- BILLS LIST -->
+  <div *ngIf="!isLoading && filteredBills.length > 0" class="bills-list">
+
+    <div *ngFor="let bill of filteredBills" class="bill-card">
+
+      <!-- ROW 1: Bill info -->
+      <div class="bill-header" (click)="viewBill(bill.id)">
+
+        <!-- Icon -->
+        <div class="bill-icon">
+          <ion-icon name="receipt-outline"></ion-icon>
+        </div>
+
+        <!-- Vendor + meta -->
+        <div class="bill-info">
+          <div class="bill-vendor">
+            {{ bill.vendor || 'Unknown Vendor' }}
+          </div>
+          <div class="bill-meta">
+            <span class="bill-number">#{{ bill.bill_number || 'N/A' }}</span>
+            <span class="bill-category" *ngIf="bill.category">
+              <ion-icon name="pricetag-outline"></ion-icon>
+              {{ bill.category }}
+            </span>
+          </div>
+                <div class="deleted-meta">
+            <ion-icon name="trash-outline"></ion-icon>
+            Deleted by <strong>{{ bill.deleted_by || 'unknown' }}</strong>
+            ({{ getRoleLabel(bill.deleted_by_role) }})
+            · {{ getRelativeTime(bill.deleted_at) }}
+          </div>
+
+          <!-- Reason — admin only sees this -->
+          <div *ngIf="auth.isAdmin() && bill.deletion_reason" class="deletion-reason">
+            <ion-icon name="document-text-outline"></ion-icon>
+            <span><strong>Reason:</strong> {{ bill.deletion_reason }}</span>
+          </div>
+        </div>
+
+        <!-- Amount -->
+        <div class="bill-amount">
+          {{ formatCurrency(bill.total) }}
+        </div>
+      </div>
+
+      <!-- ROW 2: Actions -->
+      <div class="bill-actions">
+
+        <ion-button
+          fill="outline"
+          size="small"
+          class="view-btn"
+          (click)="viewBill(bill.id)">
+          <ion-icon name="eye-outline" slot="start"></ion-icon>
+          View
+        </ion-button>
+
+        <ion-button
+          *ngIf="canRestore"
+          fill="solid"
+          size="small"
+          class="restore-btn"
+          (click)="confirmRestore(bill, $event)">
+          <ion-icon name="refresh-outline" slot="start"></ion-icon>
+          Restore
+        </ion-button>
+
+        <ion-button
+          *ngIf="canHardDelete"
+          fill="outline"
+          size="small"
+          class="delete-forever-btn"
+          (click)="confirmHardDelete(bill, $event)">
+          <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+          Delete Forever
+        </ion-button>
+
+        <div *ngIf="!canRestore && !canHardDelete" class="no-permission-note">
+          <ion-icon name="lock-closed-outline"></ion-icon>
+          Only admin can restore or permanently delete
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</ion-content>

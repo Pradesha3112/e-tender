@@ -228,4 +228,14 @@
   .version-info {
     color: #64748b;
   }
+}/* ============================================ */
+/*           RECYCLE BIN ICON (NEW)             */
+/* ============================================ */
+
+.menu-icon-recycle {
+  color: #dc2626 !important;   /* red to signal "deleted items" */
+}
+
+.dark-theme .menu-icon-recycle {
+  color: #f87171 !important;
 }

@@ -23,9 +23,9 @@ ALL_ROLES = [ROLE_ADMIN, ROLE_SUPER_ADMIN, ROLE_CLERK]
 PERMISSIONS = {
     # Bill operations
     "bill.upload":          [ROLE_ADMIN, ROLE_SUPER_ADMIN, ROLE_CLERK],
-    "bill.view_all":        [ROLE_ADMIN],                                  # only admin sees everything
-    "bill.view_group":      [ROLE_ADMIN, ROLE_SUPER_ADMIN],                # admin + S.A. see own group
-    "bill.view_own":        [ROLE_ADMIN, ROLE_SUPER_ADMIN, ROLE_CLERK],    # own bills
+    "bill.view_all":        [ROLE_ADMIN],
+    "bill.view_group":      [ROLE_ADMIN, ROLE_SUPER_ADMIN],
+    "bill.view_own":        [ROLE_ADMIN, ROLE_SUPER_ADMIN, ROLE_CLERK],
     "bill.edit_any":        [ROLE_ADMIN],
     "bill.edit_own":        [ROLE_ADMIN, ROLE_SUPER_ADMIN, ROLE_CLERK],
     "bill.delete_any":      [ROLE_ADMIN],
@@ -33,14 +33,20 @@ PERMISSIONS = {
     "bill.export_all":      [ROLE_ADMIN],
     "bill.export_own":      [ROLE_ADMIN, ROLE_SUPER_ADMIN, ROLE_CLERK],
 
+    # ---------- NEW: soft delete / recycle bin ----------
+    "bill.soft_delete":     [ROLE_ADMIN, ROLE_SUPER_ADMIN, ROLE_CLERK],   # everyone can soft delete
+    "bill.restore":         [ROLE_ADMIN],                                  # admin only can restore
+    "bill.hard_delete":     [ROLE_ADMIN],                                  # admin only permanent delete
+    "bill.view_deleted":    [ROLE_ADMIN, ROLE_SUPER_ADMIN, ROLE_CLERK],   # everyone sees their scope
+
     # User management
     "user.list_all":        [ROLE_ADMIN, ROLE_SUPER_ADMIN],
-    "user.create_admin":    [ROLE_ADMIN],                                  # only admin can create admins... well actually admin creates super_admins
-    "user.create_super":    [ROLE_ADMIN],                                  # only admin creates super_admin
-    "user.create_clerk":    [ROLE_ADMIN, ROLE_SUPER_ADMIN],                # both can create clerks
-    "user.edit_super":      [ROLE_ADMIN],                                  # only admin edits super_admin
+    "user.create_admin":    [ROLE_ADMIN],
+    "user.create_super":    [ROLE_ADMIN],
+    "user.create_clerk":    [ROLE_ADMIN, ROLE_SUPER_ADMIN],
+    "user.edit_super":      [ROLE_ADMIN],
     "user.edit_clerk":      [ROLE_ADMIN, ROLE_SUPER_ADMIN],
-    "user.activate_super":  [ROLE_ADMIN],                                  # only admin toggles super_admin
+    "user.activate_super":  [ROLE_ADMIN],
     "user.activate_clerk":  [ROLE_ADMIN, ROLE_SUPER_ADMIN],
     "user.delete_super":    [ROLE_ADMIN],
     "user.delete_clerk":    [ROLE_ADMIN, ROLE_SUPER_ADMIN],
@@ -141,9 +147,9 @@ def build_bill_visibility_filter(user: dict) -> dict:
     group = user.get("category_group", "all")
 
     if role == ROLE_ADMIN:
-        return {"mode": "all"}                              # everything
+        return {"mode": "all"}
     if role == ROLE_SUPER_ADMIN:
-        return {"mode": "group", "category_group": group}   # own group
+        return {"mode": "group", "category_group": group}
     if role == ROLE_CLERK:
-        return {"mode": "own", "created_by": uname}         # own bills only
+        return {"mode": "own", "created_by": uname}
     return {"mode": "none"}

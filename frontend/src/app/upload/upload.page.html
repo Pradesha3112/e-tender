@@ -1,22 +1,5 @@
-<!-- ============================================ -->
-<!-- FILE: src/app/upload/upload.page.html        -->
-<!-- UPLOAD BILL + CATEGORY (External CSS)        -->
-<!-- ============================================ -->
-
-<ion-header>
-  <ion-toolbar class="upload-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard"></ion-back-button>
-    </ion-buttons>
-    <ion-title>
-      <ion-icon name="train-outline" class="header-icon"></ion-icon>
-      Engineering Management System
-    </ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="upload-content ion-padding">
-  <div class="upload-container">
+<app-shell pageTitle="Upload Bill" (refresh)="loadCategories()">
+     <div class="upload-container">
 
     <!-- HEADER -->
     <div class="upload-header">
@@ -156,5 +139,4 @@
       <p>Processing your bill...</p>
     </div>
 
-  </div>
-</ion-content>
+  </div></app-shell>

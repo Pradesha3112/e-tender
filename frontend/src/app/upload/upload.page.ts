@@ -1,7 +1,4 @@
-// ============================================================
-// FILE: src/app/upload/upload.page.ts
-// PURPOSE: Upload bill + choose category (role-filtered)
-// ============================================================
+import { AppShellComponent } from '../shared/shell/shell.component';
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -17,7 +14,7 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './upload.page.html',
   styleUrls: ['./upload.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule, FormsModule],
+  imports: [CommonModule, IonicModule, RouterModule, FormsModule,  AppShellComponent,  ],
 })
 export class UploadPage implements OnInit {
 

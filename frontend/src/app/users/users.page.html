@@ -1,33 +1,19 @@
-<!-- ============================================ -->
-<!-- FILE: src/app/users/users.page.html           -->
-<!-- USER MANAGEMENT LIST (Blue Theme)              -->
-<!-- ============================================ -->
+<app-shell pageTitle="Manage Users" (refresh)="loadUsers()">
+  <!-- ROLE BADGE + ADD BUTTON -->
+  <div class="users-header-row">
+    <div class="role-info">
+      Logged in as <strong>{{ roleLabel }}</strong>
+    </div>
 
-<ion-header>
-  <ion-toolbar class="users-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/dashboard"></ion-back-button>
-    </ion-buttons>
-    <ion-title>
-      <ion-icon name="people-outline" class="header-icon"></ion-icon>
-      Engineering Management System
-    </ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="openUserForm()" *ngIf="canCreateSuperAdmin || canCreateClerk">
-        <ion-icon name="person-add-outline"></ion-icon>
-      </ion-button>
-      <ion-button (click)="loadUsers()">
-        <ion-icon name="refresh-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content class="users-content ion-padding">
-
-  <!-- ROLE BADGE -->
-  <div class="role-info">
-    Logged in as <strong>{{ roleLabel }}</strong>
+    <ion-button
+      *ngIf="canCreateSuperAdmin || canCreateClerk"
+      fill="solid"
+      size="small"
+      (click)="openUserForm()"
+      class="add-user-btn">
+      <ion-icon name="person-add-outline" slot="start"></ion-icon>
+      Add User
+    </ion-button>
   </div>
 
   <!-- SEARCH -->
@@ -76,9 +62,9 @@
           <span *ngIf="user.designation"> · {{ user.designation }}</span>
         </div>
         <div class="user-badges">
-          <ion-badge [color]="getRoleColor(user.role)">
-            {{ getRoleLabel(user.role) }}
-          </ion-badge>
+         <ion-badge [color]="getRoleColor(user.role)">
+  {{ getRoleLabel(user) }}
+</ion-badge>
           <ion-badge color="light">
             {{ getGroupLabel(user.category_group) }}
           </ion-badge>
@@ -110,5 +96,8 @@
       </div>
     </div>
   </div>
-
-</ion-content>
+    <!-- ============================================ -->
+  <!-- FLOATING ADD BUTTON                          -->
+  <!-- ============================================ -->
+ 
+</app-shell>

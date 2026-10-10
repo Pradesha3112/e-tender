@@ -1,0 +1,579 @@
+/* ============================================ */
+/* FILE: shell.component.scss                    */
+/* REUSABLE SHELL — Railway eOffice Blue        */
+/* ============================================ */
+
+:host {
+  --rly-primary:       #1a3a6c;
+  --rly-primary-light: #2c5282;
+  --rly-accent:        #2563eb;
+  --rly-accent-hover:  #1d4ed8;
+  --rly-bg:            #eef2f7;
+  --rly-surface:       #ffffff;
+  --rly-border:        #e2e8f0;
+  --rly-text-dark:     #1e293b;
+  --rly-text-gray:     #64748b;
+  --rly-text-light:    #94a3b8;
+
+  --rly-header-grad:   linear-gradient(135deg, #1a3a6c, #2c5282);
+
+  --sidebar-w:         200px;
+  --sidebar-collapsed: 60px;
+  --right-w:           260px;
+  --header-h:          64px;
+
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================ */
+/* TYPOGRAPHY                                   */
+/* ============================================ */
+
+:host,
+:host * {
+  font-family: "Times New Roman", "Times", "Georgia", "Cambria",
+               "Garamond", serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================ */
+/* TOP HEADER                                   */
+/* ============================================ */
+
+.rly-header ion-toolbar.rly-toolbar {
+  --background: var(--rly-header-grad);
+  --color: #ffffff;
+  --min-height: var(--header-h);
+  --padding-start: 12px;
+  --padding-end: 12px;
+}
+.rly-icon-btn {
+  --color: #ffffff;
+  --padding-start: 8px;
+  --padding-end: 8px;
+
+  ion-icon {
+    font-size: 22px;
+  }
+}
+
+/* ============================================ */
+/*           REFRESH BUTTON                     */
+/* ============================================ */
+
+.refresh-btn {
+  transition: transform 0.3s ease;
+
+  ion-icon {
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &.spinning ion-icon {
+    animation: spin-refresh 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &:active {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+@keyframes spin-refresh {
+  0%   { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.rly-title {
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+   .brand-logo {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: #ffffff;
+  padding: 2px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+
+  .brand-main {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+  }
+
+  .brand-sub {
+    font-size: 9px;
+    font-weight: 400;
+    opacity: 0.75;
+    letter-spacing: 0.6px;
+    color: #cbd5e1;
+  }
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 12px;
+  padding: 4px 10px 4px 4px;
+  border-radius: 40px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #2563eb;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+
+  .user-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .user-role {
+    font-size: 10px;
+    color: #cbd5e1;
+    letter-spacing: 0.4px;
+  }
+}
+
+/* ============================================ */
+/* CONTENT + LAYOUT                             */
+/* ============================================ */
+.rly-content {
+  --background: var(--rly-bg);
+  --overflow: auto;                /* ensure scrolling is enabled */
+  --padding-bottom: 32px;          /* extra padding inside scroll area */
+}
+.rly-layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  gap: 16px;
+  padding: 16px;
+  padding-bottom: 32px;                    /* ⭐ extra bottom space */
+  max-width: 1600px;
+  margin: 0 auto;
+  transition: grid-template-columns 0.25s ease;
+
+  &.sidebar-collapsed {
+    grid-template-columns: var(--sidebar-collapsed) 1fr;
+  }
+
+  &[class*="right-hidden"] {
+    grid-template-columns: var(--sidebar-w) 1fr 0;
+  }
+}
+
+:host ::ng-deep .rly-layout:has(.rly-right) {
+  grid-template-columns: var(--sidebar-w) 1fr var(--right-w);
+  padding-bottom: 32px;                    /* ⭐ extra bottom space */
+
+  &.sidebar-collapsed {
+    grid-template-columns: var(--sidebar-collapsed) 1fr var(--right-w);
+  }
+
+  &.right-hidden {
+    grid-template-columns: var(--sidebar-w) 1fr 0;
+  }
+
+  &.sidebar-collapsed.right-hidden {
+    grid-template-columns: var(--sidebar-collapsed) 1fr 0;
+  }
+}
+
+/* ============================================ */
+/* LEFT SIDEBAR                                 */
+/* ============================================ */
+.rly-sidebar {
+  background: var(--rly-surface);
+  border-radius: 12px;
+  padding: 12px 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  height: fit-content;
+  /* No sticky — scroll naturally */
+  overflow: hidden;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 8px;
+  color: var(--rly-text-dark);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+
+  ion-icon {
+    font-size: 19px;
+    color: var(--rly-primary);
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background: #f1f5f9;
+  }
+
+  &.active {
+    background: #dbeafe;
+    color: var(--rly-accent);
+
+    ion-icon {
+      color: var(--rly-accent);
+    }
+  }
+}
+
+.sidebar-collapsed .nav-item {
+  justify-content: center;
+  padding: 12px 0;
+
+  .nav-label {
+    display: none;
+  }
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--rly-border);
+  margin: 12px 8px;
+}
+
+/* ============================================ */
+/* MOBILE DRAWER                                */
+/* ============================================ */
+
+.mobile-drawer-backdrop {
+  display: none;
+}
+
+.mobile-drawer {
+  display: none;
+}
+
+/* ============================================ */
+/* MAIN CONTENT                                 */
+/* ============================================ */
+
+.rly-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* ============================================ */
+/* RIGHT PANEL (dashboard only)                 */
+/* ============================================ */
+.rly-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: fit-content;
+  /* No sticky — scroll naturally with content */
+}
+
+.right-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px;
+  background: var(--rly-surface);
+  border: 1px solid var(--rly-border);
+  border-radius: 10px;
+  color: var(--rly-accent);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+
+  ion-icon { font-size: 16px; }
+}
+
+/* ============================================ */
+/* BOTTOM NAV (mobile)                          */
+/* ============================================ */
+
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: none;
+  justify-content: space-around;
+  background: var(--rly-surface);
+  padding: 8px 0 calc(10px + env(safe-area-inset-bottom, 0px));
+  border-top: 1px solid var(--rly-border);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.05);
+  z-index: 1000;
+
+  .nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--rly-text-gray);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 4px 12px;
+    letter-spacing: 0.4px;
+
+    ion-icon { font-size: 22px; }
+
+    &.active {
+      color: var(--rly-accent);
+    }
+  }
+}
+
+/* ============================================ */
+/* VISIBILITY HELPERS                           */
+/* ============================================ */
+
+.mobile-only {
+  display: none;
+}
+
+.desktop-only {
+  display: inline-flex;
+}
+
+/* ============================================ */
+/* RESPONSIVE — TABLET 768–991                  */
+/* ============================================ */
+
+@media (max-width: 991px) {
+  .rly-layout {
+    grid-template-columns: var(--sidebar-collapsed) 1fr;
+  }
+
+  :host ::ng-deep .rly-layout:has(.rly-right) {
+    grid-template-columns: var(--sidebar-collapsed) 1fr;
+
+    &.right-hidden {
+      grid-template-columns: var(--sidebar-collapsed) 1fr;
+    }
+  }
+
+  .nav-item {
+    justify-content: center;
+    padding: 12px 0;
+
+    .nav-label {
+      display: none;
+    }
+  }
+
+  .rly-right {
+    grid-column: 1 / -1;
+    position: static;
+
+    &.mobile-collapsed {
+      .right-toggle { display: flex; }
+    }
+  }
+
+  .right-toggle {
+    display: flex;
+  }
+}
+
+/* ============================================ */
+/* RESPONSIVE — MOBILE < 768                    */
+/* ============================================ */
+
+@media (max-width: 767px) {
+  .rly-layout,
+  :host ::ng-deep .rly-layout:has(.rly-right) {
+    grid-template-columns: 1fr;
+    padding: 12px;
+    gap: 12px;
+
+    &.sidebar-collapsed,
+    &.right-hidden {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .rly-sidebar {
+    display: none;
+  }
+
+  /* Mobile drawer */
+  .mobile-drawer-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.5);
+    z-index: 999;
+    animation: fadeIn 0.2s ease;
+  }
+
+  .mobile-drawer {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 260px;
+    max-width: 80vw;
+    background: var(--rly-surface);
+    z-index: 1000;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+    transform: translateX(-100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+
+    &.open {
+      transform: translateX(0);
+    }
+  }
+
+  .drawer-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 18px;
+    background: var(--rly-header-grad);
+    color: white;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.6px;
+
+    ion-icon {
+      font-size: 22px;
+      color: #fbbf24;
+    }
+
+    span {
+      flex: 1;
+    }
+  }
+
+  .drawer-close {
+    background: rgba(255, 255, 255, 0.15);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    ion-icon {
+      font-size: 18px;
+      color: white;
+    }
+  }
+
+  .drawer-nav {
+    padding: 12px 8px;
+  }
+
+  .mobile-only {
+    display: flex;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .brand-sub {
+    display: none;
+  }
+
+  .brand-main {
+    font-size: 12px;
+  }
+
+  .user-chip {
+    padding: 4px;
+  }
+
+  .bottom-nav {
+    display: flex;
+  }
+
+  /* ⭐ KEY FIX — prevent content from being hidden behind bottom nav */
+  .rly-main {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  }
+
+  ion-content.rly-content {
+    --padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Right panel — collapse cards */
+  .rly-right.mobile-collapsed {
+    ::ng-deep [rightPanel] {
+      display: none;
+    }
+  }
+}
+
+/* ============================================ */
+/* ANIMATIONS                                   */
+/* ============================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

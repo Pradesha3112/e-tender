@@ -1,6 +1,6 @@
 // ============================================================
 // FILE: src/app/services/api.service.ts
-// PURPOSE: Central HTTP service — auto-attaches JWT, handles 401
+// PURPOSE: HTTP service — auto-Bearer + 401 + soft delete
 // ============================================================
 
 import { Injectable } from '@angular/core';
@@ -15,7 +15,6 @@ import { AuthService } from './auth.service';
 })
 export class ApiService {
 
-  // 🔴 CHANGE THIS if backend runs elsewhere
   private apiUrl = 'http://localhost:5000';
 
   constructor(
@@ -27,7 +26,7 @@ export class ApiService {
   }
 
   // ============================================================
-  // HEADERS — auto-attach Bearer token
+  // HEADERS
   // ============================================================
   private headers(): HttpHeaders {
     const token = this.auth.getToken();
@@ -46,20 +45,16 @@ export class ApiService {
   };
 
   // ============================================================
-  // PUBLIC — verify credentials (no token needed)
+  // PUBLIC
   // ============================================================
   verifyCredentials(username: string, password: string): Observable<any> {
-    return this.http.post(
-      `${this.apiUrl}/login`,
-      { username, password }
-    );
+    return this.http.post(`${this.apiUrl}/login`, { username, password });
   }
 
   // ============================================================
   // BILLS
   // ============================================================
   uploadBill(imageData: string): Observable<any> {
-    console.log('📤 Uploading to:', `${this.apiUrl}/upload`);
     return this.http.post(
       `${this.apiUrl}/upload`,
       { image: imageData },
@@ -75,9 +70,18 @@ export class ApiService {
     ).pipe(catchError(this.handleError));
   }
 
+  /** Active bills only (soft-deleted excluded) */
   getBills(): Observable<any> {
     return this.http.get(
       `${this.apiUrl}/bills`,
+      { headers: this.headers() }
+    ).pipe(catchError(this.handleError));
+  }
+
+  /** NEW — Recycle bin: soft-deleted bills */
+  getDeletedBills(): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/bills/deleted`,
       { headers: this.headers() }
     ).pipe(catchError(this.handleError));
   }
@@ -89,9 +93,33 @@ export class ApiService {
     ).pipe(catchError(this.handleError));
   }
 
-  deleteBill(id: number): Observable<any> {
+
+    /**
+   * Soft delete — moves bill to recycle bin.
+   * @param id     bill ID
+   * @param reason required for super_admin and clerk; ignored for admin
+   */
+  deleteBill(id: number, reason?: string): Observable<any> {
+    const body = reason ? { reason } : {};
+    return this.http.request('DELETE', `${this.apiUrl}/bills/${id}`, {
+      headers: this.headers(),
+      body,
+    }).pipe(catchError(this.handleError));
+  }
+
+  /** NEW — Restore a soft-deleted bill (admin only) */
+  restoreBill(id: number): Observable<any> {
+    return this.http.put(
+      `${this.apiUrl}/bills/${id}/restore`,
+      {},
+      { headers: this.headers() }
+    ).pipe(catchError(this.handleError));
+  }
+
+  /** NEW — Permanently delete a soft-deleted bill (admin only) */
+  hardDeleteBill(id: number): Observable<any> {
     return this.http.delete(
-      `${this.apiUrl}/bills/${id}`,
+      `${this.apiUrl}/bills/${id}/hard`,
       { headers: this.headers() }
     ).pipe(catchError(this.handleError));
   }
@@ -102,8 +130,9 @@ export class ApiService {
       { headers: this.headers() }
     ).pipe(catchError(this.handleError));
   }
-    // ============================================================
-  // DASHBOARD — Notices & Activity
+
+  // ============================================================
+  // DASHBOARD
   // ============================================================
   getNotices(): Observable<any> {
     return this.http.get(

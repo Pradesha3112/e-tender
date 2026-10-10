@@ -1,0 +1,235 @@
+<!-- ============================================ -->
+<!-- FILE: src/app/shared/shell/shell.component.html -->
+<!-- REUSABLE LAYOUT — header + sidebar + content   -->
+<!-- ============================================ -->
+
+<!-- ============================================================ -->
+<!-- TOP NAVIGATION BAR                                            -->
+<!-- ============================================================ -->
+<ion-header class="rly-header">
+  <ion-toolbar class="rly-toolbar">
+
+    <!-- LEFT: Back button OR hamburger -->
+    <ion-buttons slot="start">
+      <ion-button
+        *ngIf="showBack"
+        class="rly-icon-btn"
+        (click)="goBack()"
+        title="Back">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+
+      <ion-button
+        *ngIf="!showBack"
+        class="rly-icon-btn"
+        (click)="toggleSidebar()"
+        title="Menu">
+        <ion-icon name="menu-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <!-- BRAND -->
+      <!-- BRAND -->
+    <ion-title class="rly-title">
+      <div class="brand">
+        <!-- ✅ Indian Railways logo -->
+        <img
+          src="assets/ir-logo.png"
+          alt="Indian Railways"
+          class="brand-logo"
+        />
+        <div class="brand-text">
+          <span class="brand-main">Electronic Via System</span>
+          <span class="brand-sub">
+            Southern-Railway<ng-container *ngIf="pageTitle"> · {{ pageTitle }}</ng-container>
+          </span>
+        </div>
+      </div>
+    </ion-title>
+    <!-- RIGHT: Refresh + User chip -->
+    <ion-buttons slot="end" class="top-actions">
+
+      <!-- REFRESH BUTTON -->
+      <ion-button
+        class="rly-icon-btn refresh-btn"
+        [class.spinning]="isRefreshing"
+        (click)="onRefreshClick()"
+        title="Refresh">
+        <ion-icon name="refresh-outline"></ion-icon>
+      </ion-button>
+
+      <!-- PROFILE ICON -->
+      <ion-button
+        class="rly-icon-btn desktop-only"
+        (click)="goToProfile()"
+        title="Profile">
+        <ion-icon name="person-circle-outline"></ion-icon>
+      </ion-button>
+
+      <!-- USER CHIP -->
+      <div class="user-chip" (click)="goToProfile()">
+        <div class="user-avatar">{{ user?.full_name?.charAt(0) || 'U' }}</div>
+        <div class="user-info desktop-only">
+          <div class="user-name">{{ user?.full_name || 'User' }}</div>
+          <div class="user-role">{{ roleLabel }}</div>
+        </div>
+      </div>
+
+    </ion-buttons>
+
+  </ion-toolbar>
+</ion-header>
+
+<!-- ============================================================ -->
+<!-- MAIN LAYOUT                                                   -->
+<!-- ============================================================ -->
+<ion-content class="rly-content">
+  <div
+    class="rly-layout"
+    [class.sidebar-collapsed]="sidebarCollapsed"
+    [class.right-hidden]="showRightPanel && !rightPanelOpen">
+
+    <!-- ==================================================== -->
+    <!-- LEFT SIDEBAR (desktop)                                -->
+    <!-- ==================================================== -->
+    <aside class="rly-sidebar desktop-only-sidebar">
+      <nav class="sidebar-nav">
+
+        <a class="nav-item" [class.active]="isActive('/dashboard')" (click)="goToDashboard()">
+          <ion-icon name="home-outline"></ion-icon>
+          <span class="nav-label">DASHBOARD</span>
+        </a>
+
+        <a class="nav-item" [class.active]="isActive('/upload')" (click)="goToUpload()">
+          <ion-icon name="camera-outline"></ion-icon>
+          <span class="nav-label">SCAN BILL</span>
+        </a>
+
+        <a class="nav-item" [class.active]="isActive('/bills')" (click)="goToBills()">
+          <ion-icon name="document-text-outline"></ion-icon>
+          <span class="nav-label">BILLS</span>
+        </a>
+
+        <a class="nav-item" *ngIf="showExport" [class.active]="isActive('/export')" (click)="goToExport()">
+          <ion-icon name="download-outline"></ion-icon>
+          <span class="nav-label">EXPORT</span>
+        </a>
+
+  
+
+        <a class="nav-item" *ngIf="showUsers && canManageUsers" [class.active]="isActive('/users')" (click)="goToUsers()">
+          <ion-icon name="people-outline"></ion-icon>
+          <span class="nav-label">USERS</span>
+        </a>
+
+        <a class="nav-item" [class.active]="isActive('/profile')" (click)="goToProfile()">
+          <ion-icon name="person-outline"></ion-icon>
+          <span class="nav-label">PROFILE</span>
+        </a>
+
+      </nav>
+
+      <div class="sidebar-divider"></div>
+    </aside>
+
+    <!-- ==================================================== -->
+    <!-- MOBILE DRAWER SIDEBAR                                 -->
+    <!-- ==================================================== -->
+    <div
+      class="mobile-drawer-backdrop"
+      *ngIf="sidebarDrawerOpen"
+      (click)="closeDrawer()">
+    </div>
+
+    <aside
+      class="mobile-drawer"
+      [class.open]="sidebarDrawerOpen">
+      <div class="drawer-header">
+        <ion-icon name="train-outline"></ion-icon>
+        <span>MENU</span>
+        <button class="drawer-close" (click)="closeDrawer()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav drawer-nav">
+        <a class="nav-item" [class.active]="isActive('/dashboard')" (click)="goToDashboard()">
+          <ion-icon name="home-outline"></ion-icon>
+          <span class="nav-label">DASHBOARD</span>
+        </a>
+        <a class="nav-item" [class.active]="isActive('/upload')" (click)="goToUpload()">
+          <ion-icon name="camera-outline"></ion-icon>
+          <span class="nav-label">SCAN BILL</span>
+        </a>
+        <a class="nav-item" [class.active]="isActive('/bills')" (click)="goToBills()">
+          <ion-icon name="document-text-outline"></ion-icon>
+          <span class="nav-label">BILLS</span>
+        </a>
+        <a class="nav-item" *ngIf="showExport" [class.active]="isActive('/export')" (click)="goToExport()">
+          <ion-icon name="download-outline"></ion-icon>
+          <span class="nav-label">EXPORT</span>
+        </a>
+        <a class="nav-item" *ngIf="showRecycleBin" [class.active]="isActive('/recycle-bin')" (click)="goToRecycleBin()">
+          <ion-icon name="trash-bin-outline"></ion-icon>
+          <span class="nav-label">RECYCLE BIN</span>
+        </a>
+        <a class="nav-item" *ngIf="showUsers && canManageUsers" [class.active]="isActive('/users')" (click)="goToUsers()">
+          <ion-icon name="people-outline"></ion-icon>
+          <span class="nav-label">USERS</span>
+        </a>
+        <a class="nav-item" [class.active]="isActive('/profile')" (click)="goToProfile()">
+          <ion-icon name="person-outline"></ion-icon>
+          <span class="nav-label">PROFILE</span>
+        </a>
+      </nav>
+    </aside>
+
+    <!-- ==================================================== -->
+    <!-- CENTER — MAIN CONTENT (SLOT)                          -->
+    <!-- ==================================================== -->
+    <main class="rly-main">
+      <ng-content></ng-content>
+    </main>
+
+    <!-- ==================================================== -->
+    <!-- RIGHT PANEL (dashboard only)                          -->
+    <!-- ==================================================== -->
+    <aside
+      *ngIf="showRightPanel"
+      class="rly-right"
+      [class.mobile-collapsed]="!rightPanelOpen">
+
+      <button
+        class="right-toggle mobile-only"
+        (click)="toggleRightPanel()">
+        <ion-icon [name]="rightPanelOpen ? 'chevron-up' : 'chevron-down'"></ion-icon>
+        <span>{{ rightPanelOpen ? 'Hide' : 'Show' }} Info</span>
+      </button>
+
+      <ng-content select="[rightPanel]"></ng-content>
+    </aside>
+
+  </div>
+</ion-content>
+
+<!-- ============================================================ -->
+<!-- BOTTOM NAV (mobile)                                           -->
+<!-- ============================================================ -->
+<footer class="bottom-nav">
+  <button class="nav-btn" [class.active]="isActive('/dashboard')" (click)="goToDashboard()">
+    <ion-icon name="home-outline"></ion-icon>
+    <span>Home</span>
+  </button>
+  <button class="nav-btn" [class.active]="isActive('/upload')" (click)="goToUpload()">
+    <ion-icon name="camera-outline"></ion-icon>
+    <span>Scan</span>
+  </button>
+  <button class="nav-btn" [class.active]="isActive('/bills')" (click)="goToBills()">
+    <ion-icon name="document-text-outline"></ion-icon>
+    <span>Bills</span>
+  </button>
+  <button class="nav-btn" [class.active]="isActive('/profile')" (click)="goToProfile()">
+    <ion-icon name="person-outline"></ion-icon>
+    <span>Profile</span>
+  </button>
+</footer>

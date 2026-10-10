@@ -1,6 +1,6 @@
 // ============================================================
 // FILE: src/app/services/auth.service.ts
-// PURPOSE: Central auth service (JWT + user state)
+// PURPOSE: Central auth service (JWT + user state + recycle)
 // ============================================================
 
 import { Injectable } from '@angular/core';
@@ -31,26 +31,17 @@ export interface LoginResponse {
   error?: string;
 }
 
-export interface CategoryPayload {
-  group: 'all' | 'adfm_1' | 'adfm_2';
-  label: string;
-  categories: string[];
-  allow_all: boolean;
-}
-
 // ------------------------------------------------------------
 // SERVICE
 // ------------------------------------------------------------
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  // 👇 Change this if your backend runs elsewhere
   private readonly API = 'http://localhost:5000';
 
   private readonly TOKEN_KEY = 'rly_token';
   private readonly USER_KEY  = 'rly_user';
 
-  // Reactive current-user stream
   private currentUserSubject = new BehaviorSubject<AuthUser | null>(this.loadUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -85,7 +76,7 @@ export class AuthService {
   }
 
   // ============================================================
-  // SESSION STORAGE
+  // SESSION
   // ============================================================
   private setSession(token: string, user: AuthUser): void {
     localStorage.setItem(this.TOKEN_KEY, token);
@@ -145,17 +136,14 @@ export class AuthService {
     return !!r && roles.includes(r);
   }
 
-  /** Can this user open the User Management page? */
   canManageUsers(): boolean {
     return this.hasRole('admin', 'super_admin');
   }
 
-  /** Can this user create other users? */
   canCreateUsers(): boolean {
     return this.hasRole('admin', 'super_admin');
   }
 
-  /** Can this user create a specific role? */
   canCreateRole(target: Role): boolean {
     const me = this.getRole();
     if (me === 'admin')       return target === 'super_admin' || target === 'clerk';
@@ -163,16 +151,14 @@ export class AuthService {
     return false;
   }
 
-  /** Can this user manage (edit/activate/delete) a specific user? */
   canManageUser(targetRole: Role): boolean {
     const me = this.getRole();
-    if (targetRole === 'admin') return false;                    // admin is untouchable
+    if (targetRole === 'admin') return false;
     if (me === 'admin')       return targetRole === 'super_admin' || targetRole === 'clerk';
     if (me === 'super_admin') return targetRole === 'clerk';
     return false;
   }
 
-  /** Can this user edit/delete a specific bill? */
   canEditBill(bill: any): boolean {
     const me = this.getCurrentUser();
     if (!me) return false;
@@ -187,6 +173,25 @@ export class AuthService {
   }
 
   // ============================================================
+  // RECYCLE BIN PERMISSIONS (NEW)
+  // ============================================================
+  /** Can this user see the Recycle Bin menu? */
+  canViewRecycleBin(): boolean {
+    // Every logged-in user can see recycle bin (their own scope)
+    return this.isLoggedIn();
+  }
+
+  /** Can this user restore deleted bills? Admin only */
+  canRestoreBill(): boolean {
+    return this.isAdmin();
+  }
+
+  /** Can this user permanently delete bills? Admin only */
+  canHardDeleteBill(): boolean {
+    return this.isAdmin();
+  }
+
+  // ============================================================
   // HTTP HEADERS HELPER
   // ============================================================
   authHeaders(): HttpHeaders {
@@ -198,7 +203,7 @@ export class AuthService {
   }
 
   // ============================================================
-  // FORCE LOGOUT (e.g. on 401)
+  // FORCE LOGOUT
   // ============================================================
   forceLogout(): void {
     this.logout();

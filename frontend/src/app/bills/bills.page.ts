@@ -1,38 +1,55 @@
+// ============================================================
+// FILE: src/app/bills/bills.page.ts
+// PURPOSE: Bills list with soft-delete + reason + recycle bin
+// ============================================================
+
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../services/api.service';
-import { AlertController } from '@ionic/angular';
+import { AuthService } from '../services/auth.service';
+import { AlertController, ToastController } from '@ionic/angular';
+import { AppShellComponent } from '../shared/shell/shell.component';
 
 @Component({
   selector: 'app-bills',
   templateUrl: './bills.page.html',
   styleUrls: ['./bills.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule, FormsModule]
+  imports: [
+    CommonModule,
+    IonicModule,
+    RouterModule,
+    FormsModule,
+    AppShellComponent,
+  ],
 })
 export class BillsPage implements OnInit {
+
   allBills: any[] = [];
   filteredBills: any[] = [];
   isLoading = true;
   searchTerm = '';
+
   stats = {
-    totalAmount: 0
+    totalAmount: 0,
   };
 
   filters = [
-    { id: 'all', label: 'All', active: true },
-    { id: 'today', label: 'Today', active: false },
-    { id: 'week', label: 'This Week', active: false },
-    { id: 'month', label: 'This Month', active: false }
+    { id: 'all',   label: 'All',        active: true  },
+    { id: 'today', label: 'Today',      active: false },
+    { id: 'week',  label: 'This Week',  active: false },
+    { id: 'month', label: 'This Month', active: false },
   ];
 
   constructor(
     private router: Router,
     private apiService: ApiService,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private toastController: ToastController,
+    public auth: AuthService,
   ) {
     console.log('✅ BILLS PAGE LOADED!');
   }
@@ -41,9 +58,12 @@ export class BillsPage implements OnInit {
     this.loadBills();
   }
 
+  // ============================================================
+  // LOAD
+  // ============================================================
   loadBills() {
     this.isLoading = true;
-    
+
     this.apiService.getBills().subscribe({
       next: (response: any) => {
         console.log('📋 Bills received:', response);
@@ -58,14 +78,20 @@ export class BillsPage implements OnInit {
         console.error('❌ Error loading bills:', error);
         this.isLoading = false;
         this.showAlert('Error', 'Could not load bills. Please check your connection.');
-      }
+      },
     });
   }
 
-  // SEARCH FUNCTION
+  refreshBills() {
+    this.loadBills();
+  }
+
+  // ============================================================
+  // SEARCH
+  // ============================================================
   filterBills() {
     const term = this.searchTerm.toLowerCase().trim();
-    
+
     if (!term) {
       this.filteredBills = [...this.allBills];
       this.calculateStats();
@@ -73,29 +99,39 @@ export class BillsPage implements OnInit {
     }
 
     this.filteredBills = this.allBills.filter(bill => {
-      const vendor = (bill.vendor || '').toLowerCase();
+      const vendor     = (bill.vendor || '').toLowerCase();
       const billNumber = (bill.bill_number || '').toLowerCase();
-      const date = (bill.date || '').toLowerCase();
-      const gstin = (bill.gstin || '').toLowerCase();
-      
-      return vendor.includes(term) || 
-             billNumber.includes(term) || 
-             date.includes(term) || 
-             gstin.includes(term);
+      const date       = (bill.date || '').toLowerCase();
+      const gstin      = (bill.gstin || '').toLowerCase();
+
+      return vendor.includes(term)
+          || billNumber.includes(term)
+          || date.includes(term)
+          || gstin.includes(term);
     });
-    
+
     this.calculateStats();
   }
 
-  // APPLY FILTER
+  clearSearch() {
+    this.searchTerm = '';
+    this.filters.forEach(f => f.active = false);
+    this.filters[0].active = true;
+    this.filteredBills = [...this.allBills];
+    this.calculateStats();
+  }
+
+  // ============================================================
+  // FILTER
+  // ============================================================
   applyFilter(filter: any) {
     this.filters.forEach(f => f.active = false);
     filter.active = true;
-    
+
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     let filtered: any[] = [];
-    
+
     if (filter.id === 'today') {
       filtered = this.allBills.filter(bill => {
         const billDate = bill.created_at ? new Date(bill.created_at) : new Date(bill.date);
@@ -118,86 +154,135 @@ export class BillsPage implements OnInit {
     } else {
       filtered = [...this.allBills];
     }
-    
-    // Apply search term if exists
+
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase().trim();
       filtered = filtered.filter(bill => {
-        const vendor = (bill.vendor || '').toLowerCase();
+        const vendor     = (bill.vendor || '').toLowerCase();
         const billNumber = (bill.bill_number || '').toLowerCase();
         return vendor.includes(term) || billNumber.includes(term);
       });
     }
-    
+
     this.filteredBills = filtered;
     this.calculateStats();
   }
 
-  // CLEAR SEARCH
-  clearSearch() {
-    this.searchTerm = '';
-    this.filters.forEach(f => f.active = false);
-    this.filters[0].active = true;
-    this.filteredBills = [...this.allBills];
-    this.calculateStats();
-  }
-
-  // CALCULATE STATS
+  // ============================================================
+  // STATS
+  // ============================================================
   calculateStats() {
     this.stats.totalAmount = this.filteredBills.reduce(
       (sum, bill) => sum + Number(bill.total || 0), 0
     );
   }
 
+  // ============================================================
+  // ACTIONS
+  // ============================================================
   viewBill(id: number) {
     console.log('👁️ Viewing bill:', id);
     this.router.navigate(['/bill-detail', id]);
   }
 
+  // ============================================================
+  // SOFT DELETE — with role-based reason requirement
+  // Admin       → no reason
+  // Super Admin → reason required (3-500 chars)
+  // Clerk       → reason required (3-500 chars)
+  // ============================================================
   deleteBill(id: number, event: Event) {
     event.stopPropagation();
     this.confirmDelete(id);
   }
 
   async confirmDelete(id: number) {
+    const bill = this.allBills.find(b => b.id === id);
+    const billLabel = bill
+      ? `"${bill.vendor}" (#${bill.bill_number || id})`
+      : 'This bill';
+
+    const role = this.auth.getRole();
+    const requiresReason = role === 'super_admin' || role === 'clerk';
+
+    // ---- Admin flow: no reason input ----
+    if (!requiresReason) {
+      const alert = await this.alertController.create({
+        header: 'Move to Recycle Bin?',
+        message: `${billLabel} will be moved to the recycle bin. You can restore or permanently delete it later.`,
+        buttons: [
+          { text: 'Cancel', role: 'cancel' },
+          {
+            text: 'Move to Bin',
+            role: 'destructive',
+            handler: () => this.performDelete(id, undefined),
+          },
+        ],
+      });
+      await alert.present();
+      return;
+    }
+
+    // ---- S.A. / Clerk flow: reason input required ----
     const alert = await this.alertController.create({
-      header: 'Delete Bill',
-      message: 'Are you sure you want to delete this bill?',
-      buttons: [
+      header: 'Move to Recycle Bin?',
+      message: `${billLabel} will be moved to the recycle bin.`,
+      inputs: [
         {
-          text: 'Cancel',
-          role: 'cancel'
+          name: 'reason',
+          type: 'textarea',
+          placeholder: 'Reason for deletion (required, min 3 chars)',
+          attributes: {
+            maxlength: 500,
+            minlength: 3,
+            rows: 3,
+          },
         },
+      ],
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
         {
-          text: 'Delete',
-          handler: () => {
-            this.apiService.deleteBill(id).subscribe({
-              next: () => {
-                console.log('✅ Bill deleted');
-                this.loadBills();
-                this.showAlert('Success', 'Bill deleted successfully!');
-              },
-              error: (error) => {
-                console.error('❌ Delete error:', error);
-                this.showAlert('Error', 'Failed to delete bill.');
-              }
-            });
-          }
-        }
-      ]
+          text: 'Move to Bin',
+          role: 'destructive',
+          handler: (data) => {
+            const reason = (data.reason || '').trim();
+            if (!reason || reason.length < 3) {
+              this.showToast('Reason must be at least 3 characters', 'warning');
+              return false;   // keep alert open
+            }
+            if (reason.length > 500) {
+              this.showToast('Reason too long (max 500 chars)', 'warning');
+              return false;
+            }
+            this.performDelete(id, reason);
+            return true;
+          },
+        },
+      ],
     });
     await alert.present();
   }
 
-  async showAlert(header: string, message: string) {
-    const alert = await this.alertController.create({
-      header: header,
-      message: message,
-      buttons: ['OK']
+  private performDelete(id: number, reason?: string) {
+    this.apiService.deleteBill(id, reason).subscribe({
+      next: (res) => {
+        console.log('✅ Bill moved to recycle bin:', res);
+        this.loadBills();
+        this.showToast('Bill moved to recycle bin', 'success');
+      },
+      error: (error) => {
+        console.error('❌ Delete error:', error);
+        this.showToast(
+          error?.error?.error || 'Failed to delete bill',
+          'danger'
+        );
+      },
     });
-    await alert.present();
   }
 
+  // ============================================================
+  // NAVIGATION
+  // ============================================================
   goToUpload() {
     if (this.searchTerm) {
       this.clearSearch();
@@ -211,12 +296,34 @@ export class BillsPage implements OnInit {
     this.router.navigateByUrl('/export');
   }
 
-  refreshBills() {
-    this.loadBills();
+  goToRecycleBin() {
+    this.router.navigateByUrl('/recycle-bin');
   }
 
+  // ============================================================
+  // UI
+  // ============================================================
   formatCurrency(amount: number): string {
     if (!amount) return '₹0';
     return '₹' + Number(amount).toLocaleString('en-IN');
+  }
+
+  async showToast(message: string, color: string = 'primary') {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2500,
+      color,
+      position: 'bottom',
+    });
+    await toast.present();
+  }
+
+  async showAlert(header: string, message: string) {
+    const alert = await this.alertController.create({
+      header,
+      message,
+      buttons: ['OK'],
+    });
+    await alert.present();
   }
 }

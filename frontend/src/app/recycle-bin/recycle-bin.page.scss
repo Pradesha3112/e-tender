@@ -1,0 +1,483 @@
+/* ============================================ */
+/* FILE: recycle-bin.page.scss                  */
+/* RECYCLE BIN (Blue + Red accents)             */
+/* ============================================ */
+
+:host, :host * {
+  font-family: "Times New Roman", "Times", "Georgia", "Cambria",
+               "Garamond", serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================ */
+/*           TOOLBAR                            */
+/* ============================================ */
+
+.recycle-toolbar {
+  --background: linear-gradient(135deg, #1a3a6c, #2c5282) !important;
+  --color: white !important;
+}
+
+.recycle-toolbar ion-back-button,
+.recycle-toolbar ion-button {
+  --color: white !important;
+}
+
+.recycle-toolbar ion-title {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: white !important;
+}
+
+.header-icon {
+  margin-right: 8px;
+  font-size: 22px;
+}
+
+/* ============================================ */
+/*           PAGE                               */
+/* ============================================ */
+
+.recycle-content {
+  --background: #eef2f7;
+}
+
+/* ============================================ */
+/*           INFO BANNER                        */
+/* ============================================ */
+
+.info-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-left: 4px solid #2563eb;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  font-size: 12px;
+  color: #1e40af;
+}
+
+.info-banner ion-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  color: #2563eb;
+  margin-top: 1px;
+}
+
+.info-banner strong {
+  display: block;
+  color: #1a3a6c;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.info-banner span {
+  font-style: italic;
+  color: #475569;
+}
+
+/* ============================================ */
+/*           SEARCH                             */
+/* ============================================ */
+
+.search-item {
+  --background: white;
+  --border-radius: 14px;
+  --padding-start: 12px;
+  --padding-end: 8px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 12px rgba(26, 58, 108, 0.08);
+  border: 1px solid #e2e8f0;
+}
+
+.search-item ion-icon {
+  color: #64748b;
+  font-size: 20px;
+}
+
+.search-item ion-input {
+  --color: #1e293b;
+  font-size: 14px;
+}
+
+/* ============================================ */
+/*           LOADING / EMPTY                    */
+/* ============================================ */
+
+.loading-container {
+  text-align: center;
+  padding: 40px;
+}
+
+.loading-container ion-spinner {
+  --color: #2563eb;
+}
+
+.loading-container p {
+  color: #64748b;
+  font-size: 14px;
+  font-style: italic;
+}
+
+.empty-container {
+  text-align: center;
+  padding: 60px 20px;
+  color: #64748b;
+}
+
+.empty-container ion-icon {
+  font-size: 80px;
+  color: #cbd5e1;
+}
+
+.empty-container h3 {
+  color: #1e293b;
+  font-weight: 700;
+  margin: 12px 0 4px;
+}
+
+.empty-container p {
+  font-size: 14px;
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  --border-radius: 14px;
+  --background: linear-gradient(135deg, #1a3a6c, #2563eb);
+  --color: white;
+  --box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+  height: 48px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  margin-top: 12px;
+}
+
+/* ============================================ */
+/*           BILLS LIST                         */
+/* ============================================ */
+
+.bills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.bill-card {
+  background: white;
+  border-radius: 14px;
+  padding: 0;
+  box-shadow: 0 2px 12px rgba(26, 58, 108, 0.08);
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #dc2626; /* red = deleted */
+  overflow: hidden;
+}
+
+/* ---------- HEADER (clickable) ---------- */
+.bill-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.bill-header:hover {
+  background: #f8fafc;
+}
+
+.bill-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #7f1d1d, #dc2626);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+}
+
+.bill-icon ion-icon {
+  font-size: 22px;
+  color: white;
+}
+
+.bill-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.bill-vendor {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1e293b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bill-meta {
+  display: flex;
+  gap: 10px;
+  margin-top: 3px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.bill-number {
+  background: #f1f5f9;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 11px;
+}
+
+.bill-category {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.bill-category ion-icon {
+  font-size: 12px;
+}
+
+/* ---------- Deletion Reason (admin only) ---------- */
+.deletion-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #78350f;
+  line-height: 1.4;
+}
+
+.deletion-reason ion-icon {
+  font-size: 14px;
+  color: #d97706;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.deletion-reason strong {
+  font-weight: 700;
+  color: #92400e;
+}
+/* ---------- Deletion Reason (admin only) ---------- */
+.deletion-reason {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #78350f;
+  line-height: 1.4;
+}
+
+.deletion-reason ion-icon {
+  font-size: 14px;
+  color: #d97706;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.deletion-reason strong {
+  font-weight: 700;
+  color: #92400e;
+}
+.bill-amount {
+  font-size: 16px;
+  font-weight: 700;
+  color: #dc2626;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- ACTIONS ---------- */
+.bill-actions {
+  display: flex;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.bill-actions ion-button {
+  --border-radius: 10px;
+  height: 34px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: none;
+}
+
+.view-btn {
+  --border-color: #64748b !important;
+  --color: #64748b !important;
+  --border-width: 1.5px;
+}
+
+.restore-btn {
+  --background: linear-gradient(135deg, #059669, #10b981) !important;
+  --color: white !important;
+  --box-shadow: 0 3px 10px rgba(16, 185, 129, 0.30) !important;
+}
+
+.delete-forever-btn {
+  --border-color: #dc2626 !important;
+  --color: #dc2626 !important;
+  --border-width: 1.5px;
+}
+
+.no-permission-note {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #64748b;
+  font-style: italic;
+  padding: 4px 6px;
+}
+
+.no-permission-note ion-icon {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* ============================================ */
+/*           DARK THEME                         */
+/* ============================================ */
+
+.dark-theme {
+  .recycle-content {
+    --background: #0f172a;
+  }
+
+  .info-banner {
+    background: #1e3a5f;
+    border-color: #2563eb;
+    color: #93c5fd;
+  }
+
+  .info-banner strong {
+    color: #ffffff;
+  }
+
+  .search-item {
+    --background: #1e293b;
+    border-color: #334155;
+  }
+
+  .search-item ion-input {
+    --color: #ffffff;
+  }
+
+  .bill-card {
+    background: #1e293b;
+    border-color: #334155;
+    border-left-color: #dc2626;
+  }
+
+  .bill-header:hover {
+    background: #334155;
+  }
+
+  .bill-vendor {
+    color: #ffffff;
+  }
+
+  .bill-number {
+    background: #334155;
+    color: #e2e8f0;
+  }
+
+  .bill-category {
+    color: #60a5fa;
+  }
+
+  .deleted-meta {
+    color: #f87171;
+  }
+
+  .deleted-meta strong {
+    color: #fca5a5;
+  }
+
+  .bill-actions {
+    background: #0f172a;
+    border-top-color: #334155;
+  }
+
+  .empty-container h3 {
+    color: #ffffff;
+  }
+
+  .no-permission-note {
+    color: #94a3b8;
+  }
+}
+
+/* ============================================ */
+/*           RESPONSIVE                         */
+/* ============================================ */
+
+@media (max-width: 480px) {
+  .bill-header {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .bill-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .bill-icon ion-icon {
+    font-size: 18px;
+  }
+
+  .bill-vendor {
+    font-size: 14px;
+  }
+
+  .bill-amount {
+    font-size: 14px;
+  }
+
+  .bill-actions {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+
+  .bill-actions ion-button {
+    font-size: 11px;
+    height: 32px;
+    flex: 1;
+    min-width: 90px;
+  }
+}

@@ -1,8 +1,4 @@
-// ============================================================
-// FILE: src/app/validation/validation.page.ts
-// PURPOSE: Review bill + category before saving
-// ============================================================
-
+import { AppShellComponent } from '../shared/shell/shell.component';
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
@@ -16,7 +12,7 @@ import { AlertController } from '@ionic/angular';
   templateUrl: './validation.page.html',
   styleUrls: ['./validation.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule, FormsModule],
+  imports: [CommonModule, IonicModule, RouterModule, FormsModule, AppShellComponent],
 })
 export class ValidationPage implements OnInit {
 
