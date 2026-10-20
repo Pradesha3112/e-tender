@@ -1,93 +1,75 @@
 <app-shell pageTitle="Upload Bill" (refresh)="loadCategories()">
-     <div class="upload-container">
+  <div class="upload-container">
 
     <!-- HEADER -->
     <div class="upload-header">
       <h2>
-        <ion-icon name="train"></ion-icon>
         Upload Railway Bill
       </h2>
       <p>Choose an option below</p>
     </div>
 
-    <!-- ROLE BADGE -->
-    <div class="role-badge">
-      <ion-icon name="person-circle-outline"></ion-icon>
-      Uploading as <strong>{{ auth.getCurrentUser()?.full_name }}</strong>
-      <span *ngIf="categoryLabel">· {{ categoryLabel }}</span>
-    </div>
+    <!-- ============================================ -->
+    <!-- CATEGORY (LEFT) + UPLOAD (RIGHT) — SIDE BY SIDE -->
+    <!-- ============================================ -->
+    <div class="upload-options-row">
 
-    <!-- CATEGORY DROPDOWN -->
-    <ion-card class="category-card">
-      <ion-card-content>
+      <!-- LEFT: BILL CATEGORY -->
+      <ion-card class="category-card">
+        <ion-card-content>
+          <div class="category-header">
+            <ion-icon name="pricetag-outline"></ion-icon>
+            Bill Category
+          </div>
 
-        <div class="category-header">
-          <ion-icon name="pricetag-outline"></ion-icon>
-          Bill Category
-        </div>
+          <div *ngIf="isLoadingCategories" class="category-loading">
+            <ion-spinner name="dots"></ion-spinner>
+          </div>
 
-        <div *ngIf="isLoadingCategories" class="category-loading">
-          <ion-spinner name="dots"></ion-spinner>
-        </div>
+          <ion-select
+            *ngIf="!isLoadingCategories"
+            [(ngModel)]="selectedCategory"
+            placeholder="Select category"
+            interface="action-sheet"
+            class="category-select">
+            <ion-select-option *ngFor="let cat of categories" [value]="cat">
+              {{ cat }}
+            </ion-select-option>
+          </ion-select>
 
-        <ion-select
-          *ngIf="!isLoadingCategories"
-          [(ngModel)]="selectedCategory"
-          placeholder="Select category"
-          interface="action-sheet"
-          class="category-select">
-          <ion-select-option *ngFor="let cat of categories" [value]="cat">
-            {{ cat }}
-          </ion-select-option>
-        </ion-select>
+          <p class="category-hint">
+            {{ allowAllCategories
+                ? 'Admin: you can pick any of the 12 categories.'
+                : 'Showing only categories you can manage.' }}
+          </p>
+        </ion-card-content>
+      </ion-card>
 
-        <p class="category-hint">
-          {{ allowAllCategories
-              ? 'Admin: you can pick any of the 12 categories.'
-              : 'Showing only categories you can manage.' }}
-        </p>
+      <!-- RIGHT: UPLOAD FROM COMPUTER -->
+      <ion-card class="category-card upload-card">
+        <ion-card-content>
+          <div class="category-header">
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            Upload Bill
+          </div>
 
-      </ion-card-content>
-    </ion-card>
+          <input
+            #fileInput
+            type="file"
+            accept="image/*,application/pdf,.pdf"
+            (change)="onFileSelected($event)"
+            style="display: none;"
+          />
 
-    <!-- CAMERA / GALLERY -->
-    <div class="options-grid">
-      <div class="option-card" (click)="openCamera()">
-        <div class="option-icon">
-          <ion-icon name="camera-outline"></ion-icon>
-        </div>
-        <h3>Camera</h3>
-        <p>Take a photo</p>
-      </div>
+          <ion-button expand="block" (click)="fileInput.click()" class="upload-btn">
+            <ion-icon name="folder-outline" slot="start"></ion-icon>
+            Upload from Computer
+          </ion-button>
 
-      <div class="option-card" (click)="openGallery()">
-        <div class="option-icon">
-          <ion-icon name="images-outline"></ion-icon>
-        </div>
-        <h3>Gallery</h3>
-        <p>Choose from gallery</p>
-      </div>
-    </div>
+          <p class="upload-hint">Supports: JPG, PNG, PDF (Max 5MB)</p>
+        </ion-card-content>
+      </ion-card>
 
-    <!-- DIVIDER -->
-    <div class="divider">
-      <span>OR</span>
-    </div>
-
-    <!-- FILE UPLOAD -->
-    <div class="upload-area">
-      <input
-        #fileInput
-        type="file"
-        accept="image/*"
-        (change)="onFileSelected($event)"
-        style="display: none;"
-      />
-      <ion-button expand="block" (click)="fileInput.click()" class="upload-btn">
-        <ion-icon name="folder-outline" slot="start"></ion-icon>
-        Upload from Computer
-      </ion-button>
-      <p class="upload-hint">Supports: JPG, PNG (Max 10MB)</p>
     </div>
 
     <!-- ERROR -->
@@ -97,7 +79,7 @@
     </div>
 
     <!-- PREVIEW -->
-    <div *ngIf="selectedImage" class="preview-section">
+    <div *ngIf="selectedImage || isPdf" class="preview-section">
       <div class="preview-header">
         <h3>
           <ion-icon name="eye-outline"></ion-icon>
@@ -109,7 +91,43 @@
         </ion-button>
       </div>
 
-      <div class="image-preview">
+      <!-- Compression / size status -->
+      <div class="compression-info" *ngIf="originalSizeKb > 0">
+        <ion-icon name="cloud-done-outline"></ion-icon>
+
+        <!-- PDF status -->
+        <span *ngIf="isPdf">
+          <strong>{{ selectedPdfName }}</strong>
+          &nbsp;•&nbsp;
+          <strong>{{ compressedSizeKb }} KB</strong>
+          <em>(max 5 MB)</em>
+        </span>
+
+        <!-- Image status -->
+        <ng-container *ngIf="!isPdf">
+          <span *ngIf="!isCompressing">
+            Compressed
+            <strong>{{ originalSizeKb }} KB → {{ compressedSizeKb }} KB</strong>
+            <em>({{ 100 - ((compressedSizeKb / originalSizeKb) * 100) | number:'1.0-0' }}% smaller)</em>
+          </span>
+          <span *ngIf="isCompressing">
+            <ion-spinner name="dots"></ion-spinner>
+            Compressing image...
+          </span>
+        </ng-container>
+      </div>
+
+      <!-- PDF preview card -->
+      <div *ngIf="isPdf" class="pdf-preview">
+        <ion-icon name="document-text-outline"></ion-icon>
+        <div class="pdf-info">
+          <strong>{{ selectedPdfName }}</strong>
+          <span>{{ compressedSizeKb }} KB • PDF ready for OCR</span>
+        </div>
+      </div>
+
+      <!-- Image preview -->
+      <div *ngIf="!isPdf" class="image-preview">
         <img [src]="selectedImage" alt="Selected bill" />
         <div *ngIf="isLoading" class="image-overlay">
           <ion-spinner name="crescent"></ion-spinner>
@@ -125,7 +143,7 @@
         <ion-button
           expand="block"
           (click)="processBill()"
-          [disabled]="isLoading || isLoadingCategories"
+          [disabled]="isLoading || isLoadingCategories || isCompressing"
           class="process-btn">
           <ion-icon name="scan-outline" slot="start"></ion-icon>
           {{ isLoading ? 'Processing...' : 'Extract Bill Data' }}
@@ -139,4 +157,5 @@
       <p>Processing your bill...</p>
     </div>
 
-  </div></app-shell>
+  </div>
+</app-shell>

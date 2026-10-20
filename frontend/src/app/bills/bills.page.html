@@ -1,18 +1,22 @@
 <!-- ============================================ -->
 <!-- FILE: src/app/bills/bills.page.html          -->
-<!-- BILLS LIST + RECYCLE BIN QUICK ACCESS         -->
+<!-- BILLS LIST — SEARCH + SMART DATE FILTER      -->
 <!-- ============================================ -->
 
-
 <app-shell pageTitle="Bills" (refresh)="refreshBills()">
-  <!-- SEARCH BAR -->
+
+  <!-- ============================================ -->
+  <!-- SEARCH + DATE RANGE                          -->
+  <!-- ============================================ -->
   <div class="search-container">
+
+    <!-- SEARCH BAR -->
     <ion-item class="search-bar" lines="none">
       <ion-icon name="search-outline" slot="start" class="search-icon"></ion-icon>
       <ion-input
         [(ngModel)]="searchTerm"
-        placeholder="Search by vendor or bill number..."
-        (ionInput)="filterBills()"
+        placeholder="Search by vendor, bill #, GSTIN..."
+        (ionInput)="onSearchInput()"
         clear-input
         class="search-input">
       </ion-input>
@@ -26,17 +30,165 @@
       </ion-button>
     </ion-item>
 
-    <!-- Filter Chips -->
-    <div class="filter-chips">
-      <ion-chip
-        *ngFor="let filter of filters"
-        [class.active]="filter.active"
-        (click)="applyFilter(filter)"
-        class="filter-chip">
-        <ion-icon *ngIf="filter.active" name="checkmark-circle"></ion-icon>
-        {{ filter.label }}
-      </ion-chip>
+    <!-- ============================================ -->
+    <!-- DATE RANGE CARD                              -->
+    <!-- ============================================ -->
+    <div class="date-range-card">
+
+      <!-- QUICK RANGE CHIPS -->
+      <div class="quick-ranges">
+    
+      </div>
+
+      <!-- FROM / TO INPUTS -->
+      <div class="date-inputs">
+
+        <!-- FROM -->
+        <div class="date-field">
+          <label class="date-label">From</label>
+          <div class="input-with-icon">
+            <input
+              type="text"
+              class="date-text-input"
+              placeholder="YYYY-MM-DD / Oct / 2026"
+              [(ngModel)]="startDate"
+              (ngModelChange)="onDateChange()"
+            />
+            <button
+              type="button"
+              class="clear-field"
+              *ngIf="startDate"
+              (click)="clearDate('start')"
+              title="Clear">
+              <ion-icon name="close-circle"></ion-icon>
+            </button>
+            <button
+              type="button"
+              class="calendar-btn"
+              (click)="toggleCalendar('start')"
+              title="Pick a date">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </button>
+          </div>
+
+          <!-- INLINE CALENDAR (START) -->
+          <div class="mini-calendar" *ngIf="showCalendarFor === 'start'">
+            <div class="cal-header">
+              <button type="button" (click)="prevMonth('start')">
+                <ion-icon name="chevron-back-outline"></ion-icon>
+              </button>
+              <span class="cal-month">
+                {{ calendarMonthName('start') }} {{ calendarYear('start') }}
+              </span>
+              <button type="button" (click)="nextMonth('start')">
+                <ion-icon name="chevron-forward-outline"></ion-icon>
+              </button>
+            </div>
+            <div class="cal-weekdays">
+              <span *ngFor="let d of weekdays">{{ d }}</span>
+            </div>
+            <div class="cal-grid">
+              <button
+                *ngFor="let day of calendarDays('start')"
+                type="button"
+                class="cal-day"
+                [class.empty]="!day"
+                [class.today]="isToday(day, 'start')"
+                [class.selected]="isSelected(day, 'start')"
+                (click)="pickDate(day, 'start')">
+                {{ day || '' }}
+              </button>
+            </div>
+            <div class="cal-footer">
+              <button type="button" class="cal-action" (click)="pickToday('start')">
+                Today
+              </button>
+              <button type="button" class="cal-action" (click)="pickClear('start')">
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TO -->
+        <div class="date-field">
+          <label class="date-label">To</label>
+          <div class="input-with-icon">
+            <input
+              type="text"
+              class="date-text-input"
+              placeholder="YYYY-MM-DD / Oct / 2026"
+              [(ngModel)]="endDate"
+              (ngModelChange)="onDateChange()"
+            />
+            <button
+              type="button"
+              class="clear-field"
+              *ngIf="endDate"
+              (click)="clearDate('end')"
+              title="Clear">
+              <ion-icon name="close-circle"></ion-icon>
+            </button>
+            <button
+              type="button"
+              class="calendar-btn"
+              (click)="toggleCalendar('end')"
+              title="Pick a date">
+              <ion-icon name="calendar-outline"></ion-icon>
+            </button>
+          </div>
+
+          <!-- INLINE CALENDAR (END) -->
+          <div class="mini-calendar" *ngIf="showCalendarFor === 'end'">
+            <div class="cal-header">
+              <button type="button" (click)="prevMonth('end')">
+                <ion-icon name="chevron-back-outline"></ion-icon>
+              </button>
+              <span class="cal-month">
+                {{ calendarMonthName('end') }} {{ calendarYear('end') }}
+              </span>
+              <button type="button" (click)="nextMonth('end')">
+                <ion-icon name="chevron-forward-outline"></ion-icon>
+              </button>
+            </div>
+            <div class="cal-weekdays">
+              <span *ngFor="let d of weekdays">{{ d }}</span>
+            </div>
+            <div class="cal-grid">
+              <button
+                *ngFor="let day of calendarDays('end')"
+                type="button"
+                class="cal-day"
+                [class.empty]="!day"
+                [class.today]="isToday(day, 'end')"
+                [class.selected]="isSelected(day, 'end')"
+                (click)="pickDate(day, 'end')">
+                {{ day || '' }}
+              </button>
+            </div>
+            <div class="cal-footer">
+              <button type="button" class="cal-action" (click)="pickToday('end')">
+                Today
+              </button>
+              <button type="button" class="cal-action" (click)="pickClear('end')">
+                Clear
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HELPER HINT -->
+      <div class="date-hint">
+        <ion-icon name="information-circle-outline"></ion-icon>
+        <span>
+          Try <em>2026</em>, <em>Oct</em>, <em>15</em>, <em>Oct 2026</em>,
+          or <em>2026-10-15</em>
+        </span>
+      </div>
+
     </div>
+
   </div>
 
   <!-- LOADING -->
@@ -61,59 +213,92 @@
     </div>
   </div>
 
-  <!-- BILLS LIST -->
-  <div *ngIf="!isLoading && filteredBills.length > 0" class="bills-container">
-    <div
-      class="bill-item"
-      *ngFor="let bill of filteredBills"
-      (click)="viewBill(bill.id)">
+  <!-- BILLS TABLE -->
+  <div *ngIf="!isLoading && filteredBills.length > 0" class="bills-table-wrapper">
+    <table class="bills-table">
+      <colgroup>
+        <col class="col-invoice" />
+        <col class="col-date" />
+        <col class="col-company" />
+        <col class="col-amount" />
+        <col class="col-actions" />
+      </colgroup>
 
-      <div class="bill-icon">
-        <ion-icon name="receipt-outline"></ion-icon>
-      </div>
+      <thead>
+        <tr>
+          <th>Invoice No.</th>
+          <th>Date</th>
+          <th>Company Name</th>
+          <th class="align-center">Amount</th>
+          <th class="align-center">Delete</th>
+        </tr>
+      </thead>
 
-      <div class="bill-info">
-        <div class="bill-vendor">
-          {{ bill.vendor || 'Unknown Vendor' }}
-        </div>
-        <div class="bill-details">
-          <span class="bill-number">#{{ bill.bill_number || 'N/A' }}</span>
-          <span class="bill-date">
-            <ion-icon name="calendar-outline"></ion-icon>
+      <tbody>
+        <tr
+          *ngFor="let bill of filteredBills"
+          class="bill-row"
+          (click)="viewBill(bill.id)">
+
+          <td>
+            <span class="invoice-badge">
+              {{ bill.bill_number || 'N/A' }}
+            </span>
+          </td>
+
+          <td class="col-date">
             {{ bill.date || 'No date' }}
-          </span>
-          <span class="bill-category" *ngIf="bill.category">
-            <ion-icon name="pricetag-outline"></ion-icon>
-            {{ bill.category }}
-          </span>
-        </div>
-      </div>
+          </td>
 
-      <div class="bill-amount">
-        {{ formatCurrency(bill.total) }}
-        <ion-button
-          fill="clear"
-          size="small"
-          (click)="deleteBill(bill.id, $event)"
-          class="delete-btn"
-          title="Move to recycle bin">
-          <ion-icon name="trash-outline"></ion-icon>
-        </ion-button>
-      </div>
-    </div>
+          <td class="col-company">
+            <div class="company-name">{{ bill.vendor || 'Unknown Vendor' }}</div>
+            <div class="category-sub" *ngIf="bill.category">
+              {{ bill.category }}
+            </div>
+          </td>
+
+          <td class="col-amount align-center">
+            {{ formatCurrency(bill.total) }}
+          </td>
+
+          <td class="col-actions align-center">
+            <ion-button
+              fill="clear"
+              size="small"
+              (click)="deleteBill(bill.id, $event)"
+              class="delete-btn"
+              title="Move to recycle bin">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- EMPTY STATE -->
   <div *ngIf="!isLoading && filteredBills.length === 0" class="empty-state">
     <ion-icon name="document-outline" class="empty-icon"></ion-icon>
-    <h3>{{ searchTerm ? 'No Results Found' : 'No Railway Bills Found' }}</h3>
+    <h3>{{ searchTerm || startDate || endDate ? 'No Results Found' : 'No Railway Bills Found' }}</h3>
     <p>
-      {{ searchTerm
-          ? 'Try adjusting your search criteria'
+      {{ searchTerm || startDate || endDate
+          ? 'Try adjusting your search or date range'
           : 'You haven\'t scanned any railway bills yet.' }}
     </p>
-    <ion-button (click)="goToUpload()" class="empty-btn">
-      <ion-icon name="camera-outline" slot="start"></ion-icon>
-      {{ searchTerm ? 'Clear Search' : 'Scan Your First Bill' }}
+    <ion-button
+      *ngIf="searchTerm || startDate || endDate"
+      (click)="clearAllFilters()"
+      class="empty-btn">
+      <ion-icon name="close-circle-outline" slot="start"></ion-icon>
+      Clear Filters
     </ion-button>
-  </div></app-shell>
+    <ion-button
+      *ngIf="!searchTerm && !startDate && !endDate"
+      (click)="goToUpload()"
+      class="empty-btn">
+      <ion-icon name="camera-outline" slot="start"></ion-icon>
+      Scan Your First Bill
+    </ion-button>
+  </div>
+
+</app-shell>

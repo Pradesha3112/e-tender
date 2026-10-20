@@ -1,6 +1,6 @@
 import requests
 
-BASE = "http://localhost:5000"
+BASE = "http://192.168.1.7:5000"
 
 # Login as admin
 r = requests.post(f"{BASE}/login", json={"username": "admin", "password": "admin"})

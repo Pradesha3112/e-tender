@@ -13,9 +13,7 @@ import { AuthService } from './auth.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ApiService {
-
-  private apiUrl = 'http://localhost:5000';
+export class ApiService {private apiUrl = 'http://192.168.43.84:5000';
 
   constructor(
     private http: HttpClient,
@@ -58,6 +56,17 @@ export class ApiService {
     return this.http.post(
       `${this.apiUrl}/upload`,
       { image: imageData },
+      { headers: this.headers() }
+    ).pipe(catchError(this.handleError));
+  }
+    /**
+   * Send either { image } or { pdf } to /upload.
+   * Used by the Upload page for both file types.
+   */
+  uploadBillPayload(payload: { image?: string; pdf?: string }): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/upload`,
+      payload,
       { headers: this.headers() }
     ).pipe(catchError(this.handleError));
   }
@@ -144,6 +153,29 @@ export class ApiService {
   getActivity(): Observable<any> {
     return this.http.get(
       `${this.apiUrl}/activity`,
+      { headers: this.headers() }
+    ).pipe(catchError(this.handleError));
+  }
+    /**
+   * Logout — marks current user's activity session as closed.
+   * Called before clearing local storage.
+   */
+  logout(): Observable<any> {
+    return this.http.post(
+      `${this.apiUrl}/logout`,
+      {},
+      { headers: this.headers() }
+    ).pipe(catchError(this.handleError));
+  }
+
+  /**
+   * Get recent user login/logout activity.
+   * - admin / super_admin → all users
+   * - clerk               → own only
+   */
+  getUserActivity(): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/user-activity`,
       { headers: this.headers() }
     ).pipe(catchError(this.handleError));
   }

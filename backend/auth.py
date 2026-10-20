@@ -1,6 +1,7 @@
 # ============================================================
 # FILE: auth.py
 # PURPOSE: Authentication — login, hashing, JWT, middleware
+#          (compatible with pooled MySQLClient)
 # ============================================================
 
 import os
@@ -95,7 +96,7 @@ def build_admin_user(db=None) -> dict:
     If a DB row exists for 'admin', use its real id so password updates work.
     """
     real_id = 0
-    if db is not None and db.connection:
+    if db is not None and getattr(db, 'pool', None):
         row = db.get_user_by_username(HARDCODED_ADMIN_USERNAME)
         if row and row.get("id"):
             real_id = row["id"]
@@ -126,7 +127,11 @@ def authenticate(db, username: str, password: str) -> dict | None:
 
     # ----- ADMIN path -----
     if username.lower() == HARDCODED_ADMIN_USERNAME:
-        admin_row = db.get_user_by_username(HARDCODED_ADMIN_USERNAME) if db else None
+        admin_row = (
+            db.get_user_by_username(HARDCODED_ADMIN_USERNAME)
+            if db and getattr(db, 'pool', None)
+            else None
+        )
 
         # Case 1: DB has a real hash → use it (custom password set)
         if (admin_row
@@ -144,11 +149,11 @@ def authenticate(db, username: str, password: str) -> dict | None:
                 admin_row.pop("password_hash", None)
                 admin_row["role"] = ROLE_ADMIN
                 return admin_row
-            return build_admin_user(db)   # ← pass db so it picks real id
+            return build_admin_user(db)   # pass db so it picks real id
         return None
 
     # ----- OTHER USERS path -----
-    if not db or not db.connection:
+    if not db or not getattr(db, 'pool', None):
         return None
 
     user = db.get_user_by_username(username)

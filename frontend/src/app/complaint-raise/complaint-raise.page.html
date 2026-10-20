@@ -1,0 +1,174 @@
+<!-- ============================================ -->
+<!-- FILE: src/app/complaint-raise/complaint-raise.page.html -->
+<!-- PUBLIC COMPLAINT RAISING PAGE                -->
+<!-- ============================================ -->
+
+<ion-header>
+  <ion-toolbar class="raise-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goToLogin()">
+        <ion-icon name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      <ion-icon name="chatbubble-ellipses-outline" class="header-icon"></ion-icon>
+      Complaint Raising
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="raise-content">
+
+  <div class="raise-container">
+
+    <!-- ============================================================ -->
+    <!-- FORM VIEW                                                     -->
+    <!-- ============================================================ -->
+    <div *ngIf="!submitted">
+
+      <!-- HEADER -->
+      <div class="raise-header">
+        <div class="raise-logo">
+          <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+        </div>
+        <h1>File a Complaint</h1>
+        <p>Please fill in the details below to submit your complaint</p>
+      </div>
+
+      <!-- FORM CARD -->
+      <ion-card class="raise-card">
+        <ion-card-content>
+
+          <!-- Subject -->
+          <div class="field-group">
+            <label class="field-label">Subject <span class="req">*</span></label>
+            <ion-item class="field-item" lines="none">
+              <ion-input
+                [(ngModel)]="form.subject"
+                placeholder="e.g., Printer not working in ADFM-I office"
+                maxlength="150"
+                counter="true">
+              </ion-input>
+            </ion-item>
+          </div>
+
+          <!-- Category + Priority -->
+          <div class="field-row">
+            <div class="field-group">
+              <label class="field-label">Category <span class="req">*</span></label>
+              <ion-item class="field-item" lines="none">
+                <ion-select
+                  [(ngModel)]="form.category"
+                  interface="action-sheet"
+                  placeholder="Select">
+                  <ion-select-option *ngFor="let c of categories" [value]="c">
+                    {{ c }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+
+            <div class="field-group">
+              <label class="field-label">Priority <span class="req">*</span></label>
+              <ion-item class="field-item" lines="none">
+                <ion-select
+                  [(ngModel)]="form.priority"
+                  interface="action-sheet"
+                  placeholder="Select">
+                  <ion-select-option *ngFor="let p of priorities" [value]="p">
+                    {{ p | titlecase }}
+                  </ion-select-option>
+                </ion-select>
+              </ion-item>
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div class="field-group">
+            <label class="field-label">Description <span class="req">*</span></label>
+            <ion-item class="field-item" lines="none">
+              <ion-textarea
+                [(ngModel)]="form.description"
+                placeholder="Describe your complaint in detail..."
+                [rows]="5"
+                maxlength="1000"
+                counter="true"
+                autoGrow="true">
+              </ion-textarea>
+            </ion-item>
+          </div>
+
+          <!-- Submit -->
+          <ion-button
+            expand="block"
+            class="submit-btn"
+            [disabled]="isSubmitting"
+            (click)="submitComplaint()">
+            <ion-spinner *ngIf="isSubmitting" name="crescent" slot="start"></ion-spinner>
+            <ion-icon *ngIf="!isSubmitting" name="send-outline" slot="start"></ion-icon>
+            {{ isSubmitting ? 'Submitting...' : 'Submit Complaint' }}
+          </ion-button>
+
+          <!-- Cancel link -->
+          <ion-button
+            expand="block"
+            fill="clear"
+            class="cancel-btn"
+            (click)="goToLogin()">
+            <ion-icon name="arrow-back-outline" slot="start"></ion-icon>
+            Back to Login
+          </ion-button>
+
+        </ion-card-content>
+      </ion-card>
+
+    </div>
+
+    <!-- ============================================================ -->
+    <!-- SUCCESS VIEW                                                  -->
+    <!-- ============================================================ -->
+    <div *ngIf="submitted" class="success-wrapper">
+
+      <div class="success-icon">
+        <ion-icon name="checkmark-circle"></ion-icon>
+      </div>
+
+      <h1 class="success-title">Complaint Submitted!</h1>
+
+      <p class="success-message">
+        Your complaint has been successfully registered.
+      </p>
+
+      <div class="success-badge">
+        <span class="badge-label">Complaint ID</span>
+        <span class="badge-value">#{{ submittedId }}</span>
+      </div>
+
+      <p class="success-note">
+        Admin will review your complaint. You can also view your complaints
+        after logging in as SSO.
+      </p>
+
+      <div class="success-actions">
+        <ion-button
+          expand="block"
+          class="raise-another-btn"
+          (click)="raiseAnother()">
+          <ion-icon name="add-outline" slot="start"></ion-icon>
+          Raise Another Complaint
+        </ion-button>
+
+        <ion-button
+          expand="block"
+          fill="outline"
+          class="back-login-btn"
+          (click)="goToLogin()">
+          <ion-icon name="log-in-outline" slot="start"></ion-icon>
+          Back to Login
+        </ion-button>
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>

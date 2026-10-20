@@ -1,0 +1,375 @@
+/* ============================================ */
+/* FILE: complaint-raise.page.scss               */
+/* PUBLIC COMPLAINT RAISING PAGE                 */
+/* ============================================ */
+
+:host, :host * {
+  font-family: "Times New Roman", "Times", "Georgia", "Cambria",
+               "Garamond", serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================ */
+/*           TOOLBAR                            */
+/* ============================================ */
+
+.raise-toolbar {
+  --background: linear-gradient(135deg, #1a3a6c, #2c5282) !important;
+  --color: white !important;
+}
+
+.raise-toolbar ion-back-button,
+.raise-toolbar ion-button {
+  --color: white !important;
+}
+
+.raise-toolbar ion-title {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  color: white !important;
+}
+
+.header-icon {
+  margin-right: 8px;
+  font-size: 22px;
+}
+
+/* ============================================ */
+/*           CONTENT                            */
+/* ============================================ */
+
+.raise-content {
+  --background: #eef2f7;
+}
+
+.raise-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+/* ============================================ */
+/*           HEADER                             */
+/* ============================================ */
+
+.raise-header {
+  text-align: center;
+  margin-bottom: 24px;
+  animation: fadeInDown 0.4s ease;
+}
+
+.raise-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #1a3a6c, #2563eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+
+  ion-icon {
+    font-size: 36px;
+    color: white;
+  }
+}
+
+.raise-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a3a6c;
+  margin: 0 0 6px;
+  letter-spacing: 0.3px;
+}
+
+.raise-header p {
+  color: #64748b;
+  font-size: 13px;
+  font-style: italic;
+  margin: 0;
+}
+
+/* ============================================ */
+/*           CARD                               */
+/* ============================================ */
+
+.raise-card {
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(26, 58, 108, 0.10);
+  border: 1px solid rgba(37, 99, 235, 0.08);
+  margin: 0;
+  animation: fadeInUp 0.5s ease;
+}
+
+.raise-card ion-card-content {
+  padding: 22px 20px 20px;
+}
+
+/* ============================================ */
+/*           FORM FIELDS                        */
+/* ============================================ */
+
+.field-group {
+  margin-bottom: 16px;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.field-row .field-group {
+  margin-bottom: 0;
+}
+
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a3a6c;
+  letter-spacing: 0.4px;
+  margin-bottom: 6px;
+}
+
+.field-label .req {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.field-item {
+  --background: #f8fafc;
+  --border-radius: 10px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --min-height: 48px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  ion-input,
+  ion-textarea,
+  ion-select {
+    font-size: 14px;
+    --color: #1e293b;
+    --padding-start: 0;
+  }
+
+  ion-textarea {
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+  }
+}
+
+/* ============================================ */
+/*           BUTTONS                            */
+/* ============================================ */
+
+.submit-btn {
+  --border-radius: 12px;
+  --background: linear-gradient(135deg, #1a3a6c, #2563eb);
+  --color: white;
+  --box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+  height: 50px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  margin-top: 8px;
+}
+
+.cancel-btn {
+  --color: #64748b;
+  margin-top: 6px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  height: 44px;
+}
+
+/* ============================================ */
+/*           SUCCESS VIEW                       */
+/* ============================================ */
+
+.success-wrapper {
+  text-align: center;
+  padding: 40px 20px;
+  animation: fadeInUp 0.4s ease;
+}
+
+.success-icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.25);
+
+  ion-icon {
+    font-size: 56px;
+    color: #059669;
+  }
+}
+
+.success-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #065f46;
+  margin: 0 0 8px;
+  letter-spacing: 0.3px;
+}
+
+.success-message {
+  font-size: 14px;
+  color: #475569;
+  margin: 0 0 24px;
+  font-style: italic;
+}
+
+.success-badge {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  background: white;
+  border: 2px solid #2563eb;
+  border-radius: 16px;
+  padding: 14px 32px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.15);
+}
+
+.badge-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.badge-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: #1a3a6c;
+  letter-spacing: 1px;
+}
+
+.success-note {
+  font-size: 12px;
+  color: #64748b;
+  font-style: italic;
+  line-height: 1.5;
+  max-width: 340px;
+  margin: 0 auto 32px;
+}
+
+.success-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.raise-another-btn {
+  --border-radius: 12px;
+  --background: linear-gradient(135deg, #1a3a6c, #2563eb);
+  --color: white;
+  --box-shadow: 0 4px 16px rgba(37, 99, 235, 0.35);
+  height: 50px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+.back-login-btn {
+  --border-radius: 12px;
+  --border-color: #2563eb;
+  --color: #2563eb;
+  --border-width: 2px;
+  height: 50px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+
+/* ============================================ */
+/*           ANIMATIONS                         */
+/* ============================================ */
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================ */
+/*           RESPONSIVE                         */
+/* ============================================ */
+
+@media (max-width: 480px) {
+  .raise-container { padding: 16px 12px 30px; }
+  .raise-logo { width: 64px; height: 64px; }
+  .raise-logo ion-icon { font-size: 32px; }
+  .raise-header h1 { font-size: 20px; }
+  .raise-header p { font-size: 12px; }
+  .raise-card ion-card-content { padding: 18px 16px; }
+  .field-row { grid-template-columns: 1fr; gap: 16px; }
+}
+
+/* ============================================ */
+/*           DARK THEME                         */
+/* ============================================ */
+
+.dark-theme {
+  .raise-content { --background: #0f172a; }
+
+  .raise-header h1 { color: #ffffff; }
+  .raise-header p  { color: #94a3b8; }
+
+  .raise-card {
+    background: #1e293b;
+    border-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .raise-card ion-card-content { background: transparent; }
+
+  .field-label { color: #93c5fd; }
+
+  .field-item {
+    --background: #334155;
+    border-color: #475569;
+
+    ion-input,
+    ion-textarea,
+    ion-select {
+      --color: #ffffff;
+    }
+  }
+
+  .success-title { color: #ffffff; }
+  .success-message,
+  .success-note { color: #94a3b8; }
+
+  .success-badge {
+    background: #1e293b;
+    border-color: #3b82f6;
+  }
+
+  .badge-label { color: #94a3b8; }
+  .badge-value { color: #ffffff; }
+
+  .cancel-btn { --color: #94a3b8; }
+}

@@ -6,7 +6,6 @@
 <ion-header>
   <ion-toolbar class="login-toolbar">
     <ion-title>
-      <ion-icon name="train-outline" class="header-icon"></ion-icon>
       Electronic Via System
     </ion-title>
   </ion-toolbar>
@@ -17,10 +16,11 @@
   <div class="login-container">
 
     <!-- LOGIN HEADER -->
+      <!-- LOGIN HEADER -->
     <div class="login-header">
       <div class="logo-container">
         <div class="logo">
-          <ion-icon name="receipt-outline"></ion-icon>
+          <img src="assets/ir-logo.png" alt="Indian Railways" class="login-logo-img" />
         </div>
       </div>
       <h1>Welcome Back!</h1>
@@ -30,7 +30,8 @@
     <!-- LOGIN FORM -->
     <ion-card class="login-card">
       <ion-card-content>
-     <!-- Dummy Role Dropdown (cosmetic only) -->
+
+        <!-- Role dropdown -->
         <ion-item class="form-item" lines="none">
           <ion-icon name="shield-checkmark-outline" slot="start" class="input-icon"></ion-icon>
           <ion-select
@@ -44,6 +45,7 @@
             </ion-select-option>
           </ion-select>
         </ion-item>
+
         <!-- Username -->
         <ion-item class="form-item" lines="none">
           <ion-icon name="person-outline" slot="start" class="input-icon"></ion-icon>
@@ -57,7 +59,7 @@
           ></ion-input>
         </ion-item>
 
-        <!-- Password (with eye toggle) -->
+        <!-- Password with eye -->
         <ion-item class="form-item" lines="none">
           <ion-icon name="lock-closed-outline" slot="start" class="input-icon"></ion-icon>
           <ion-input
@@ -75,15 +77,28 @@
             class="eye-btn"
             (click)="togglePassword()"
             [attr.aria-label]="showPassword ? 'Hide password' : 'Show password'">
-            <ion-icon
-              [name]="showPassword ? 'eye-off-outline' : 'eye-outline'">
-            </ion-icon>
+            <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
           </ion-button>
         </ion-item>
 
-       
+        <!-- COMPLAINT BUTTON (only for SSO / SSO Admin) -->
+        <div *ngIf="showComplaintButton" class="complaint-shortcut">
+          <button
+            type="button"
+            class="complaint-btn"
+            (click)="goToComplaintPage()">
+            <div class="complaint-btn-icon">
+              <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+            </div>
+            <div class="complaint-btn-text">
+              <strong>Complaint Raising</strong>
+              <span>File a new complaint</span>
+            </div>
+            <ion-icon name="chevron-forward-outline" class="complaint-btn-arrow"></ion-icon>
+          </button>
+        </div>
 
-        <!-- Error Message -->
+        <!-- Error -->
         <div *ngIf="errorMessage" class="error-message">
           <ion-icon name="alert-circle-outline"></ion-icon>
           {{ errorMessage }}
@@ -94,14 +109,13 @@
           expand="block"
           (click)="login()"
           [disabled]="isLoading"
-          class="login-btn"
-        >
+          class="login-btn">
           <ion-spinner *ngIf="isLoading" name="crescent" slot="start"></ion-spinner>
           <ion-icon *ngIf="!isLoading" name="log-in-outline" slot="start"></ion-icon>
           {{ isLoading ? 'Logging in...' : 'Login' }}
         </ion-button>
 
-        <!-- Credentials Hint -->
+        <!-- Credentials hint -->
         <div class="credentials-hint">
           <small>
             <ion-icon name="information-circle-outline"></ion-icon>

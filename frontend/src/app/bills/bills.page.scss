@@ -3,19 +3,22 @@
 /* RAILWAY E-BILLING - BILLS LIST (Blue Theme)  */
 /* ============================================ */
 
-/* Times New Roman everywhere */
 :host, :host * {
   font-family: "Times New Roman", "Times", "Georgia", "Cambria",
                "Garamond", serif !important;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  box-sizing: border-box;
 }
 
 ion-content {
   --background: #eef2f7;
 }
 
-/* ----- SEARCH BAR ----- */
+/* ============================================ */
+/*           SEARCH BAR                         */
+/* ============================================ */
+
 .search-container {
   margin-bottom: 16px;
 }
@@ -52,7 +55,10 @@ ion-content {
   font-size: 22px;
 }
 
-/* ----- FILTER CHIPS ----- */
+/* ============================================ */
+/*           FILTER CHIPS                       */
+/* ============================================ */
+
 .filter-chips {
   display: flex;
   gap: 8px;
@@ -79,7 +85,10 @@ ion-content {
   --color: white;
 }
 
-/* ----- STATS CARDS ----- */
+/* ============================================ */
+/*           STATS CARDS                        */
+/* ============================================ */
+
 .stats-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -123,124 +132,169 @@ ion-content {
   color: #2563eb;
 }
 
-/* ----- BILL ITEMS ----- */
-.bills-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+/* ============================================ */
+/*           BILLS TABLE                        */
+/* ============================================ */
+
+.bills-table-wrapper {
+  width: 100%;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(26, 58, 108, 0.08);
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
   margin-bottom: 20px;
 }
 
-.bill-item {
-  background: white;
-  border-radius: 16px;
-  padding: 14px 16px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  box-shadow: 0 2px 12px rgba(26, 58, 108, 0.08);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: 1px solid #e2e8f0;
-}
-
-.bill-item:hover {
-  transform: translateX(4px);
-  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.18);
-  border-color: #2563eb60;
-}
-
-.bill-item:active {
-  transform: scale(0.98);
-}
-
-.bill-item .bill-icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #1a3a6c, #2563eb);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-}
-
-.bill-item .bill-icon ion-icon {
-  font-size: 22px;
-  color: white;
-}
-
-.bill-item .bill-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.bill-item .bill-info .bill-vendor {
-  font-size: 15px;
-  font-weight: 700;
-  color: #1e293b;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.bill-item .bill-info .bill-details {
-  display: flex;
-  gap: 10px;
-  margin-top: 3px;
-  font-size: 12px;
-  color: #64748b;
-  flex-wrap: wrap;
-}
-
-.bill-item .bill-info .bill-details .bill-number {
-  background: #f1f5f9;
-  padding: 2px 10px;
-  border-radius: 4px;
-  font-weight: 600;
-  color: #1e293b;
-  font-size: 11px;
-}
-
-.bill-item .bill-info .bill-details .bill-date {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: #64748b;
-  font-size: 11px;
-  font-style: italic;
-}
-
-.bill-item .bill-info .bill-details .bill-date ion-icon {
+.bills-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* ← keeps columns from overflowing */
   font-size: 14px;
 }
 
-.bill-item .bill-amount {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  font-size: 16px;
+/* ============================================ */
+/*   COLUMN WIDTHS (fixed → no h-scroll)        */
+/* ============================================ */
+
+.col-invoice { width: 22%; }
+.col-date    { width: 14%; }
+.col-company { width: 38%; }
+.col-amount  { width: 16%; }
+.col-actions { width: 10%; }
+
+/* ============================================ */
+/*   TABLE HEADER                               */
+/* ============================================ */
+
+.bills-table thead th {
+  background: #f1f5f9;
+  color: #1a3a6c;
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  text-align: left;
+  padding: 14px 12px;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.bills-table th.align-right  { text-align: right; }
+.bills-table th.align-center { text-align: center; }
+
+/* ============================================ */
+/*   TABLE BODY                                 */
+/* ============================================ */
+
+.bill-row {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.bill-row:hover  { background: #f8fafc; }
+.bill-row:active { background: #eff6ff; }
+
+.bills-table tbody td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1e293b;
+  vertical-align: middle;
+  overflow: hidden;
+}
+
+.bills-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.align-right  { text-align: right; }
+.align-center { text-align: center; }
+
+/* ============================================ */
+/*   AMOUNT — CENTER ALIGN (FIX)                */
+/* ============================================ */
+
+.bills-table th.col-amount,
+.bills-table td.col-amount {
+  text-align: center !important;
+  font-weight: 700;
+  font-size: 15px;
   color: #2563eb;
-  flex-shrink: 0;
+  white-space: nowrap;
   font-variant-numeric: tabular-nums;
 }
 
-.bill-item .bill-amount ion-button {
-  --padding-start: 4px;
-  --padding-end: 4px;
-  --color: #dc2626;
-  --background: transparent;
-  height: 28px;
+/* ---------- INVOICE NUMBER ---------- */
+.invoice-badge {
+  display: inline-block;
+  background: #eff6ff;
+  color: #1a3a6c;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #bfdbfe;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  font-variant-numeric: tabular-nums;
 }
 
-.bill-item .bill-amount ion-button ion-icon {
+/* ---------- DATE ---------- */
+.col-date {
+  color: #475569;
+  font-size: 13px;
+  font-style: italic;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* ---------- COMPANY NAME ---------- */
+.col-company {
+  min-width: 0;
+}
+
+.company-name {
+  font-weight: 600;
+  color: #1e293b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.category-sub {
+  font-size: 11px;
+  color: #64748b;
+  font-style: italic;
+  margin-top: 2px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- DELETE BUTTON ---------- */
+.col-actions ion-button {
+  --color: #dc2626;
+  --padding-start: 6px;
+  --padding-end: 6px;
+  height: 32px;
+  margin: 0;
+}
+
+.col-actions ion-button:hover {
+  --background: rgba(220, 38, 38, 0.08);
+}
+
+.col-actions ion-icon {
   font-size: 18px;
 }
 
-/* ----- LOADING ----- */
+/* ============================================ */
+/*           LOADING                            */
+/* ============================================ */
+
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -262,7 +316,10 @@ ion-content {
   font-style: italic;
 }
 
-/* ----- EMPTY STATE ----- */
+/* ============================================ */
+/*           EMPTY STATE                        */
+/* ============================================ */
+
 .empty-state {
   display: flex;
   flex-direction: column;
@@ -305,7 +362,10 @@ ion-content {
   --color: white;
 }
 
-/* ----- DARK THEME SUPPORT ----- */
+/* ============================================ */
+/*           DARK THEME                         */
+/* ============================================ */
+
 .dark-theme .search-bar {
   --background: #1e293b;
   border-color: #334155;
@@ -321,67 +381,117 @@ ion-content {
   border-left-color: #2563eb;
 }
 
-.dark-theme .stat-card .stat-number {
-  color: #ffffff;
-}
+.dark-theme .stat-card .stat-number { color: #ffffff; }
+.dark-theme .stat-card .stat-label  { color: #94a3b8; }
 
-.dark-theme .stat-card .stat-label {
-  color: #94a3b8;
-}
-
-.dark-theme .bill-item {
+.dark-theme .bills-table-wrapper {
   background: #1e293b;
   border-color: #334155;
 }
 
-.dark-theme .bill-item .bill-info .bill-vendor {
-  color: #ffffff;
+.dark-theme .bills-table thead th {
+  background: #0f172a;
+  color: #93c5fd;
+  border-bottom-color: #334155;
 }
 
-.dark-theme .bill-item .bill-info .bill-details .bill-number {
-  background: #334155;
+.dark-theme .bills-table tbody td {
+  border-bottom-color: #334155;
   color: #e2e8f0;
 }
 
-.dark-theme .bill-item .bill-info .bill-details .bill-date {
-  color: #94a3b8;
+.dark-theme .bill-row:hover  { background: #334155; }
+.dark-theme .bill-row:active { background: #1e3a5f; }
+
+.dark-theme .invoice-badge {
+  background: #1e3a5f;
+  color: #93c5fd;
+  border-color: #2563eb;
 }
 
-.dark-theme .empty-state h3 {
-  color: #ffffff;
-}
+.dark-theme .company-name { color: #ffffff; }
+.dark-theme .col-date     { color: #94a3b8; }
+.dark-theme .col-amount   { color: #60a5fa; }
+.dark-theme .category-sub { color: #94a3b8; }
 
-.dark-theme .empty-state p {
-  color: #94a3b8;
-}
+.dark-theme .empty-state h3 { color: #ffffff; }
+.dark-theme .empty-state p  { color: #94a3b8; }
 
-.dark-theme .filter-chips ion-chip[color="medium"] {
-  --background: #334155;
-  --color: #94a3b8;
-}
+/* ============================================ */
+/*   RESPONSIVE — MOBILE (< 640px)              */
+/*   Table → Stacked cards (no h-scroll)        */
+/* ============================================ */
 
-/* ----- RESPONSIVE ----- */
-@media (max-width: 480px) {
-  .bill-item {
-    padding: 12px;
-    gap: 10px;
+@media (max-width: 640px) {
+  .bills-table thead {
+    display: none;
   }
 
-  .bill-item .bill-icon {
-    width: 40px;
-    height: 40px;
+  .bills-table,
+  .bills-table tbody,
+  .bills-table tr,
+  .bills-table td {
+    display: block;
+    width: 100%;
   }
 
-  .bill-item .bill-icon ion-icon {
-    font-size: 18px;
+  .bill-row {
+    position: relative;
+    padding: 12px 48px 12px 12px;
+    border-bottom: 1px solid #e2e8f0;
   }
 
-  .bill-item .bill-info .bill-vendor {
+  .bill-row:last-child {
+    border-bottom: none;
+  }
+
+  .bills-table tbody td {
+    padding: 2px 0;
+    border-bottom: none;
+    overflow: visible;
+  }
+
+  /* Row 1: Invoice badge + Amount side-by-side */
+  .col-invoice {
+    display: inline-block;
+    width: auto;
+    text-align: left;
+  }
+
+  .col-amount {
+    display: inline-block;
+    width: auto;
+    float: right;
+    font-size: 15px;
+    margin-top: -26px;
+    text-align: right !important;
+  }
+
+  /* Row 2: Company name */
+  .company-name {
     font-size: 14px;
+    font-weight: 700;
+    margin-top: 6px;
   }
 
-  .bill-item .bill-amount {
-    font-size: 14px;
+  .category-sub {
+    margin-top: 2px;
+  }
+
+  /* Row 3: Date */
+  .col-date {
+    font-size: 12px;
+    margin-top: 6px;
+    text-align: left;
+  }
+
+  /* Delete button — absolute top-right */
+  .col-actions {
+    position: absolute;
+    top: 8px;
+    right: 4px;
+    width: auto;
+    padding: 0;
   }
 
   .stats-container {
@@ -389,12 +499,628 @@ ion-content {
     gap: 8px;
   }
 
-  .stat-card {
-    padding: 12px;
+  .stat-card { padding: 12px; }
+  .stat-card .stat-number { font-size: 18px; }
+}
+/* ============================================ */
+/*           DATE RANGE CARD                    */
+/* ============================================ */
+
+.date-range-card {
+  background: white;
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 12px rgba(26, 58, 108, 0.08);
+  border: 1px solid #e2e8f0;
+  margin-top: 8px;
+}
+
+/* Quick range chips */
+.quick-ranges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.range-chip {
+  --border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  padding: 4px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  --background: #f1f5f9;
+  --color: #475569;
+
+  ion-icon {
+    font-size: 14px;
+    margin-right: 4px;
   }
 
-  .stat-card .stat-number {
-    font-size: 18px;
+  &:active {
+    transform: scale(0.95);
   }
-  
+
+  &.active {
+    --background: #2563eb;
+    --color: #ffffff;
+  }
+}
+
+/* From / To text inputs */
+.date-inputs {
+  display: flex;
+  gap: 16px;
+
+  .date-field {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    .date-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #64748b;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .date-text-input {
+      width: 100%;
+      height: 44px;
+      padding: 0 12px;
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #1e293b;
+      font-family: inherit;
+      box-sizing: border-box;
+      transition: all 0.2s;
+
+      &::placeholder {
+        color: #94a3b8;
+        font-style: italic;
+      }
+
+      &:focus {
+        outline: none;
+        border-color: #2563eb;
+        background: #ffffff;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+      }
+    }
+  }
+}
+
+/* Dark theme */
+.dark-theme .date-range-card {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.dark-theme .range-chip {
+  --background: #334155;
+  --color: #cbd5e1;
+
+  &.active {
+    --background: #2563eb;
+    --color: #ffffff;
+  }
+}
+
+.dark-theme .date-text-input {
+  background: #334155;
+  border-color: #475569;
+  color: #ffffff;
+
+  &::placeholder {
+    color: #64748b;
+  }
+
+  &:focus {
+    background: #1e293b;
+    border-color: #2563eb;
+  }
+}
+
+/* Mobile — stack From/To vertically */
+@media (max-width: 480px) {
+  .date-inputs {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+/* ============================================ */
+/*           DATE RANGE CARD                    */
+/* ============================================ */
+
+.date-range-card {
+  background: white;
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 12px rgba(26, 58, 108, 0.08);
+  border: 1px solid #e2e8f0;
+  margin-top: 8px;
+  position: relative;
+}
+
+/* ============================================ */
+/*           QUICK RANGE CHIPS                  */
+/* ============================================ */
+
+.quick-ranges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.range-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+
+  ion-icon {
+    font-size: 14px;
+  }
+
+  &:hover {
+    background: #e2e8f0;
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &.active {
+    background: #2563eb;
+    color: #ffffff;
+    border-color: #2563eb;
+  }
+}
+
+/* ============================================ */
+/*           FROM / TO INPUTS                   */
+/* ============================================ */
+
+.date-inputs {
+  display: flex;
+  gap: 16px;
+}
+
+.date-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-width: 0;
+}
+
+.date-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.input-with-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.date-text-input {
+  width: 100%;
+  height: 44px;
+  padding: 0 76px 0 12px;   /* space for clear ✕ + calendar 📅 */
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #1e293b;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: all 0.15s;
+
+  &::placeholder {
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 12px;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: #2563eb;
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+}
+
+/* Clear ✕ button */
+.clear-field {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: color 0.12s;
+
+  ion-icon { font-size: 18px; }
+
+  &:hover {
+    color: #dc2626;
+  }
+}
+
+/* Calendar 📅 button */
+.calendar-btn {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #2563eb;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+
+  ion-icon { font-size: 18px; }
+
+  &:hover {
+    background: #2563eb;
+    color: white;
+    border-color: #2563eb;
+  }
+}
+
+/* ============================================ */
+/*           INLINE MINI CALENDAR               */
+/* ============================================ */
+
+.mini-calendar {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 100;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 8px 28px rgba(26, 58, 108, 0.18);
+  padding: 10px;
+  width: 280px;
+  max-width: 90vw;
+  animation: calFadeIn 0.15s ease;
+}
+
+@keyframes calFadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+
+  button {
+    background: none;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    ion-icon { font-size: 16px; }
+
+    &:hover {
+      background: #eff6ff;
+    }
+  }
+}
+
+.cal-month {
+  font-size: 13px;
+  font-weight: 700;
+  color: #1a3a6c;
+  letter-spacing: 0.4px;
+}
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+
+  span {
+    text-align: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: 0.4px;
+    padding: 4px 0;
+  }
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cal-day {
+  background: none;
+  border: none;
+  aspect-ratio: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: #1e293b;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+  transition: all 0.1s;
+
+  &:hover:not(.empty):not(.selected) {
+    background: #eff6ff;
+    color: #2563eb;
+  }
+
+  &.empty {
+    cursor: default;
+    visibility: hidden;
+  }
+
+  &.today {
+    color: #dc2626;
+    font-weight: 800;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: #dc2626;
+    }
+    position: relative;
+  }
+
+  &.selected {
+    background: #2563eb;
+    color: #ffffff;
+    font-weight: 800;
+  }
+}
+
+.cal-footer {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 8px;
+}
+
+.cal-action {
+  flex: 1;
+  background: #f1f5f9;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2563eb;
+  cursor: pointer;
+  font-family: inherit;
+  letter-spacing: 0.3px;
+
+  &:hover {
+    background: #2563eb;
+    color: white;
+  }
+}
+
+/* ============================================ */
+/*           HELPER HINT                        */
+/* ============================================ */
+
+.date-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 11px;
+  color: #94a3b8;
+  font-style: italic;
+
+  ion-icon {
+    font-size: 14px;
+    color: #2563eb;
+  }
+
+  em {
+    font-style: italic;
+    font-weight: 700;
+    color: #2563eb;
+    background: #eff6ff;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+  }
+}
+
+/* ============================================ */
+/*           DARK THEME                         */
+/* ============================================ */
+
+.dark-theme {
+  .date-range-card {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .range-chip {
+    background: #334155;
+    color: #cbd5e1;
+    border-color: #475569;
+
+    &:hover { background: #475569; }
+
+    &.active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #2563eb;
+    }
+  }
+
+  .date-text-input {
+    background: #334155;
+    border-color: #475569;
+    color: #ffffff;
+
+    &::placeholder { color: #64748b; }
+
+    &:focus {
+      background: #1e293b;
+      border-color: #2563eb;
+    }
+  }
+
+  .clear-field {
+    color: #64748b;
+
+    &:hover { color: #f87171; }
+  }
+
+  .calendar-btn {
+    background: #1e3a5f;
+    border-color: #2563eb;
+    color: #60a5fa;
+
+    &:hover {
+      background: #2563eb;
+      color: white;
+    }
+  }
+
+  .mini-calendar {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  }
+
+  .cal-header button {
+    border-color: #334155;
+    color: #60a5fa;
+
+    &:hover { background: #334155; }
+  }
+
+  .cal-month { color: #ffffff; }
+
+  .cal-weekdays span { color: #64748b; }
+
+  .cal-day {
+    color: #e2e8f0;
+
+    &:hover:not(.empty):not(.selected) {
+      background: #334155;
+      color: #60a5fa;
+    }
+
+    &.today { color: #f87171; }
+    &.selected { background: #2563eb; color: white; }
+  }
+
+  .cal-footer { border-top-color: #334155; }
+
+  .cal-action {
+    background: #334155;
+    color: #60a5fa;
+
+    &:hover {
+      background: #2563eb;
+      color: white;
+    }
+  }
+
+  .date-hint {
+    color: #64748b;
+
+    em {
+      background: #1e3a5f;
+      color: #60a5fa;
+    }
+  }
+}
+@media (max-width: 640px) {
+  .date-inputs {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .date-text-input {
+    padding: 0 76px 0 12px;
+    font-size: 13px;
+
+    &::placeholder { font-size: 11px; }
+  }
+
+  .mini-calendar {
+    width: 100%;
+    max-width: 100%;
+    left: 0;
+    right: 0;
+  }
+
+  .quick-ranges {
+    gap: 6px;
+
+    .range-chip {
+      padding: 5px 10px;
+      font-size: 11px;
+    }
+  }
+  .date-hint {
+    font-size: 10px;
+
+    em { font-size: 10px; }
+  }
 }

@@ -1,11 +1,10 @@
 // ============================================================
 // FILE: src/app/services/auth.service.ts
-// PURPOSE: Central auth service (JWT + user state + recycle)
+// PURPOSE: Central auth service (JWT + user state + recycle + multi-session)
 // ============================================================
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of, firstValueFrom } from 'rxjs';
 import { map, tap, catchError } from 'rxjs/operators';
 import { Router } from '@angular/router';
 
@@ -27,6 +26,7 @@ export interface LoginResponse {
   success: boolean;
   message?: string;
   token?: string;
+  session_id?: string; // <-- Added for unique session tracking
   user?: AuthUser;
   error?: string;
 }
@@ -36,12 +36,12 @@ export interface LoginResponse {
 // ------------------------------------------------------------
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-
-  private readonly API = 'http://localhost:5000';
-
+  private readonly API = 'http://192.168.43.84:5000';
   private readonly TOKEN_KEY = 'rly_token';
   private readonly USER_KEY  = 'rly_user';
-
+  private readonly SESSION_KEY = 'rly_session_id'; // <-- Added for unique session tracking
+  private readonly LOGIN_TIME_KEY = 'rly_login_time';
+  
   private currentUserSubject = new BehaviorSubject<AuthUser | null>(this.loadUserFromStorage());
   public currentUser$ = this.currentUserSubject.asObservable();
 
@@ -57,8 +57,10 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.API}/login`, { username, password })
       .pipe(
         tap(res => {
-          if (res.success && res.token && res.user) {
-            this.setSession(res.token, res.user);
+          // Ensure we receive the session_id from the updated backend
+          if (res.success && res.token && res.user && res.session_id) {
+            this.setSession(res.token, res.user, res.session_id);
+            localStorage.setItem(this.LOGIN_TIME_KEY, new Date().toISOString());
           }
         }),
         catchError(err => {
@@ -68,19 +70,50 @@ export class AuthService {
       );
   }
 
-  logout(): void {
+  async logout(): Promise<void> {
+    try {
+      const token = this.getToken();
+      const sessionId = this.getSessionId();
+
+      if (token && sessionId) {
+        // Send the specific session_id to the backend to close only this session
+        await firstValueFrom(
+          this.http.post(
+            `${this.API}/logout`,
+            { session_id: sessionId },
+            {
+              headers: new HttpHeaders({
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
+              }),
+            }
+          )
+        ).catch(() => {
+          console.warn('⚠️ Logout API failed (non-fatal)');
+        });
+      }
+    } catch (err) {
+      console.warn('⚠️ Logout API error (non-fatal):', err);
+    }
+
+    // Clear local storage
     localStorage.removeItem(this.TOKEN_KEY);
     localStorage.removeItem(this.USER_KEY);
+    localStorage.removeItem(this.SESSION_KEY);
+    localStorage.removeItem(this.LOGIN_TIME_KEY);
     this.currentUserSubject.next(null);
+
+    // Navigate to login
     this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 
   // ============================================================
   // SESSION
   // ============================================================
-  private setSession(token: string, user: AuthUser): void {
+  private setSession(token: string, user: AuthUser, sessionId: string): void {
     localStorage.setItem(this.TOKEN_KEY, token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+    localStorage.setItem(this.SESSION_KEY, sessionId);
     this.currentUserSubject.next(user);
   }
 
@@ -100,6 +133,10 @@ export class AuthService {
     return localStorage.getItem(this.TOKEN_KEY);
   }
 
+  getSessionId(): string | null {
+    return localStorage.getItem(this.SESSION_KEY);
+  }
+
   getCurrentUser(): AuthUser | null {
     return this.currentUserSubject.value;
   }
@@ -114,6 +151,11 @@ export class AuthService {
 
   getCategoryGroup(): 'all' | 'adfm_1' | 'adfm_2' | null {
     return this.getCurrentUser()?.category_group ?? null;
+  }
+
+  /** Get the timestamp when the current user logged in */
+  getLoginTime(): string | null {
+    return localStorage.getItem(this.LOGIN_TIME_KEY);
   }
 
   // ============================================================
@@ -173,11 +215,10 @@ export class AuthService {
   }
 
   // ============================================================
-  // RECYCLE BIN PERMISSIONS (NEW)
+  // RECYCLE BIN PERMISSIONS
   // ============================================================
   /** Can this user see the Recycle Bin menu? */
   canViewRecycleBin(): boolean {
-    // Every logged-in user can see recycle bin (their own scope)
     return this.isLoggedIn();
   }
 

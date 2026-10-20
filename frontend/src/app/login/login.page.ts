@@ -1,6 +1,6 @@
 // ============================================================
 // FILE: src/app/login/login.page.ts
-// PURPOSE: Login — username, password (with eye), dummy role
+// PURPOSE: Login — with password toggle, dummy role, complaints
 // ============================================================
 
 import { Component, OnInit } from '@angular/core';
@@ -17,8 +17,8 @@ import {
   trainOutline, receiptOutline, personOutline, lockClosedOutline,
   alertCircleOutline, logInOutline, informationCircleOutline,
   eyeOutline, eyeOffOutline, shieldCheckmarkOutline,
+  chatbubbleEllipsesOutline, closeOutline, sendOutline,
 } from 'ionicons/icons';
-
 import { AuthService } from '../services/auth.service';
 
 @Component({
@@ -40,7 +40,8 @@ export class LoginPage implements OnInit {
   // Form fields
   username = '';
   password = '';
-   selectedRole = 'sr_drm';   // ⚠️ DUMMY — cosmetic only, never sent to backend
+  selectedRole = 'sr_drm';
+
   // UI state
   showPassword = false;
   isLoading = false;
@@ -52,7 +53,7 @@ export class LoginPage implements OnInit {
     { value: 'adrm_2',    label: 'ADRM II/MDU' },
     { value: 'sso',       label: 'SSO' },
     { value: 'sso_admin', label: 'SSO Admin' },
-  ];;
+  ];
 
   constructor(
     private auth: AuthService,
@@ -62,6 +63,7 @@ export class LoginPage implements OnInit {
       trainOutline, receiptOutline, personOutline, lockClosedOutline,
       alertCircleOutline, logInOutline, informationCircleOutline,
       eyeOutline, eyeOffOutline, shieldCheckmarkOutline,
+      chatbubbleEllipsesOutline, closeOutline, sendOutline,
     });
   }
 
@@ -72,7 +74,7 @@ export class LoginPage implements OnInit {
   }
 
   // ============================================================
-  // SHOW / HIDE PASSWORD
+  // PASSWORD TOGGLE
   // ============================================================
   togglePassword(): void {
     this.showPassword = !this.showPassword;
@@ -89,7 +91,6 @@ export class LoginPage implements OnInit {
       return;
     }
 
-    // ⚠️ selectedRole is NOT sent — backend determines role
     this.isLoading = true;
 
     this.auth.login(this.username.trim(), this.password).subscribe({
@@ -112,9 +113,23 @@ export class LoginPage implements OnInit {
     this.router.navigateByUrl('/dashboard', { replaceUrl: true });
   }
 
-   fillAdmin(): void {
+  fillAdmin(): void {
     this.username = 'admin';
     this.password = 'admin';
     this.selectedRole = 'sr_drm';
+  }
+
+  // ============================================================
+  // COMPLAINT — role gating
+  // ============================================================
+  get showComplaintButton(): boolean {
+    return this.selectedRole === 'sso' || this.selectedRole === 'sso_admin';
+  }
+
+  // ============================================================
+  // COMPLAINT — navigate to full page
+  // ============================================================
+  goToComplaintPage(): void {
+    this.router.navigateByUrl('/complaint-raise');
   }
 }

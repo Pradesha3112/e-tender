@@ -1,81 +1,157 @@
 <!-- ============================================ -->
 <!-- FILE: src/app/dashboard/dashboard.page.html    -->
-<!-- DASHBOARD — content only (shell provides layout) -->
+<!-- DASHBOARD — content only                        -->
 <!-- ============================================ -->
 
 <app-shell
   pageTitle="Dashboard"
-  [showRightPanel]="true"
+  [showRightPanel]="false"
   (refresh)="loadAll()">
-  <!-- ============================================================ -->
-  <!-- MAIN CONTENT (default slot)                                    -->
-  <!-- ============================================================ -->
 
-  <!-- NOTICE BANNER -->
-  <div *ngIf="topNotice"
-       class="notice-banner"
-       [ngClass]="getNoticeClass(topNotice.type)">
-    <ion-icon [name]="getNoticeIcon(topNotice.type)"
-              class="notice-icon"></ion-icon>
-    <div class="notice-content">
-      <strong>{{ topNotice.title }}</strong>
-      <span class="notice-message">{{ topNotice.message }}</span>
-    </div>
-  </div>
+  <!-- ============================================================ -->
+  <!-- TOP ROW: WELCOME + STATS (left) | USER DETAILS (right)        -->
+  <!-- ============================================================ -->
+  <section class="top-row">
 
-  <!-- WELCOME CARD -->
-  <section class="welcome-card">
-    <div class="welcome-left">
-      <div class="welcome-icon">
-        <ion-icon name="train-outline"></ion-icon>
-      </div>
-      <div>
-        <h1 class="welcome-title">
-          Welcome, {{ user?.full_name || 'User' }}
-        </h1>
-        <p class="welcome-subtitle">{{ groupLabel }}</p>
-      </div>
+    <!-- ---------- LEFT COLUMN (60%) ---------- -->
+    <div class="top-left">
+
+      <!-- Welcome Card -->
+      <section class="welcome-card">
+        <div class="welcome-left">
+          <div>
+            <h1 class="welcome-title">
+              Welcome, {{ user?.full_name || 'User' }}
+            </h1>
+            <p class="welcome-subtitle">{{ groupLabel }}</p>
+          </div>
+        </div>
+        <div class="welcome-right">
+          <span class="welcome-badge">{{ roleLabel }}</span>
+        </div>
+      </section>
+
+      <!-- Stats Grid -->
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <ion-icon name="document-text-outline"></ion-icon>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">{{ stats.totalBills }}</div>
+            <div class="stat-label">TOTAL BILLS</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <ion-icon name="cash-outline"></ion-icon>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">{{ formatCompactCurrency(stats.totalAmount) }}</div>
+            <div class="stat-label">TOTAL AMOUNT</div>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon">
+            <ion-icon name="calendar-outline"></ion-icon>
+          </div>
+          <div class="stat-body">
+            <div class="stat-value">{{ stats.thisMonth }}</div>
+            <div class="stat-label">THIS MONTH</div>
+          </div>
+        </div>
+      </section>
     </div>
-    <div class="welcome-right">
-      <span class="welcome-badge">{{ roleLabel }}</span>
+
+    <!-- ---------- RIGHT COLUMN (40%) ---------- -->
+    <div class="top-right">
+      <section class="user-section">
+        <div class="right-card">
+          <div class="right-heading">
+            <ion-icon name="person-circle-outline"></ion-icon>
+            USER
+          </div>
+
+          <div class="info-grid">
+            <div class="info-row">
+              <span class="info-label">Role</span>
+              <span class="info-value info-role">{{ roleLabel }}</span>
+            </div>
+
+            <div class="info-row">
+              <span class="info-label">Group</span>
+              <span class="info-value info-group">{{ groupLabel }}</span>
+            </div>
+
+            <div class="info-row">
+              <span class="info-label">Username</span>
+              <span class="info-value info-username">&#64;{{ user?.username }}</span>
+            </div>
+
+            <div class="info-row">
+              <span class="info-label">Login Time</span>
+              <span class="info-value">{{ loginTime }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </section>
 
-  <!-- STATS GRID -->
-  <section class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-icon">
-        <ion-icon name="document-text-outline"></ion-icon>
-      </div>
-      <div class="stat-body">
-        <div class="stat-value">{{ stats.totalBills }}</div>
-        <div class="stat-label">TOTAL BILLS</div>
-      </div>
+  <!-- ============================================================ -->
+  <!-- USER ACTIVITY TABLE (full width)                              -->
+  <!-- ============================================================ -->
+  <section class="activity-section">
+    <div class="section-header">
+      <h3>
+        <ion-icon name="people-outline"></ion-icon>
+        USER ACTIVITY
+      </h3>
     </div>
 
-    <div class="stat-card">
-      <div class="stat-icon">
-        <ion-icon name="cash-outline"></ion-icon>
-      </div>
-      <div class="stat-body">
-        <div class="stat-value">{{ formatCompactCurrency(stats.totalAmount) }}</div>
-        <div class="stat-label">TOTAL AMOUNT</div>
-      </div>
+    <div *ngIf="userActivity.length === 0" class="empty-inline">
+      <ion-icon name="time-outline"></ion-icon>
+      <p>No user activity recorded yet.</p>
     </div>
 
-    <div class="stat-card">
-      <div class="stat-icon">
-        <ion-icon name="calendar-outline"></ion-icon>
-      </div>
-      <div class="stat-body">
-        <div class="stat-value">{{ stats.thisMonth }}</div>
-        <div class="stat-label">THIS MONTH</div>
-      </div>
+    <div *ngIf="userActivity.length > 0" class="activity-table-wrapper">
+      <table class="activity-table">
+        <thead>
+          <tr>
+            <th>USERNAME</th>
+            <th>ROLE</th>
+            <th>GROUP</th>
+            <th>LOGIN TIME</th>
+            <th>LOGOUT TIME</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let act of userActivity">
+            <td>
+              <span class="activity-user">&#64;{{ act.username }}</span>
+            </td>
+            <td>
+              <span class="activity-role-chip">
+                {{ getActivityRoleLabel(act.role) }}
+              </span>
+            </td>
+            <td>{{ getActivityGroupLabel(act.category_group) }}</td>
+            <td class="time-cell">{{ formatActivityTime(act.login_at) }}</td>
+            <td class="time-cell">
+              <span *ngIf="act.is_active" class="status-active">● Active</span>
+              <span *ngIf="!act.is_active">{{ formatActivityTime(act.logout_at) }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </section>
 
-
-  <!-- RECENT BILLS -->
+  <!-- ============================================================ -->
+  <!-- RECENT BILLS (full width)                                     -->
+  <!-- ============================================================ -->
   <section class="recent-section">
     <div class="section-header">
       <h3>
@@ -129,109 +205,5 @@
       </tbody>
     </table>
   </section>
-
-  <!-- ============================================================ -->
-  <!-- RIGHT PANEL CONTENT (projected slot)                          -->
-  <!-- ============================================================ -->
-  <div rightPanel>
-
-    <!-- USER INFO -->
-    <div class="right-card">
-      <div class="right-heading">
-        <ion-icon name="person-circle-outline"></ion-icon>
-        USER
-      </div>
-      <div class="info-row">
-        <span class="info-label">Role</span>
-        <span class="info-value">{{ roleLabel }}</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Group</span>
-        <span class="info-value">{{ groupLabel }}</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Username</span>
-        <span class="info-value">@{{ user?.username }}</span>
-      </div>
-    </div>
-
-    <!-- QUICK ACTIONS -->
-    <div class="right-card">
-      <div class="right-heading">
-        <ion-icon name="flash-outline"></ion-icon>
-        QUICK ACTIONS
-      </div>
-      <div class="quick-actions">
-        <button class="qa-btn" (click)="goToUpload()">
-          <ion-icon name="camera-outline"></ion-icon>
-          <span>Scan Bill</span>
-        </button>
-        <button class="qa-btn" *ngIf="canManageUsers" (click)="goToUsers()">
-          <ion-icon name="people-outline"></ion-icon>
-          <span>Users</span>
-        </button>
-        <button class="qa-btn" (click)="goToBills()">
-          <ion-icon name="document-text-outline"></ion-icon>
-          <span>Bills</span>
-        </button>
-        <button class="qa-btn" (click)="goToExport()">
-          <ion-icon name="download-outline"></ion-icon>
-          <span>Export</span>
-        </button>
-        <button class="qa-btn" (click)="refreshDashboard()">
-          <ion-icon name="refresh-outline"></ion-icon>
-          <span>Refresh</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- SYSTEM INFO -->
-    <div class="right-card">
-      <div class="right-heading">
-        <ion-icon name="server-outline"></ion-icon>
-        SYSTEM INFO
-      </div>
-      <div class="info-row">
-        <span class="info-label">Total Bills</span>
-        <span class="info-value">{{ stats.totalBills }}</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Total Amount</span>
-        <span class="info-value">{{ formatCompactCurrency(stats.totalAmount) }}</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">This Month</span>
-        <span class="info-value">{{ stats.thisMonth }}</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">Role</span>
-        <span class="info-value">{{ roleLabel }}</span>
-      </div>
-    </div>
-
-    <!-- ACTIVITY -->
-    <div class="right-card">
-      <div class="right-heading">
-        <ion-icon name="pulse-outline"></ion-icon>
-        RECENT ACTIVITY
-      </div>
-      <div *ngIf="activity.length === 0" class="activity-empty">
-        No recent activity
-      </div>
-      <ul class="activity-list" *ngIf="activity.length > 0">
-        <li *ngFor="let a of activity">
-          <ion-icon [name]="a.icon || 'ellipse-outline'"
-                    class="activity-icon"></ion-icon>
-          <div class="activity-body">
-            <div class="activity-message">{{ a.message }}</div>
-            <div class="activity-meta" *ngIf="a.username">
-              by @{{ a.username }}
-            </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-
-  </div>
 
 </app-shell>

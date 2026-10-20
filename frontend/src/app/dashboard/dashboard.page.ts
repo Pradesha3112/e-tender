@@ -1,9 +1,10 @@
 // ============================================================
 // FILE: src/app/dashboard/dashboard.page.ts
 // PURPOSE: Dashboard using shared AppShellComponent
+//          + user activity table
 // ============================================================
 
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { Router, RouterModule } from '@angular/router';
@@ -16,21 +17,12 @@ import { AppShellComponent } from '../shared/shell/shell.component';
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    IonicModule,
-    RouterModule,
-    AppShellComponent,
-  ],
+  imports: [CommonModule, IonicModule, RouterModule, AppShellComponent],
 })
-export class DashboardPage implements OnInit, OnDestroy {
+export class DashboardPage implements OnInit {
 
-  // Data
   recentBills: any[] = [];
-  notices: any[] = [];
-  activity: any[] = [];
-
-  // State
+  userActivity: any[] = [];
   isLoading = true;
 
   stats = {
@@ -51,17 +43,13 @@ export class DashboardPage implements OnInit, OnDestroy {
     this.loadAll();
   }
 
-  ngOnDestroy() {
-    // Reserved for cleanup
-  }
-
   // ============================================================
   // LOAD ALL DATA
   // ============================================================
   loadAll() {
     this.isLoading = true;
 
-    // Bills
+    // Bills (stats + recent)
     this.apiService.getBills().subscribe({
       next: (res: any) => {
         if (res?.success) {
@@ -87,25 +75,17 @@ export class DashboardPage implements OnInit, OnDestroy {
       },
     });
 
-    // Notices
-    this.apiService.getNotices().subscribe({
+    // User Activity
+    this.apiService.getUserActivity().subscribe({
       next: (res: any) => {
-        if (res?.success) this.notices = res.data || [];
+        if (res?.success) this.userActivity = res.data || [];
       },
-      error: (err) => console.warn('⚠️ Notices unavailable:', err),
-    });
-
-    // Activity
-    this.apiService.getActivity().subscribe({
-      next: (res: any) => {
-        if (res?.success) this.activity = res.data || [];
-      },
-      error: (err) => console.warn('⚠️ Activity unavailable:', err),
+      error: (err) => console.warn('⚠️ User activity unavailable:', err),
     });
   }
 
   // ============================================================
-  // USER HELPERS (used by dashboard content)
+  // USER HELPERS
   // ============================================================
   get user() {
     return this.auth.getCurrentUser();
@@ -130,29 +110,63 @@ export class DashboardPage implements OnInit, OnDestroy {
     return 'ALL CATEGORIES';
   }
 
-  get canManageUsers(): boolean {
-    return this.auth.canManageUsers();
+  get loginTime(): string {
+    const raw = this.auth.getLoginTime();
+    if (!raw) return '—';
+    try {
+      const d = new Date(raw);
+      if (isNaN(d.getTime())) return '—';
+      return d.toLocaleString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+    } catch {
+      return raw;
+    }
   }
 
   // ============================================================
-  // NOTICE HELPERS
+  // ACTIVITY HELPERS
   // ============================================================
-  get topNotice(): any | null {
-    return this.notices.length > 0 ? this.notices[0] : null;
+  formatActivityTime(dateStr: string | null): string {
+    if (!dateStr) return '—';
+    try {
+      const s = String(dateStr).trim();
+      const m = s.match(/^(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2}):(\d{2})/);
+      if (!m) return s;
+
+      const [, year, month, day, hour, minute] = m;
+
+      const date = new Date(Number(year), Number(month) - 1, Number(day),
+                            Number(hour), Number(minute));
+      return date.toLocaleString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true,
+      });
+    } catch {
+      return '—';
+    }
   }
 
-  getNoticeClass(type: string): string {
-    if (type === 'warning') return 'notice--warning';
-    if (type === 'success') return 'notice--success';
-    if (type === 'danger')  return 'notice--danger';
-    return 'notice--info';
+  getActivityRoleLabel(role: string): string {
+    if (role === 'admin')       return 'Sr. DRM';
+    if (role === 'super_admin') return 'ADRM';
+    if (role === 'clerk')       return 'SSO';
+    return role || '—';
   }
 
-  getNoticeIcon(type: string): string {
-    if (type === 'warning') return 'alert-circle-outline';
-    if (type === 'success') return 'checkmark-circle-outline';
-    if (type === 'danger')  return 'close-circle-outline';
-    return 'information-circle-outline';
+  getActivityGroupLabel(group: string): string {
+    if (group === 'adfm_1') return 'ADFM/I';
+    if (group === 'adfm_2') return 'ADFM/II';
+    return 'All';
   }
 
   // ============================================================
@@ -187,7 +201,12 @@ export class DashboardPage implements OnInit, OnDestroy {
   goToUsers()     { this.router.navigateByUrl('/users'); }
   viewBill(id: number) { this.router.navigateByUrl(`/bill-detail/${id}`); }
 
-  refreshDashboard() {
-    this.loadAll();
+  refreshDashboard() { this.loadAll(); }
+
+  // ============================================================
+  // SESSION HIGHLIGHTING
+  // ============================================================
+  get currentSessionId(): string | null {
+    return this.auth.getSessionId();
   }
 }

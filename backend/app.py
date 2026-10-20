@@ -54,7 +54,23 @@ def _load_user():
 def home():
     return "Bill Scanner API (RBAC + Recycle Bin) is working! 🎉"
 
-
+@app.route('/user-activity', methods=['GET'])
+@require_auth
+def get_user_activity_route():
+    """
+    Return recent login/logout activity.
+    - admin / super_admin → all users (last 10)
+    - clerk               → own activity (last 10)
+    """
+    try:
+        activity = db.get_user_activity(
+            user=request.current_user,
+            limit=10,
+        )
+        return jsonify({'success': True, 'data': activity})
+    except Exception as e:
+        print(f"❌ get_user_activity error: {e}")
+        return jsonify({'success': False, 'error': str(e)}), 500
 @app.route('/login', methods=['POST'])
 def login():
     try:
@@ -72,12 +88,25 @@ def login():
         if user.get('id', 0) != 0:
             db.touch_last_login(user['username'])
 
+        # Log login activity
+        import uuid
+        session_id = str(uuid.uuid4())
+
+        db.log_user_login(
+            session_id=session_id,
+            username=user.get('username'),
+            role=user.get('role'),
+            category_group=user.get('category_group', 'all'),
+            full_name=user.get('full_name'),
+        )
+
         token = create_token(user)
 
         return jsonify({
             'success': True,
             'message': 'Login successful',
             'token': token,
+            'session_id': session_id,
             'user': {
                 'id':             user.get('id'),
                 'username':       user.get('username'),
@@ -90,6 +119,32 @@ def login():
     except Exception as e:
         print(f"❌ Login error: {e}")
         print(traceback.format_exc())
+        return jsonify({'success': False, 'error': str(e)}), 500
+@app.route('/logout', methods=['POST'])
+@require_auth
+def logout():
+    """Mark the current specific session as logged out."""
+    try:
+        data = request.json or {}
+        session_id = data.get('session_id')
+        
+        if not session_id:
+            print("⚠️ Logout called but no session_id provided")
+            return jsonify({'success': False, 'error': 'Missing session_id'}), 400
+
+        # Call the database function
+        success = db.log_user_logout(session_id)
+        
+        if success:
+            return jsonify({'success': True, 'message': 'Session closed successfully'})
+        else:
+            print(f"❌ DB failed to close session: {session_id}")
+            return jsonify({'success': False, 'error': 'Session not found or already closed'}), 404
+            
+    except Exception as e:
+        print(f"❌ Logout exception: {e}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
@@ -142,7 +197,8 @@ def save_bill():
         user = request.current_user
 
         category = bill_data.get('category')
-
+        
+        # Ensure allowed categories are fetched
         allowed = build_category_payload(
             user_group=user.get('category_group', 'all'),
             user_role=user.get('role')
@@ -160,9 +216,11 @@ def save_bill():
 
         bill_data['created_by']      = user.get('username')
         bill_data['created_by_role'] = user.get('role')
-        bill_data['category_group']  = (
-            get_group_for_category(category) if category else 'all'
-        )
+        bill_data['category_group']  = get_group_for_category(category) if category else 'all'
+
+        # Make sure items are passed properly
+        if 'items' not in bill_data:
+            bill_data['items'] = []
 
         result = db.save_bill(bill_data)
 
@@ -173,12 +231,14 @@ def save_bill():
                 'data': result,
                 'id': result.get('id')
             })
-        return jsonify({'success': False, 'error': 'Save failed'}), 500
+        
+        return jsonify({'success': False, 'error': 'Database save failed. Check Flask terminal for details.'}), 500
 
     except Exception as e:
         print(f"❌ Save error: {e}")
-        print(traceback.format_exc())
-        return jsonify({'success': False, 'error': str(e)}), 500
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': f"Server crash: {str(e)}"}), 500
 
 
 @app.route('/bills', methods=['GET'])
@@ -697,4 +757,5 @@ def get_activity():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000,
+            threaded=False, use_reloader=False)

@@ -88,6 +88,15 @@ ion-title {
   color: white;
 }
 
+/* Indian Railways logo image inside the circle */
+.login-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+  padding: 4px;
+  display: block;
+}
 .login-header h1 {
   font-size: 24px;
   font-weight: 700;
@@ -117,6 +126,7 @@ ion-title {
 
 .login-card ion-card-content {
   padding: 24px 20px 20px;
+  overflow: hidden;
 }
 
 /* ============================================ */
@@ -126,8 +136,10 @@ ion-title {
 .form-item {
   --padding-start: 0;
   --padding-end: 0;
-  --inner-padding-end: 0;
-  margin-bottom: 16px;
+  --inner-padding-start: 0;
+  --inner-padding-end: 4px;
+  --min-height: 52px;
+  margin-bottom: 12px;
   border-bottom: 2px solid #e2e8f0;
   transition: border-color 0.3s ease;
 }
@@ -139,13 +151,20 @@ ion-title {
 .input-icon {
   color: #2563eb;
   font-size: 20px;
-  margin-right: 12px;
+  margin-right: 10px;
   opacity: 0.85;
+  flex-shrink: 0;
+}
+
+.form-item ion-icon[slot="start"] {
+  margin-right: 10px;
+  flex-shrink: 0;
 }
 
 .form-item ion-input,
 .form-item ion-select {
   --padding-start: 0;
+  --padding-end: 8px;
   --color: #1e293b;
   font-size: 15px;
 }
@@ -157,6 +176,7 @@ ion-title {
 
 .role-select {
   width: 100%;
+  max-width: 100%;
 }
 
 /* ============================================ */
@@ -165,11 +185,13 @@ ion-title {
 
 .eye-btn {
   --color: #64748b;
-  --padding-start: 6px;
-  --padding-end: 6px;
-  height: 36px;
-  width: 36px;
-  margin: 0;
+  --padding-start: 2px !important;
+  --padding-end: 2px !important;
+  --background: transparent;
+  width: 34px !important;
+  height: 34px !important;
+  margin: 0 !important;
+  flex-shrink: 0;
   transition: color 0.2s;
 }
 
@@ -178,7 +200,98 @@ ion-title {
 }
 
 .eye-btn ion-icon {
-  font-size: 22px;
+  font-size: 20px !important;
+}
+
+/* ============================================ */
+/*           COMPLAINT SHORTCUT BUTTON          */
+/* ============================================ */
+
+.complaint-shortcut {
+  margin-top: 8px;
+  margin-bottom: 16px;
+  animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.complaint-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  border: 1.5px solid #93c5fd;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  transition: all 0.18s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+    border-color: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.18);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.complaint-btn-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #1a3a6c, #2563eb);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
+
+  ion-icon {
+    font-size: 22px;
+    color: white;
+  }
+}
+
+.complaint-btn-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+  min-width: 0;
+
+  strong {
+    font-size: 14px;
+    font-weight: 700;
+    color: #1a3a6c;
+    letter-spacing: 0.2px;
+  }
+
+  span {
+    font-size: 11px;
+    font-style: italic;
+    color: #64748b;
+    margin-top: 1px;
+  }
+}
+
+.complaint-btn-arrow {
+  font-size: 18px;
+  color: #2563eb;
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+
+.complaint-btn:hover .complaint-btn-arrow {
+  transform: translateX(3px);
 }
 
 /* ============================================ */
@@ -294,6 +407,157 @@ ion-title {
 }
 
 /* ============================================ */
+/*           COMPLAINT MODAL                    */
+/* ============================================ */
+
+.complaint-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(3px);
+  z-index: 9998;
+  animation: fadeIn 0.2s ease;
+}
+
+.complaint-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 92%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  z-index: 9999;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+  animation: modalIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translate(-50%, -46%) scale(0.96); }
+  to   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.complaint-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #1a3a6c, #2c5282);
+  color: white;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.4px;
+  border-radius: 16px 16px 0 0;
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 22px;
+    color: #fbbf24;
+  }
+
+  span {
+    flex: 1;
+  }
+}
+
+.modal-close {
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  ion-icon { font-size: 18px; color: white; }
+
+  &:hover { background: rgba(255, 255, 255, 0.25); }
+}
+
+.complaint-modal-body {
+  padding: 16px 20px 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #1a3a6c;
+  letter-spacing: 0.4px;
+  margin-top: 10px;
+  margin-bottom: 4px;
+}
+
+.modal-input {
+  --background: #f8fafc;
+  --border-radius: 10px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --min-height: 46px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  transition: border-color 0.2s;
+
+  &:focus-within {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  ion-input,
+  ion-textarea,
+  ion-select {
+    font-size: 14px;
+    --color: #1e293b;
+  }
+
+  ion-textarea {
+    --padding-top: 10px;
+    --padding-bottom: 10px;
+  }
+}
+
+.complaint-modal-actions {
+  display: flex;
+  gap: 10px;
+  padding: 12px 20px 18px;
+  justify-content: flex-end;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+.modal-cancel-btn {
+  --border-color: #64748b;
+  --color: #64748b;
+  --border-radius: 10px;
+  --border-width: 1.5px;
+  height: 42px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.modal-submit-btn {
+  --background: linear-gradient(135deg, #1a3a6c, #2563eb);
+  --color: white;
+  --border-radius: 10px;
+  --box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  height: 42px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* ============================================ */
 /*           ANIMATIONS                         */
 /* ============================================ */
 
@@ -315,6 +579,11 @@ ion-title {
   80%      { transform: translateX(4px); }
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* ============================================ */
 /*           RESPONSIVE                         */
 /* ============================================ */
@@ -327,6 +596,56 @@ ion-title {
   .login-header p  { font-size: 13px; }
   .login-card ion-card-content { padding: 16px; }
   .login-btn { height: 44px; font-size: 15px; }
+
+  .complaint-modal {
+    width: 96%;
+    max-height: 94vh;
+  }
+
+  .complaint-modal-body { padding: 12px 16px; }
+  .complaint-modal-header { padding: 14px 16px; font-size: 14px; }
+  .complaint-modal-actions { padding: 10px 16px 14px; }
+}
+
+/* Very small phones */
+@media (max-width: 380px) {
+  .login-container {
+    padding: 12px 8px 20px;
+  }
+
+  .logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .logo ion-icon {
+    font-size: 28px;
+  }
+
+  .login-header h1 {
+    font-size: 18px;
+  }
+
+  .login-card ion-card-content {
+    padding: 16px 14px 14px;
+  }
+
+  .complaint-btn {
+    padding: 10px 12px;
+  }
+
+  .complaint-btn-icon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .complaint-btn-text strong {
+    font-size: 13px;
+  }
+
+  .complaint-btn-text span {
+    font-size: 10px;
+  }
 }
 
 /* ============================================ */
@@ -354,6 +673,15 @@ ion-title {
   .eye-btn { --color: #94a3b8; }
   .eye-btn:hover { --color: #60a5fa; }
 
+  .complaint-btn {
+    background: linear-gradient(135deg, #1e3a5f, #1e40af);
+    border-color: #2563eb;
+  }
+
+  .complaint-btn-text strong { color: #ffffff; }
+  .complaint-btn-text span   { color: #93c5fd; }
+  .complaint-btn-arrow       { color: #60a5fa; }
+
   .credentials-hint {
     background: #1e3a5f;
     border-color: #2563eb;
@@ -368,5 +696,35 @@ ion-title {
     background: #4c1d1d;
     border-color: #7f1d1d;
     color: #fca5a5;
+  }
+
+  .complaint-modal {
+    background: #1e293b;
+  }
+
+  .complaint-modal-header {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+  }
+
+  .field-label { color: #93c5fd; }
+
+  .modal-input {
+    --background: #334155;
+    border-color: #475569;
+
+    ion-input,
+    ion-textarea,
+    ion-select {
+      --color: #ffffff;
+    }
+  }
+
+  .complaint-modal-actions {
+    border-top-color: #334155;
+  }
+
+  .modal-cancel-btn {
+    --border-color: #94a3b8;
+    --color: #94a3b8;
   }
 }

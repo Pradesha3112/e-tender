@@ -14,24 +14,40 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './upload.page.html',
   styleUrls: ['./upload.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, RouterModule, FormsModule,  AppShellComponent,  ],
+  imports: [CommonModule, IonicModule, RouterModule, FormsModule, AppShellComponent],
 })
 export class UploadPage implements OnInit {
 
-  // Image
+  // ----- Image -----
   selectedImage: string | undefined = undefined;
   selectedFile: File | undefined = undefined;
 
-  // Category
+  // ----- PDF -----
+  isPdf = false;
+  selectedPdfName = '';
+  selectedPdfBase64 = '';   // raw base64, no data: prefix
+
+  // ----- Compression info -----
+  originalSizeKb = 0;
+  compressedSizeKb = 0;
+  isCompressing = false;
+
+  // ----- Category -----
   categories: string[] = [];
   selectedCategory: string = '';
   categoryLabel: string = '';
   allowAllCategories: boolean = false;
 
-  // State
+  // ----- State -----
   isLoading = false;
   isLoadingCategories = true;
   errorMessage = '';
+
+  // ----- Limits -----
+  private readonly MAX_DIMENSION = 1600;     // image longest-side px
+  private readonly JPEG_QUALITY = 0.75;      // image quality
+  private readonly MAX_IMAGE_INPUT_MB = 25;  // image input guard
+  private readonly MAX_PDF_MB = 5;           // PDF must be <= 5 MB
 
   constructor(
     private router: Router,
@@ -46,7 +62,7 @@ export class UploadPage implements OnInit {
   }
 
   // ============================================================
-  // LOAD CATEGORIES (role-filtered by backend)
+  // LOAD CATEGORIES
   // ============================================================
   loadCategories() {
     this.isLoadingCategories = true;
@@ -59,7 +75,6 @@ export class UploadPage implements OnInit {
           this.categoryLabel = data.label || '';
           this.allowAllCategories = !!data.allow_all;
 
-          // Auto-select first category (auto-categorization)
           if (this.categories.length > 0) {
             this.selectedCategory = this.categories[0];
           }
@@ -75,7 +90,7 @@ export class UploadPage implements OnInit {
   }
 
   // ============================================================
-  // CAMERA / GALLERY / FILE
+  // CAMERA / GALLERY  (images only)
   // ============================================================
   async openCamera() {
     console.log('📸 Opening camera...');
@@ -87,7 +102,8 @@ export class UploadPage implements OnInit {
         resultType: CameraResultType.DataUrl,
         source: CameraSource.Camera,
       });
-      this.selectedImage = image.dataUrl;
+      this.resetPdfState();
+      await this.applyCompression(image.dataUrl!);
     } catch (error: any) {
       console.error('Camera error:', error);
       this.errorMessage = 'Camera error: ' + (error.message || 'Unknown error');
@@ -104,40 +120,197 @@ export class UploadPage implements OnInit {
         resultType: CameraResultType.DataUrl,
         source: CameraSource.Photos,
       });
-      this.selectedImage = image.dataUrl;
+      this.resetPdfState();
+      await this.applyCompression(image.dataUrl!);
     } catch (error: any) {
       console.error('Gallery error:', error);
       this.errorMessage = 'Gallery error: ' + (error.message || 'Unknown error');
     }
   }
 
-  onFileSelected(event: any) {
+  // ============================================================
+  // FILE INPUT — handles BOTH images and PDFs
+  // ============================================================
+  async onFileSelected(event: any) {
     console.log('📁 File selected');
     this.errorMessage = '';
-    const file = event.target.files[0];
-    if (file) {
+
+    const file: File = event.target.files[0];
+    if (!file) return;
+
+    const isPdfFile =
+      file.type === 'application/pdf' ||
+      file.name.toLowerCase().endsWith('.pdf');
+
+    // ---------------- PDF branch ----------------
+    if (isPdfFile) {
+      const sizeMb = file.size / (1024 * 1024);
+
+      if (sizeMb > this.MAX_PDF_MB) {
+        this.errorMessage =
+          `PDF too large (${sizeMb.toFixed(2)} MB). Max allowed: ${this.MAX_PDF_MB} MB. ` +
+          `Please compress the PDF first.`;
+        event.target.value = '';
+        return;
+      }
+
       this.selectedFile = file;
+      this.isPdf = true;
+      this.selectedImage = undefined;
+      this.selectedPdfName = file.name;
+
       const reader = new FileReader();
       reader.onload = (e: any) => {
-        this.selectedImage = e.target.result;
+        const dataUrl: string = e.target.result;
+        const base64 = dataUrl.split(',')[1] || '';
+        this.selectedPdfBase64 = base64;
+
+        // approximate KB size from base64
+        this.originalSizeKb = Math.round((base64.length * 3) / 4 / 1024);
+        this.compressedSizeKb = this.originalSizeKb;
+
+        console.log(`📄 PDF loaded: ${this.selectedPdfName} (${this.compressedSizeKb} KB)`);
       };
       reader.onerror = () => {
-        this.errorMessage = 'Error reading file';
+        this.errorMessage = 'Error reading PDF file';
       };
       reader.readAsDataURL(file);
+
+      return;
     }
+
+    // ---------------- Image branch ----------------
+    const sizeMb = file.size / (1024 * 1024);
+    if (sizeMb > this.MAX_IMAGE_INPUT_MB) {
+      this.errorMessage =
+        `File too large (${sizeMb.toFixed(1)} MB). Max allowed: ${this.MAX_IMAGE_INPUT_MB} MB.`;
+      event.target.value = '';
+      return;
+    }
+
+    this.resetPdfState();
+    this.selectedFile = file;
+
+    const reader = new FileReader();
+    reader.onload = async (e: any) => {
+      await this.applyCompression(e.target.result);
+    };
+    reader.onerror = () => {
+      this.errorMessage = 'Error reading file';
+    };
+    reader.readAsDataURL(file);
   }
 
   // ============================================================
-  // PROCESS BILL
+  // HELPERS
+  // ============================================================
+  private resetPdfState() {
+    this.isPdf = false;
+    this.selectedPdfBase64 = '';
+    this.selectedPdfName = '';
+  }
+
+  // ============================================================
+  // IMAGE COMPRESSION
+  // ============================================================
+  private async applyCompression(dataUrl: string): Promise<void> {
+    this.isCompressing = true;
+    this.originalSizeKb = this.dataUrlSizeKb(dataUrl);
+
+    try {
+      const compressed = await this.compressImage(
+        dataUrl,
+        this.MAX_DIMENSION,
+        this.JPEG_QUALITY
+      );
+
+      this.selectedImage = compressed;
+      this.compressedSizeKb = this.dataUrlSizeKb(compressed);
+
+      console.log(
+        `🗜️ Compressed: ${this.originalSizeKb} KB → ${this.compressedSizeKb} KB ` +
+        `(${Math.round((1 - this.compressedSizeKb / this.originalSizeKb) * 100)}% saved)`
+      );
+    } catch (err) {
+      console.error('Compression failed, using original:', err);
+      this.selectedImage = dataUrl;
+      this.compressedSizeKb = this.originalSizeKb;
+    } finally {
+      this.isCompressing = false;
+    }
+  }
+
+  private compressImage(
+    dataUrl: string,
+    maxDim: number,
+    quality: number
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+
+      img.onload = () => {
+        try {
+          let { width, height } = img;
+
+          if (width > height && width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else if (height >= width && height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext('2d');
+          if (!ctx) throw new Error('Canvas context not available');
+
+          // White background (JPEG has no alpha)
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(0, 0, width, height);
+
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const out = canvas.toDataURL('image/jpeg', quality);
+          resolve(out);
+        } catch (e) {
+          reject(e);
+        }
+      };
+
+      img.onerror = () => reject(new Error('Failed to load image'));
+      img.src = dataUrl;
+    });
+  }
+
+  /** Rough byte size of a base64 DataURL, in KB */
+  private dataUrlSizeKb(dataUrl: string): number {
+    if (!dataUrl) return 0;
+    const base64 = dataUrl.split(',')[1] || '';
+    const bytes = Math.floor((base64.length * 3) / 4);
+    return Math.round(bytes / 1024);
+  }
+
+  // ============================================================
+  // PROCESS BILL — sends either image OR pdf
   // ============================================================
   async processBill() {
     console.log('🔄 Processing bill...');
     this.errorMessage = '';
 
-    if (!this.selectedImage) {
-      this.errorMessage = 'Please select or upload a bill image first';
-      return;
+    // Validate
+    if (this.isPdf) {
+      if (!this.selectedPdfBase64) {
+        this.errorMessage = 'Please select or upload a PDF first';
+        return;
+      }
+    } else {
+      if (!this.selectedImage) {
+        this.errorMessage = 'Please select or upload a bill image first';
+        return;
+      }
     }
 
     if (!this.selectedCategory) {
@@ -148,10 +321,16 @@ export class UploadPage implements OnInit {
     this.isLoading = true;
 
     try {
-      const result = await this.apiService.uploadBill(this.selectedImage).toPromise();
+      // ✅ FIXED PAYLOAD: Flask expects 'image' key, and Python OCR needs the 'data:' prefix to detect PDFs
+      const payload = this.isPdf
+        ? { image: `data:application/pdf;base64,${this.selectedPdfBase64}` }
+        : { image: this.selectedImage };
+
+      const result = await this.apiService
+        .uploadBillPayload(payload)
+        .toPromise();
 
       if (result && result.success) {
-        // Pass extracted data + chosen category to validation page
         this.router.navigate(['/validation'], {
           state: {
             billData: result.data,
@@ -163,9 +342,8 @@ export class UploadPage implements OnInit {
       }
     } catch (error: any) {
       console.error('❌ Processing error:', error);
-      this.errorMessage = error?.error?.error
-        || error?.message
-        || 'Error processing bill';
+      this.errorMessage =
+        error?.error?.error || error?.message || 'Error processing bill';
     } finally {
       this.isLoading = false;
     }
@@ -174,7 +352,10 @@ export class UploadPage implements OnInit {
   clearImage() {
     this.selectedImage = undefined;
     this.selectedFile = undefined;
+    this.resetPdfState();
     this.errorMessage = '';
+    this.originalSizeKb = 0;
+    this.compressedSizeKb = 0;
   }
 
   goBack() {

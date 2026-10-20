@@ -1,0 +1,152 @@
+<!-- ============================================ -->
+<!-- FILE: src/app/complaints/complaints.page.html -->
+<!-- COMPLAINT RAISING + MY COMPLAINTS            -->
+<!-- ============================================ -->
+
+<app-shell pageTitle="Complaint Raising">
+
+  <!-- HEADER -->
+  <section class="page-header">
+    <div class="page-header-left">
+      <div class="page-header-icon">
+        <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+      </div>
+      <div>
+        <h2 class="page-title">Complaint Raising</h2>
+        <p class="page-subtitle">Raise a complaint or view your previous ones</p>
+      </div>
+    </div>
+    <ion-button
+      class="toggle-form-btn"
+      [fill]="showForm ? 'outline' : 'solid'"
+      (click)="toggleForm()">
+      <ion-icon [name]="showForm ? 'list-outline' : 'add-outline'" slot="start"></ion-icon>
+      {{ showForm ? 'My Complaints' : 'New Complaint' }}
+    </ion-button>
+  </section>
+
+  <!-- FORM -->
+  <section *ngIf="showForm" class="complaint-form-card">
+
+    <div class="field-group">
+      <label class="field-label">Subject *</label>
+      <ion-item class="field-input" lines="none">
+        <ion-input
+          [(ngModel)]="form.subject"
+          placeholder="e.g., Printer not working in ADFM-I office"
+          maxlength="150"
+          counter="true">
+        </ion-input>
+      </ion-item>
+    </div>
+
+    <div class="field-row">
+      <div class="field-group">
+        <label class="field-label">Category *</label>
+        <ion-item class="field-input" lines="none">
+          <ion-select
+            [(ngModel)]="form.category"
+            interface="action-sheet"
+            placeholder="Select category">
+            <ion-select-option *ngFor="let c of categories" [value]="c">
+              {{ c }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Priority *</label>
+        <ion-item class="field-input" lines="none">
+          <ion-select
+            [(ngModel)]="form.priority"
+            interface="action-sheet"
+            placeholder="Select priority">
+            <ion-select-option *ngFor="let p of priorities" [value]="p">
+              {{ p | titlecase }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label">Description *</label>
+      <ion-item class="field-input" lines="none">
+        <ion-textarea
+          [(ngModel)]="form.description"
+          placeholder="Describe your complaint in detail..."
+          [rows]="5"
+          maxlength="1000"
+          counter="true"
+          autoGrow="true">
+        </ion-textarea>
+      </ion-item>
+    </div>
+
+    <ion-button
+      expand="block"
+      class="submit-btn"
+      [disabled]="isSubmitting"
+      (click)="submitComplaint()">
+      <ion-spinner *ngIf="isSubmitting" name="crescent" slot="start"></ion-spinner>
+      <ion-icon *ngIf="!isSubmitting" name="send-outline" slot="start"></ion-icon>
+      {{ isSubmitting ? 'Submitting...' : 'Submit Complaint' }}
+    </ion-button>
+
+  </section>
+
+  <!-- MY COMPLAINTS -->
+  <section *ngIf="!showForm" class="complaints-section">
+
+    <div class="section-header">
+      <h3>
+        <ion-icon name="list-outline"></ion-icon>
+        MY COMPLAINTS ({{ myComplaints.length }})
+      </h3>
+    </div>
+
+    <div *ngIf="myComplaints.length === 0" class="empty-state">
+      <ion-icon name="chatbubble-outline"></ion-icon>
+      <h3>No complaints yet</h3>
+      <p>Your submitted complaints will appear here.</p>
+      <ion-button (click)="toggleForm()" class="new-complaint-btn">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
+        Raise a Complaint
+      </ion-button>
+    </div>
+
+    <div *ngIf="myComplaints.length > 0" class="complaint-list">
+      <div *ngFor="let c of myComplaints" class="complaint-card">
+
+        <div class="complaint-head">
+          <span class="complaint-number">#{{ c.id }}</span>
+          <ion-badge [color]="getStatusColor(c.status)" class="status-badge">
+            <ion-icon [name]="getStatusIcon(c.status)"></ion-icon>
+            {{ getStatusLabel(c.status) }}
+          </ion-badge>
+          <ion-badge [color]="getPriorityColor(c.priority)" class="priority-badge">
+            {{ c.priority | titlecase }}
+          </ion-badge>
+        </div>
+
+        <h4 class="complaint-subject">{{ c.subject }}</h4>
+        <p class="complaint-desc">{{ c.description }}</p>
+
+        <div class="complaint-meta">
+          <span class="meta-category">
+            <ion-icon name="pricetag-outline"></ion-icon>
+            {{ c.category }}
+          </span>
+          <span class="meta-time">
+            <ion-icon name="time-outline"></ion-icon>
+            {{ formatRelativeTime(c.createdAt) }}
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+  </section>
+
+</app-shell>
